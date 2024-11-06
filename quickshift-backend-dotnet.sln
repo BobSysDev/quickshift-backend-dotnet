@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D9FEEECA-C3FC-42C9-AE40-A542BFD1C32D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAPI", "RestAPI\RestAPI.csproj", "{D520547E-6650-462F-B5A5-ED12FA3C42F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D520547E-6650-462F-B5A5-ED12FA3C42F7} = {D9FEEECA-C3FC-42C9-AE40-A542BFD1C32D}
+		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C} = {D9FEEECA-C3FC-42C9-AE40-A542BFD1C32D}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D520547E-6650-462F-B5A5-ED12FA3C42F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D520547E-6650-462F-B5A5-ED12FA3C42F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D520547E-6650-462F-B5A5-ED12FA3C42F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D520547E-6650-462F-B5A5-ED12FA3C42F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
