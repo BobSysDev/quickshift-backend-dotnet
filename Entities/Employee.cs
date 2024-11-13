@@ -2,7 +2,7 @@
 
 public class Employee
 {
-    public Employee(string firstName, string lastName, int workingNumber, string email, int phoneNumber, IEnumerable<Shift> shifts)
+    public Employee(string firstName, string lastName, int workingNumber, string email, string phoneNumber, IEnumerable<Shift> shifts)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -16,6 +16,6 @@ public class Employee
     public string LastName { get; set; }
     public int WorkingNumber { get; set; }
     public string Email { get; set; }
-    public int PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; }
     public List<Shift> Shifts = new List<Shift>();
 }
