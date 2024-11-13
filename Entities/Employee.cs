@@ -10,6 +10,8 @@ public class Employee
         Email = email;
         PhoneNumber = phoneNumber;
         Shifts = new List<Shift>(shifts);
+        // TODO: Id = jakartashit
+        
     }
 
     public string FirstName { get; set; }
@@ -17,5 +19,6 @@ public class Employee
     public int WorkingNumber { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
+    public long Id { get; set; }
     public List<Shift> Shifts = new List<Shift>();
 }
