@@ -33,11 +33,11 @@ public class ShiftInMemoryRepository : IShiftRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(Shift shift)
+    public Task DeleteAsync(long id)
     {
-        Shift? shiftToRemove = shifts.SingleOrDefault(p => p.Id == shift.Id);
+        Shift? shiftToRemove = shifts.SingleOrDefault(p => p.Id == id);
 
-        if (shiftToRemove is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+        if (shiftToRemove is null) throw new InvalidOperationException($"Shift with ID {id} not found");
 
         shifts.Remove(shiftToRemove);
         return Task.CompletedTask;
@@ -51,7 +51,7 @@ public class ShiftInMemoryRepository : IShiftRepository
     public Task<Shift> GetSingleAsync(long id)
     {
         var shift = shifts.FirstOrDefault(c => c.Id == id);
-        if (shift is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+        if (shift is null) throw new InvalidOperationException($"Shift with ID {id} not found");
         return Task.FromResult(shift);
     }
 }

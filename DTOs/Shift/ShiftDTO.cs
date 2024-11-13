@@ -8,4 +8,5 @@ public class ShiftDTO
     public string ShiftStatus { get; set; }
     public string Description { get; set; }
     public string Location { get; set; }
+    public long Id { get; set; }
 }
