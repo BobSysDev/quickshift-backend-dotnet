@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestAPI", "RestAPI\RestAPI.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcClient", "GrpcClient\GrpcClient.csproj", "{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B916D121-76B1-4A1F-B913-0F03DF95DD89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", "{D75082AA-5461-4B4F-90D4-0AC81D311DBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +18,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D520547E-6650-462F-B5A5-ED12FA3C42F7} = {D9FEEECA-C3FC-42C9-AE40-A542BFD1C32D}
 		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C} = {D9FEEECA-C3FC-42C9-AE40-A542BFD1C32D}
+		{D75082AA-5461-4B4F-90D4-0AC81D311DBB} = {B916D121-76B1-4A1F-B913-0F03DF95DD89}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D520547E-6650-462F-B5A5-ED12FA3C42F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -24,5 +29,9 @@ Global
 		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D81DCF6-3AD3-4BB1-8E38-41E581EC5C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D75082AA-5461-4B4F-90D4-0AC81D311DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D75082AA-5461-4B4F-90D4-0AC81D311DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D75082AA-5461-4B4F-90D4-0AC81D311DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D75082AA-5461-4B4F-90D4-0AC81D311DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
