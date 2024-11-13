@@ -25,10 +25,10 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(long id)
+    public Task DeleteAsync(int WorkingNumber)
     {
-        Employee? employeeToRemove = employees.SingleOrDefault(e => e.Id == id);
-        if (employeeToRemove is null) throw new InvalidOperationException($"User({id}) not found");
+        Employee? employeeToRemove = employees.SingleOrDefault(e => e.WorkingNumber == WorkingNumber);
+        if (employeeToRemove is null) throw new InvalidOperationException($"User({WorkingNumber}) not found");
         employees.Remove(employeeToRemove);
         return Task.CompletedTask;
     }
