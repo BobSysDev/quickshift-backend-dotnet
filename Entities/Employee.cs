@@ -2,17 +2,17 @@
 
 public class Employee
 {
-    public Employee(string firstName, string lastName, int workingNumber, string email, string phoneNumber, IEnumerable<Shift> shifts)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-        WorkingNumber = workingNumber;
-        Email = email;
-        PhoneNumber = phoneNumber;
-        Shifts = new List<Shift>(shifts);
-        // TODO: Id = jakartashit
-        
-    }
+    // public Employee(string firstName, string lastName, int workingNumber, string email, string phoneNumber, IEnumerable<Shift> shifts)
+    // {
+    //     FirstName = firstName;
+    //     LastName = lastName;
+    //     WorkingNumber = workingNumber;
+    //     Email = email;
+    //     PhoneNumber = phoneNumber;
+    //     Shifts = new List<Shift>(shifts);
+    //     Id = new
+    //     
+    // }
 
     public string FirstName { get; set; }
     public string LastName { get; set; }
