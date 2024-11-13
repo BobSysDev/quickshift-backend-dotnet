@@ -9,26 +9,49 @@ public class ShiftInMemoryRepository : IShiftRepository
     
     public Task<Shift> AddAsync(Shift shift)
     {
-        throw new NotImplementedException();
+        if (shifts.Any())
+        {
+            var maxId = shifts.Max(s => s.Id);
+            shift.Id = maxId + 1;
+        }
+        else
+        {
+            shift.Id = 1;
+        }
+        shifts.Add(shift);
+        return Task.FromResult(shift);
     }
 
     public Task UpdateAsync(Shift shift)
     {
-        throw new NotImplementedException();
+        Shift? exisitingShift = shifts.SingleOrDefault(p => p.Id == shift.Id);
+
+        if (exisitingShift is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+
+        shifts.Remove(exisitingShift);
+        shifts.Add(shift);
+        return Task.CompletedTask;
     }
 
     public Task DeleteAsync(Shift shift)
     {
-        throw new NotImplementedException();
+        Shift? shiftToRemove = shifts.SingleOrDefault(p => p.Id == shift.Id);
+
+        if (shiftToRemove is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+
+        shifts.Remove(shiftToRemove);
+        return Task.CompletedTask;
     }
 
     public IQueryable<Shift> GetManyAsync()
     {
-        throw new NotImplementedException();
+        return shifts.AsQueryable();
     }
 
-    public Task<Shift> GetSingleAsync(int id)
+    public Task<Shift> GetSingleAsync(long id)
     {
-        throw new NotImplementedException();
+        var shift = shifts.FirstOrDefault(c => c.Id == id);
+        if (shift is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+        return Task.FromResult(shift);
     }
 }

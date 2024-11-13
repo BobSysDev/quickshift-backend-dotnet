@@ -8,5 +8,5 @@ public interface IShiftRepository
     Task UpdateAsync(Shift shift);
     Task DeleteAsync(Shift shift);
     IQueryable<Shift> GetManyAsync();
-    Task<Shift> GetSingleAsync(int id);
+    Task<Shift> GetSingleAsync(long id);
 }
