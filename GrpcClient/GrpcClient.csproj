@@ -20,4 +20,8 @@
         <Protobuf Include="Protos\Quickshift.proto" GrpcServices="Client" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DTOs\DTOs.csproj" />
+    </ItemGroup>
+
 </Project>

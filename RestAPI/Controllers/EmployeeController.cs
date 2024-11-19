@@ -1,10 +1,15 @@
-﻿using DTOs;
-using DTOs.Shift;
-using Entities;
+﻿using System.Runtime.CompilerServices;
+using DTOs;
+using GrpcClient;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using Exception = System.Exception;
 using Microsoft.EntityFrameworkCore;
+using Employee = Entities.Employee;
+using EmployeeDTO = DTOs.EmployeeDTO;
+using NewEmployeeDTO = DTOs.NewEmployeeDTO;
+using Shift = Entities.Shift;
+using ShiftDTO = DTOs.Shift.ShiftDTO;
 
 
 namespace RestAPI.Controllers;
@@ -15,42 +20,97 @@ namespace RestAPI.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository employeeRepo;
+    private readonly GrpcRepo grpcRepo;
 
-    public EmployeeController(IEmployeeRepository employeeRepository)
+    public EmployeeController(IEmployeeRepository employeeRepository, GrpcRepo grpcRepo)
     {
         employeeRepo = employeeRepository;
+        this.grpcRepo = grpcRepo;
     }
 
 
     [HttpPost]
-    public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] CreateEmployeeDTO request)
+    public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] NewEmployeeDTO request)
     {
-        //add grpc-repo from clientRequester, +new password
-        
         try
         {
+            EmployeeDTO employeeDto = await grpcRepo.AddSingleEmployee(request);
+
+            List<Shift> shifts = new List<Shift>();
+            foreach (var shiftDTO in employeeDto.Shifts)
+            {
+                var shift = new Shift
+                {
+                    Id = shiftDTO.Id,
+                    StartDateTime = shiftDTO.StartDateTime,
+                    EndDateTime = shiftDTO.EndDateTime,
+                    TypeOfShift = shiftDTO.TypeOfShift,
+                    ShiftStatus = shiftDTO.TypeOfShift,
+                    Description = shiftDTO.Description,
+                    Location = shiftDTO.Description
+                };
+                shifts.Add(shift);
+            }
+            
             var newEmployee = new Employee
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                WorkingNumber = request.WorkingNumber
+                FirstName = employeeDto.FirstName,
+                LastName = employeeDto.LastName,
+                Email = employeeDto.Email,
+                Id = employeeDto.Id,
+                Password = employeeDto.Password,
+                PhoneNumber = employeeDto.PhoneNumber,
+                Shifts = shifts,
+                WorkingNumber = employeeDto.WorkingNumber
             };
-
-            await employeeRepo.AddAsync(newEmployee); // Assuming an AddAsync method exists
-
+            await employeeRepo.AddAsync(newEmployee);
             var simpleDto = new SimpleEmployeeDTO
             {
-                FirstName = newEmployee.FirstName,
-                LastName = newEmployee.LastName,
-                WorkingNumber = newEmployee.WorkingNumber // Include WorkingNumber in the response
+                FirstName = employeeDto.FirstName,
+                LastName = employeeDto.LastName,
+                WorkingNumber = employeeDto.WorkingNumber, // Include WorkingNumber in the response
+                Id = employeeDto.Id
             };
-
+            
             return Ok(simpleDto);
+
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             return Problem(e.Message);
         }
+
+
+
+
+
+
+
+
+        // try
+        // {
+        //     var newEmployee = new Employee
+        //     {
+        //         FirstName = request.FirstName,
+        //         LastName = request.LastName,
+        //         WorkingNumber = request.WorkingNumber
+        //     };
+        //
+        //     await employeeRepo.AddAsync(newEmployee); // Assuming an AddAsync method exists
+        //
+        //     var simpleDto = new SimpleEmployeeDTO
+        //     {
+        //         FirstName = newEmployee.FirstName,
+        //         LastName = newEmployee.LastName,
+        //         WorkingNumber = newEmployee.WorkingNumber // Include WorkingNumber in the response
+        //     };
+        //
+        //     return Ok(simpleDto);
+        // }
+        // catch (Exception e)
+        // {
+        //     return Problem(e.Message);
+        // }
     }
 
 

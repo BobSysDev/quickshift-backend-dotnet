@@ -7,12 +7,12 @@ option java_package = "quickshift.grpc.service";
 package org.grpc.service;
 
 service Shift{
-  rpc AddSingleShift (NewShiftDto) returns (ShiftDTO);
+  rpc AddSingleShift (NewShiftDTO) returns (ShiftDTO);
   rpc GetSingleShiftById (Id) returns (ShiftDTO);
   rpc GetAllShifts(Empty) returns (ShiftDTOList);
-  rpc GetManyShiftsAfterStartDate (DateTimeInMillis) returns (ShiftDTO);
-  rpc GetManyShiftsByEmployee (EmployeeDTO) returns (ShiftDTOList);
-  rpc UpdateSingleShift (ShiftDTO) returns (ShiftDTO);
+  rpc GetManyShiftsAfterStartDate (DateTimeInMillis) returns (ShiftDTOList);
+  rpc GetManyShiftsByEmployee (Id) returns (ShiftDTOList);
+  rpc UpdateSingleShift (UpdateShiftDTO) returns (ShiftDTO);
   rpc DeleteSingleShift (Id) returns (GenericTextMessage);
 }
 
@@ -52,13 +52,24 @@ message ShiftDTO {
   string Location = 7;
 }
 
-message NewShiftDto {
+message NewShiftDTO {
   sint64 StartDateTime = 1;
   sint64 EndDateTime = 2;
   string TypeOfShift = 3;
   string ShiftStatus = 4;
   string Description = 5;
   string Location = 6;
+}
+
+message UpdateShiftDTO {
+  sint64 Id = 1;
+  sint64 StartDateTime = 2;
+  sint64 EndDateTime = 3;
+  string TypeOfShift = 4;
+  string ShiftStatus = 5;
+  string Description = 6;
+  string Location = 7;
+  sint64 EmployeeId = 8;
 }
 
 message ShiftDTOList {
