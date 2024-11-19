@@ -25,6 +25,8 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] CreateEmployeeDTO request)
     {
+        //add grpc-repo from clientRequester, +new password
+        
         try
         {
             var newEmployee = new Employee
@@ -52,7 +54,7 @@ public class EmployeeController : ControllerBase
     }
 
 
-    [HttpPatch]
+    [HttpPatch] //TODO: sebo fix this
     public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromBody] EmployeeDTO request)
     {
         if(request.FirstName == null || request.FirstName.Equals(""))
@@ -138,7 +140,7 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet("/Employee/")]
+    [HttpGet("/Employee/")] //TODO: sebo fix getmany
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         try
