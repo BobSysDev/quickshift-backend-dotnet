@@ -9,14 +9,17 @@ public class ShiftInMemoryRepository : IShiftRepository
     
     public Task<Shift> AddAsync(Shift shift)
     {
-        if (shifts.Any())
+        if (shift.Id == 0)
         {
-            var maxId = shifts.Max(s => s.Id);
-            shift.Id = maxId + 1;
-        }
-        else
-        {
-            shift.Id = 1;
+            if (shifts.Any())
+            {
+                var maxId = shifts.Max(s => s.Id);
+                shift.Id = maxId + 1;
+            }
+            else
+            {
+                shift.Id = 1;
+            }
         }
         shifts.Add(shift);
         return Task.FromResult(shift);
@@ -35,7 +38,7 @@ public class ShiftInMemoryRepository : IShiftRepository
 
     public Task DeleteAsync(long id)
     {
-        Shift? shiftToRemove = shifts.SingleOrDefault(p => p.Id == id);
+        Shift? shiftToRemove = shifts.FirstOrDefault(p => p.Id == id);
 
         if (shiftToRemove is null) throw new InvalidOperationException($"Shift with ID {id} not found");
 
@@ -51,7 +54,7 @@ public class ShiftInMemoryRepository : IShiftRepository
     public Task<Shift> GetSingleAsync(long id)
     {
         var shift = shifts.FirstOrDefault(c => c.Id == id);
-        if (shift is null) throw new InvalidOperationException($"Shift with ID {id} not found");
+        if (shift is null) throw new InvalidOperationException($"Shift with ID '{id}' not found");
         return Task.FromResult(shift);
     }
 }

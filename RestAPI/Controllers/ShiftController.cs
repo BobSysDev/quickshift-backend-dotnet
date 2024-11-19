@@ -2,14 +2,13 @@
 using RepositoryContracts;
 using DTOs.Shift;
 using Entities;
-using Grpc.Core;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace RestAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ShiftController
+public class ShiftController : ControllerBase
 {
     private readonly IShiftRepository _shiftRepository;
 
@@ -25,7 +24,6 @@ public class ShiftController
         {
             return Results.BadRequest("Date is required");
         }
-
         Shift newShift = new Shift()
         {
             Id = shiftDto.Id,
@@ -36,33 +34,31 @@ public class ShiftController
             Description = shiftDto.Description,
             Location = shiftDto.Location
         };
-
         Shift createdShift = await _shiftRepository.AddAsync(newShift);
-        
-        return Results.Created($"/shift/{createdShift.Id}", createdShift);
+        return Results.Created($"shift/{createdShift.Id}", createdShift);
     }
 
     [HttpGet("{id}")]
     public async Task<IResult> GetSingleShift([FromRoute] long id)
     {
+        Console.WriteLine($"Requested ID: {id}");
         try
         {
             Shift shift = await _shiftRepository.GetSingleAsync(id);
             return Results.Ok(shift);
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             Console.WriteLine(e);
             return Results.NotFound(e.Message);
         }
     }
-    
-    [HttpGet]
 
+    [HttpGet]
     public async Task<IResult> GetAllShifts([FromQuery] long? id)
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
-
+        
         if (id is not null)
         {
             shifts = shifts.Where(x => x.Id == id);
@@ -72,7 +68,6 @@ public class ShiftController
     }
 
     [HttpDelete("{id}")]
-
     public async Task<IResult> DeleteShift([FromRoute] long id)
     {
         await _shiftRepository.DeleteAsync(id);
