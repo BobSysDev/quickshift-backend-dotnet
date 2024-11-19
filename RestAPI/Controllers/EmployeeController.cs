@@ -3,6 +3,9 @@ using DTOs.Shift;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using Exception = System.Exception;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace RestAPI.Controllers;
 
@@ -15,35 +18,40 @@ public class EmployeeController : ControllerBase
 
     public EmployeeController(IEmployeeRepository employeeRepository)
     {
-        this.employeeRepo = employeeRepository;
+        employeeRepo = employeeRepository;
     }
-    
-    
-    
+
+
     [HttpPost]
     public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] CreateEmployeeDTO request)
     {
         try
         {
-            List<Employee> employees = employeeRepo.GetManyAsync().ToList();
-            List<SimpleEmployeeDTO> dtos = employees.Select(e => new SimpleEmployeeDTO
+            var newEmployee = new Employee
             {
-                FirstName = e.FirstName,
-                LastName = e.LastName,
-                WorkingNumber = e.WorkingNumber
-            }).ToList();
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                WorkingNumber = request.WorkingNumber
+            };
 
-            return Ok(dtos); // Returning OK with dtos
+            await employeeRepo.AddAsync(newEmployee); // Assuming an AddAsync method exists
+
+            var simpleDto = new SimpleEmployeeDTO
+            {
+                FirstName = newEmployee.FirstName,
+                LastName = newEmployee.LastName,
+                WorkingNumber = newEmployee.WorkingNumber // Include WorkingNumber in the response
+            };
+
+            return Ok(simpleDto);
         }
         catch (Exception e)
         {
-            return Problem(e.Message); 
+            return Problem(e.Message);
         }
     }
-    
-    
-    
-    
+
+
     [HttpPatch]
     public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromBody] EmployeeDTO request)
     {
@@ -66,22 +74,7 @@ public class EmployeeController : ControllerBase
         {
             List<ShiftDTO> shiftDTOs = request.Shifts;
             List<Shift> shifts = new List<Shift>();
-        
-            foreach (var shiftDto in shiftDTOs)
-            {
-                var shift = new Shift
-                {
-                    Description = shiftDto.Description,
-                    EndDateTime = shiftDto.EndDateTime,
-                    Location = shiftDto.Location,
-                    ShiftStatus = shiftDto.ShiftStatus,
-                    StartDateTime = shiftDto.StartDateTime,
-                    TypeOfShift = shiftDto.TypeOfShift,
-                    Id = shiftDto.Id
-                };
-                shifts.Add(shift);
-            }
-
+            
             Employee employee = new Employee
             {
                 FirstName = request.FirstName,
@@ -145,57 +138,63 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet ("/Employee/")]
+    [HttpGet("/Employee/")]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         try
         {
-            List<Employee> employees = employeeRepo.GetManyAsync().ToList();
-            List<PublicEmployeeDTO> dtos = new();
-            employees.ForEach(employee =>
+            List<Employee> employees = await employeeRepo.GetManyAsync().ToListAsync();
+            List<PublicEmployeeDTO> dtos = employees.Select(employee => new PublicEmployeeDTO
             {
-                dtos.Add(new PublicEmployeeDTO
-                {
-                    WorkingNumber = employee.WorkingNumber,
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName
-                });
-            });
-            
-            return Accepted($"/Employees/", dtos);
+                WorkingNumber = employee.WorkingNumber,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName
+            }).ToList();
+        
+            return Ok(dtos);
         }
         catch (Exception e)
         {
             return Problem(e.Message); 
         }
     }
-// TODO: add checking the password before deleting, maybe make a separate dto for it, currently it just takes working no., 1st n 2nd name
-    [HttpDelete]public async Task<ActionResult> Delete([FromBody] EmployeeDTO request)
+    
+    [HttpDelete]
+    public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
     {
-        if (request.WorkingNumber == null || request.WorkingNumber == 0) 
+        if (request.WorkingNumber == 0)
         {
-            return BadRequest("Working Number required.");
+            return BadRequest("Working Number is required.");
         }
-        if(request.FirstName==null || request.FirstName.Equals(""))
+        if (string.IsNullOrWhiteSpace(request.FirstName))
         {
-            return BadRequest("First Name required.");
+            return BadRequest("First Name is required.");
         }
 
         try
         {
+
             Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
-            if (employeeToDelete.WorkingNumber == request.WorkingNumber)
+            
+            if (employeeToDelete == null)
             {
-                employeeRepo.DeleteAsync(request.WorkingNumber);
-                return Ok();
+                return NotFound("Employee not found.");
             }
-            return Unauthorized("Wrong Working Number.");
+            
+            if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
+            {
+                return Unauthorized("First Name does not match.");
+            }
+
+            if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
+            {
+                return Unauthorized("Incorrect password.");
+            }
+            
+            await employeeRepo.DeleteAsync(request.WorkingNumber);
+            return Ok("Employee deleted successfully.");
         }
-        catch (InvalidDataException e)
-        {
-            return Problem(e.Message); 
-        }
-        catch (InvalidOperationException e)
+        catch (Exception e)
         {
             return Problem(e.Message); 
         }

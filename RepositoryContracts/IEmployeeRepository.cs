@@ -4,7 +4,7 @@ namespace RepositoryContracts;
 
 public interface IEmployeeRepository
 {
-    Task AddAsync(Employee employee);
+    Task<Employee> AddAsync(Employee employee);
     Task UpdateAsync(Employee employee);
     Task DeleteAsync(int WorkingNumber);
     IQueryable<Employee> GetManyAsync();
