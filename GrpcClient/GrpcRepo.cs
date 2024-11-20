@@ -23,7 +23,7 @@ public class GrpcRepo
             Password = newEmployeeDto.Password
         }); //TODO await maybe
         //create new employee now with id to be returned to web app basically, source it from reply
-        EmployeeDTO employeeDto = new EmployeeDTO
+        EmployeeDTO employeeDto = new EmployeeDTO //maybe unnecessary
         {
             FirstName = reply.FirstName,
             LastName = reply.LastName,

@@ -189,7 +189,7 @@ public class EmployeeController : ControllerBase
         }
     }
     
-    [HttpDelete]
+    [HttpDelete]//TODO maybe not working sebo samo
     public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
     {
         if (request.WorkingNumber == 0)
