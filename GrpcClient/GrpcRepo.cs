@@ -7,7 +7,7 @@ namespace GrpcClient;
 public class GrpcRepo
 {
     //TODO sebo - prototype for your fixing session
-    public async Task<DTOs.EmployeeDTO> AddSingleEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
+    public async Task<DTOs.EmployeeDTO> CreateEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
         //create channel for connection to JAVA
         using var channel = GrpcChannel.ForAddress("http://localhost:50051"); //TODO the port might change
@@ -65,6 +65,11 @@ public class GrpcRepo
         return ogEmployeeDto;
     }
 
+    public async Task<DTOs.Shift.ShiftDTO> CreateShift(DTOs.Shift.ShiftDTOWithoutId shiftDtoWithoutId)
+    {
+        using var channel = GrpcChannel.ForAddress("http://localhost:50051");
+        var client = new 
+    }
     // public async Task<string> SendHello(string name)
     // {
     //     using var channel = GrpcChannel.ForAddress("http://localhost:50051");

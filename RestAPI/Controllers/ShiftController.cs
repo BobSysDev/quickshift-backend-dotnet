@@ -54,7 +54,7 @@ public class ShiftController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("Employee")]
     public async Task<IResult> GetAllShifts([FromQuery] long? id)
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
@@ -67,6 +67,35 @@ public class ShiftController : ControllerBase
         return Results.Ok(shifts);
     }
 
+
+    [HttpPut("Update-Shift-By-Id")]
+    public async Task<IResult> UpdateShiftOfEmployee([FromQuery] long id, [FromBody] ShiftDTO shiftDto)
+    {
+        try
+        {
+            Shift existingShift = await _shiftRepository.GetSingleAsync(id);
+            if (existingShift == null)
+            {
+                return Results.NotFound($"Shift with ID {id} not found");
+            }
+
+            existingShift.StartDateTime = shiftDto.StartDateTime;
+            existingShift.EndDateTime = shiftDto.EndDateTime;
+            existingShift.TypeOfShift = shiftDto.TypeOfShift;
+            existingShift.ShiftStatus = shiftDto.ShiftStatus;
+            existingShift.Description = shiftDto.Description;
+            existingShift.Location = shiftDto.Location;
+
+            await _shiftRepository.UpdateAsync(existingShift);
+            return Results.Ok(existingShift);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return Results.BadRequest(e.Message);
+        }
+    }
+    
     [HttpDelete("{id}")]
     public async Task<IResult> DeleteShift([FromRoute] long id)
     {

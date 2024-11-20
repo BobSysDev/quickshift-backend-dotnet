@@ -34,7 +34,7 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            EmployeeDTO employeeDto = await grpcRepo.AddSingleEmployee(request);
+            EmployeeDTO employeeDto = await grpcRepo.CreateEmployee(request);
 
             List<Shift> shifts = new List<Shift>();
             foreach (var shiftDTO in employeeDto.Shifts)
@@ -79,38 +79,6 @@ public class EmployeeController : ControllerBase
         {
             return Problem(e.Message);
         }
-
-
-
-
-
-
-
-
-        // try
-        // {
-        //     var newEmployee = new Employee
-        //     {
-        //         FirstName = request.FirstName,
-        //         LastName = request.LastName,
-        //         WorkingNumber = request.WorkingNumber
-        //     };
-        //
-        //     await employeeRepo.AddAsync(newEmployee); // Assuming an AddAsync method exists
-        //
-        //     var simpleDto = new SimpleEmployeeDTO
-        //     {
-        //         FirstName = newEmployee.FirstName,
-        //         LastName = newEmployee.LastName,
-        //         WorkingNumber = newEmployee.WorkingNumber // Include WorkingNumber in the response
-        //     };
-        //
-        //     return Ok(simpleDto);
-        // }
-        // catch (Exception e)
-        // {
-        //     return Problem(e.Message);
-        // }
     }
 
 

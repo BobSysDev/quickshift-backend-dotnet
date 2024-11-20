@@ -21,7 +21,6 @@ service Employee{
   rpc GetSingleEmployeeById (Id) returns (EmployeeDTO);
   rpc GetAllEmployees (Empty) returns (EmployeeDTOList);
   rpc GetManyEmployeesByName (GenericTextMessage) returns (EmployeeDTOList);
-  rpc GetManyEmployeesByShiftType (GenericTextMessage) returns (EmployeeDTOList);
   rpc UpdateSingleEmployee (ShiftDTO) returns (ShiftDTO);
   rpc DeleteSingleEmployee (Id) returns (GenericTextMessage);
 }
