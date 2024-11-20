@@ -92,18 +92,17 @@ public class GrpcRepo
             EndDateTime = new DateTimeOffset(shiftDtoWithoutId.EndDateTime).ToUnixTimeMilliseconds(),
             Location = shiftDtoWithoutId.Location
         };
-        var reply = await client.AddSingleShiftAsync(newShiftDto);
-        
+        var reply = client.AddSingleShift(newShiftDto);
 
         ShiftDTO shiftDto = new ShiftDTO
         {
-         Description = reply.Description,
-         TypeOfShift = reply.TypeOfShift,
-         Id = reply.Id,
-         ShiftStatus = reply.ShiftStatus,
-         StartDateTime = reply.StartDateTime,
-         EndDateTime = reply.EndDateTime,
-         Location = reply.Location
+            Description = reply.Description,
+            TypeOfShift = reply.TypeOfShift,
+            Id = reply.Id,
+            ShiftStatus = reply.ShiftStatus,
+            StartDateTime = reply.StartDateTime,
+            EndDateTime = reply.EndDateTime,
+            Location = reply.Location
         };
 
         DTOs.Shift.ShiftDTO ogShiftDto = new DTOs.Shift.ShiftDTO
@@ -118,23 +117,6 @@ public class GrpcRepo
         };
         return ogShiftDto;
     }
-    
-    // public async Task<string> SendHello(string name)
-    // {
-    //     using var channel = GrpcChannel.ForAddress("http://localhost:50051");
-    //     var client = new Greeter.GreeterClient(channel);
-    //     var reply = await client.SayHelloAsync(new HelloRequest { Name = name});
-    //     Console.WriteLine(reply.Message);
-    //     return reply.Message;
-    // }
-    //
-    // public async Task<List<String>> GetAllHellos()
-    // {
-    //     using var channel = GrpcChannel.ForAddress("http://localhost:50051");
-    //     var client = new Greeter.GreeterClient(channel);
-    //     var reply = await client.GetAllHellosAsync(new Empty()); 
-    //     return reply.Replies.ToList();
-    // }
 }
 
 

@@ -13,44 +13,33 @@ namespace RestAPI.Controllers;
 public class ShiftController : ControllerBase
 {
     private readonly IShiftRepository _shiftRepository;
+    private readonly IShiftRepository grpcRepo;
 
-    public ShiftController(IShiftRepository shiftRepository)
+    public ShiftController(IShiftRepository shiftRepository, IShiftRepository grpcRepo)
     {
         _shiftRepository = shiftRepository;
+        this.grpcRepo = grpcRepo;
     }
 
     [HttpPost]
-    public async Task<ActionResult<ShiftDTOWithoutId>> AddShift([FromBody] ShiftDTOWithoutId request)
+    public async Task<ActionResult<ShiftDTO>> AddShift([FromBody] ShiftDTOWithoutId request)
     {
         try
         {
-            var grpcRepo = new GrpcRepo();
-            ShiftDTO shiftDto = await grpcRepo.CreateShift(request);
-
-            var shift = new Shift
-            {
-                Id = shiftDto.Id,
-                StartDateTime = shiftDto.StartDateTime,
-                EndDateTime = shiftDto.EndDateTime,
-                TypeOfShift = shiftDto.TypeOfShift,
-                ShiftStatus = shiftDto.ShiftStatus,
-                Description = shiftDto.Description,
-                Location = shiftDto.Location
-            };
-
+            Shift shift = await grpcRepo.AddAsync(ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request));
             await _shiftRepository.AddAsync(shift);
 
-            var simpleShiftDto = new ShiftDTOWithoutId
+            var simpleDto = new ShiftDTO
             {
-                StartDateTime = shiftDto.StartDateTime,
-                EndDateTime = shiftDto.EndDateTime,
-                TypeOfShift = shiftDto.TypeOfShift,
-                ShiftStatus = shiftDto.ShiftStatus,
-                Description = shiftDto.Description,
-                Location = shiftDto.Location
+                Description = shift.Description,
+                TypeOfShift = shift.TypeOfShift,
+                ShiftStatus = shift.ShiftStatus,
+                Id = shift.Id,
+                StartDateTime = shift.StartDateTime,
+                EndDateTime = shift.EndDateTime,
+                Location = shift.Location
             };
-
-            return Ok(simpleShiftDto);
+            return Ok(simpleDto);
         }
         catch (Exception e)
         {

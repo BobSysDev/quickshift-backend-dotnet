@@ -91,7 +91,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         return employee;
     }
     
-    public static Entities.Employee grpcEmplyeeDtoToEntitiyEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
+    public static Entities.Employee EntityNewEmployeeDtoToEntityEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
         Entities.Employee employee = new Entities.Employee
         {

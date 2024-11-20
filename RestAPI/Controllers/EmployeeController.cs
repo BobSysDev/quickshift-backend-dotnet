@@ -34,7 +34,7 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            Employee employee = await grpcRepo.AddAsync(EmployeeGrpcRepository.grpcEmplyeeDtoToEntitiyEmployee(request));
+            Employee employee = await grpcRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
             await employeeRepo.AddAsync(employee);
             var simpleDto = new SimpleEmployeeDTO
             {
