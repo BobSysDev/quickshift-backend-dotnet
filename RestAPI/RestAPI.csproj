@@ -18,6 +18,7 @@
       <ProjectReference Include="..\GrpcClient\GrpcClient.csproj" />
       <ProjectReference Include="..\InMemoryRepositories\InMemoryRepositories.csproj" />
       <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
+      <ProjectReference Include="..\RepositoryProxies\RepositoryProxies.csproj" />
     </ItemGroup>
 
 </Project>

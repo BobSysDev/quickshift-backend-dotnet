@@ -2,6 +2,7 @@ using Entities;
 using GrpcClient;
 using InMemoryRepositories;
 using RepositoryContracts;
+using RepositoryProxies;
 using RestAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IShiftRepository, ShiftInMemoryRepository>();
+builder.Services.AddSingleton<IShiftRepository, ShiftRepositoryProxy>();
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeInMemoryRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeGrpcRepository>();
-builder.Services.AddScoped<IShiftRepository, ShiftGrpcRepository>();
+
 
 var app = builder.Build();
 

@@ -13,12 +13,10 @@ namespace RestAPI.Controllers;
 public class ShiftController : ControllerBase
 {
     private readonly IShiftRepository _shiftRepository;
-    private readonly IShiftRepository grpcRepo;
 
-    public ShiftController(IShiftRepository shiftRepository, IShiftRepository grpcRepo)
+    public ShiftController(IShiftRepository shiftRepository)
     {
         _shiftRepository = shiftRepository;
-        this.grpcRepo = grpcRepo;
     }
 
     [HttpPost]
@@ -26,8 +24,7 @@ public class ShiftController : ControllerBase
     {
         try
         {
-            Shift shift = await grpcRepo.AddAsync(ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request));
-            // await _shiftRepository.AddAsync(shift);
+            Shift shift = await _shiftRepository.AddAsync(ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request));
 
             var simpleDto = new ShiftDTO
             {

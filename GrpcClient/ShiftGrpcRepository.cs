@@ -31,22 +31,62 @@ public class ShiftGrpcRepository : IShiftRepository
         return shiftRecieved;
     }
 
-    public Task UpdateAsync(Entities.Shift shift)
+    public async Task UpdateAsync(Entities.Shift shift)
     {
-        throw new NotImplementedException();
+        using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        var client = new Shift.ShiftClient(channel);
+        var updateShiftDto = new UpdateShiftDTO
+        {
+            Id = shift.Id,
+            StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
+            EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
+            TypeOfShift = shift.TypeOfShift,
+            ShiftStatus = shift.ShiftStatus,
+            Description = shift.Description,
+            Location = shift.Location
+        };
+        await client.UpdateSingleShiftAsync(updateShiftDto);
     }
 
-    public Task DeleteAsync(long shift)
+    public async Task DeleteAsync(long shift)
     {
-        throw new NotImplementedException();
+        using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        var client = new Shift.ShiftClient(channel);
+        await client.DeleteSingleShiftAsync(new Id());
     }
 
     public IQueryable<Entities.Shift> GetManyAsync()
     {
-        throw new NotImplementedException();
+        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051");
+        var client = new Shift.ShiftClient(channel);
+        List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
+        List<Entities.Shift> shifts = new List<Entities.Shift>();
+        shiftDtos.ForEach(dto =>
+        {
+            shifts.Add(grpcShiftObject(dto));
+        });
+        return shifts.AsQueryable();
     }
 
     public Task<Entities.Shift> GetSingleAsync(long id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> IsShiftInRepository(long id)
+    {
+        using var channel = GrpcChannel.ForAddress(_grpcAddress); 
+        var client = new Shift.ShiftClient(channel); 
+        var reply = await client.IsShiftInRepositoryAsync(new Id { Id_ = id});
+        return reply.Result;
+    }
+
+    public Task<Entities.Shift> AssignEmployeeToShift(long shiftId, long employeeId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
         throw new NotImplementedException();
     }

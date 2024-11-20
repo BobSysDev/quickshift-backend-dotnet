@@ -1,4 +1,5 @@
-﻿using DTOs.Shift;
+﻿using System.Runtime.InteropServices.JavaScript;
+using DTOs.Shift;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 
@@ -66,18 +67,18 @@ public class GrpcRepo
         return ogEmployeeDto;
     }
 
-    public async Task<Boolean> DeleteEmployee(DTOs.DeleteEmployeeDTO deleteEmployeeDto)
-    {
-        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051"); //TODO the port might change
-        var client = new Employee.EmployeeClient(channel);
-        string reply = client.DeleteSingleEmployee(new Id{Id_ = deleteEmployeeDto.id}).Text;
-        if (reply.Equals("Employee deleted successfully."))
-        {
-            return true;
-        }
-
-        return false;
-    }
+    // public async Task<JSType.Boolean> DeleteEmployee(DTOs.DeleteEmployeeDTO deleteEmployeeDto)
+    // {
+    //     using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051"); //TODO the port might change
+    //     var client = new Employee.EmployeeClient(channel);
+    //     string reply = client.DeleteSingleEmployee(new Id{Id_ = deleteEmployeeDto.id}).Text;
+    //     if (reply.Equals("Employee deleted successfully."))
+    //     {
+    //         return true;
+    //     }
+    //
+    //     return false;
+    // }
 
     public async Task<DTOs.Shift.ShiftDTO> CreateShift(ShiftDTOWithoutId shiftDtoWithoutId)
     {

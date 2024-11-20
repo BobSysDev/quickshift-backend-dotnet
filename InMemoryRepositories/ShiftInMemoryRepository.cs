@@ -58,4 +58,20 @@ public class ShiftInMemoryRepository : IShiftRepository
         if (shift is null) throw new InvalidOperationException($"Shift with ID '{id}' not found");
         return Task.FromResult(shift);
     }
+
+    public Task<bool> IsShiftInRepository(long id)
+    {
+        var exists = shifts.Any(shift => shift.Id == id);
+        return Task.FromResult(exists);
+    }
+
+    public Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    {
+        throw new NotImplementedException();
+    }
 }
