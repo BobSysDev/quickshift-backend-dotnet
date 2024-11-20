@@ -1,4 +1,5 @@
 using Entities;
+using GrpcClient;
 using InMemoryRepositories;
 using RepositoryContracts;
 using RestAPI;
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IShiftRepository, ShiftInMemoryRepository>();
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeInMemoryRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeGrpcRepository>();
 
 var app = builder.Build();
 

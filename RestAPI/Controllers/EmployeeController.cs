@@ -20,9 +20,9 @@ namespace RestAPI.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository employeeRepo;
-    private readonly GrpcRepo grpcRepo;
+    private readonly IEmployeeRepository grpcRepo;
 
-    public EmployeeController(IEmployeeRepository employeeRepository, GrpcRepo grpcRepo)
+    public EmployeeController(IEmployeeRepository employeeRepository, IEmployeeRepository grpcRepo)
     {
         employeeRepo = employeeRepository;
         this.grpcRepo = grpcRepo;
@@ -34,42 +34,14 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            EmployeeDTO employeeDto = await grpcRepo.CreateEmployee(request);
-
-            List<Shift> shifts = new List<Shift>();
-            foreach (var shiftDTO in employeeDto.Shifts)
-            {
-                var shift = new Shift
-                {
-                    Id = shiftDTO.Id,
-                    StartDateTime = shiftDTO.StartDateTime,
-                    EndDateTime = shiftDTO.EndDateTime,
-                    TypeOfShift = shiftDTO.TypeOfShift,
-                    ShiftStatus = shiftDTO.TypeOfShift,
-                    Description = shiftDTO.Description,
-                    Location = shiftDTO.Description
-                };
-                shifts.Add(shift);
-            }
-            
-            var newEmployee = new Employee
-            {
-                FirstName = employeeDto.FirstName,
-                LastName = employeeDto.LastName,
-                Email = employeeDto.Email,
-                Id = employeeDto.Id,
-                Password = employeeDto.Password,
-                PhoneNumber = employeeDto.PhoneNumber,
-                Shifts = shifts,
-                WorkingNumber = employeeDto.WorkingNumber
-            };
-            await employeeRepo.AddAsync(newEmployee);
+            Employee employee = await grpcRepo.AddAsync(EmployeeGrpcRepository.grpcEmplyeeDtoToEntitiyEmployee(request));
+            await employeeRepo.AddAsync(employee);
             var simpleDto = new SimpleEmployeeDTO
             {
-                FirstName = employeeDto.FirstName,
-                LastName = employeeDto.LastName,
-                WorkingNumber = employeeDto.WorkingNumber, // Include WorkingNumber in the response
-                Id = employeeDto.Id
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                WorkingNumber = employee.WorkingNumber, 
+                Id = employee.Id
             };
             
             return Ok(simpleDto);
@@ -189,59 +161,59 @@ public class EmployeeController : ControllerBase
         }
     }
     
-    [HttpDelete]//TODO maybe not working sebo samo
-    public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
-    {
-        if (request.WorkingNumber == 0)
-        {
-            return BadRequest("Working Number is required.");
-        }
-        if (string.IsNullOrWhiteSpace(request.FirstName))
-        {
-            return BadRequest("First Name is required.");
-        }
-        if (string.IsNullOrWhiteSpace(request.LastName))
-        {
-            return BadRequest("First Name is required.");
-        }
-
-        if (!request.Password.Equals(employeeRepo.GetSingleAsync(request.WorkingNumber).Result.Password))
-        {
-            return Unauthorized("Incorrect password.");
-        }
-
-        try
-        {
-            Boolean reply = await grpcRepo.DeleteEmployee(request);
-            //Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
-            
-            if (reply == false)
-            {
-                return NotFound("Employee not found.");
-            }
-            
-            // if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
-            // {
-            //     return Unauthorized("First Name does not match.");
-            // }
-
-            // if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
-            // {
-            //     return Unauthorized("Incorrect password.");
-            // }
-            
-            if (reply)
-            {
-                await employeeRepo.DeleteAsync(request.WorkingNumber);
-                return Ok("Employee deleted successfully.");
-            }
-           
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message); 
-        }
-
-        return Problem("Shit failed...");
-    }
+    // [HttpDelete]//TODO maybe not working sebo samo
+    // public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
+    // {
+    //     if (request.WorkingNumber == 0)
+    //     {
+    //         return BadRequest("Working Number is required.");
+    //     }
+    //     if (string.IsNullOrWhiteSpace(request.FirstName))
+    //     {
+    //         return BadRequest("First Name is required.");
+    //     }
+    //     if (string.IsNullOrWhiteSpace(request.LastName))
+    //     {
+    //         return BadRequest("First Name is required.");
+    //     }
+    //
+    //     if (!request.Password.Equals(employeeRepo.GetSingleAsync(request.WorkingNumber).Result.Password))
+    //     {
+    //         return Unauthorized("Incorrect password.");
+    //     }
+    //
+    //     try
+    //     {
+    //         Boolean reply = await grpcRepo.DeleteAsync(request);
+    //         //Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
+    //         
+    //         if (reply == false)
+    //         {
+    //             return NotFound("Employee not found.");
+    //         }
+    //         
+    //         // if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
+    //         // {
+    //         //     return Unauthorized("First Name does not match.");
+    //         // }
+    //
+    //         // if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
+    //         // {
+    //         //     return Unauthorized("Incorrect password.");
+    //         // }
+    //         
+    //         if (reply)
+    //         {
+    //             await employeeRepo.DeleteAsync(request.WorkingNumber);
+    //             return Ok("Employee deleted successfully.");
+    //         }
+    //        
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return Problem(e.Message); 
+    //     }
+    //
+    //     return Problem("Shit failed...");
+    // }
 }

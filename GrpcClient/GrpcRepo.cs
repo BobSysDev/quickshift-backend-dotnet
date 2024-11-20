@@ -11,7 +11,7 @@ public class GrpcRepo
     public async Task<DTOs.EmployeeDTO> CreateEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
         //create channel for connection to JAVA
-        using var channel = GrpcChannel.ForAddress("http://localhost:50051"); //TODO the port might change
+        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051"); //TODO the port might change
         //create client for employee entity, "EmployeeClient" method is auto-genereted               
         var client = new Employee.EmployeeClient(channel);
         //reply - "AddSingleEmployee(newEmployeeDto)" comes from .proto file + need to convert the og-DTO to .proto-DTO
@@ -68,7 +68,7 @@ public class GrpcRepo
 
     public async Task<Boolean> DeleteEmployee(DTOs.DeleteEmployeeDTO deleteEmployeeDto)
     {
-        using var channel = GrpcChannel.ForAddress("http://localhost:50051"); //TODO the port might change
+        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051"); //TODO the port might change
         var client = new Employee.EmployeeClient(channel);
         string reply = client.DeleteSingleEmployee(new Id{Id_ = deleteEmployeeDto.id}).Text;
         if (reply.Equals("Employee deleted successfully."))
@@ -81,7 +81,7 @@ public class GrpcRepo
 
     public async Task<DTOs.Shift.ShiftDTO> CreateShift(ShiftDTOWithoutId shiftDtoWithoutId)
     {
-        using var channel = GrpcChannel.ForAddress("http://localhost:50051");
+        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051");
         var client = new Shift.ShiftClient(channel);
         var newShiftDto = new NewShiftDTO
         {
