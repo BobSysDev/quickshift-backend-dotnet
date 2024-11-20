@@ -66,6 +66,19 @@ public class GrpcRepo
         return ogEmployeeDto;
     }
 
+    public async Task<Boolean> DeleteEmployee(DTOs.DeleteEmployeeDTO deleteEmployeeDto)
+    {
+        using var channel = GrpcChannel.ForAddress("http://localhost:50051"); //TODO the port might change
+        var client = new Employee.EmployeeClient(channel);
+        string reply = client.DeleteSingleEmployee(new Id{Id_ = deleteEmployeeDto.id}).Text;
+        if (reply.Equals("Employee deleted successfully."))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public async Task<DTOs.Shift.ShiftDTO> CreateShift(ShiftDTOWithoutId shiftDtoWithoutId)
     {
         using var channel = GrpcChannel.ForAddress("http://localhost:50051");
@@ -123,3 +136,5 @@ public class GrpcRepo
     //     return reply.Replies.ToList();
     // }
 }
+
+

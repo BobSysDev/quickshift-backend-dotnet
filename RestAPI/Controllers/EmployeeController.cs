@@ -200,33 +200,48 @@ public class EmployeeController : ControllerBase
         {
             return BadRequest("First Name is required.");
         }
+        if (string.IsNullOrWhiteSpace(request.LastName))
+        {
+            return BadRequest("First Name is required.");
+        }
+
+        if (!request.Password.Equals(employeeRepo.GetSingleAsync(request.WorkingNumber).Result.Password))
+        {
+            return Unauthorized("Incorrect password.");
+        }
 
         try
         {
-
-            Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
+            Boolean reply = await grpcRepo.DeleteEmployee(request);
+            //Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
             
-            if (employeeToDelete == null)
+            if (reply == false)
             {
                 return NotFound("Employee not found.");
             }
             
-            if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
-            {
-                return Unauthorized("First Name does not match.");
-            }
+            // if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
+            // {
+            //     return Unauthorized("First Name does not match.");
+            // }
 
-            if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
-            {
-                return Unauthorized("Incorrect password.");
-            }
+            // if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
+            // {
+            //     return Unauthorized("Incorrect password.");
+            // }
             
-            await employeeRepo.DeleteAsync(request.WorkingNumber);
-            return Ok("Employee deleted successfully.");
+            if (reply)
+            {
+                await employeeRepo.DeleteAsync(request.WorkingNumber);
+                return Ok("Employee deleted successfully.");
+            }
+           
         }
         catch (Exception e)
         {
             return Problem(e.Message); 
         }
+
+        return Problem("Shit failed...");
     }
 }
