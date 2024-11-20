@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DTOs.Shift;
+using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
-using DTOs.Shift;
-using Entities;
+using GrpcClient;
 using Microsoft.Extensions.Logging;
+using Shift = Entities.Shift;
+using ShiftDTO = DTOs.Shift.ShiftDTO;
 
 namespace RestAPI.Controllers;
 
@@ -18,24 +20,42 @@ public class ShiftController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IResult> CreateShift([FromBody] ShiftDTO shiftDto)
+    public async Task<ActionResult<ShiftDTOWithoutId>> AddShift([FromBody] ShiftDTOWithoutId request)
     {
-        if (string.IsNullOrEmpty(shiftDto.StartDateTime.ToString("MM/dd/yyyy")))
+        try
         {
-            return Results.BadRequest("Date is required");
+            var grpcRepo = new GrpcRepo();
+            ShiftDTO shiftDto = await grpcRepo.CreateShift(request);
+
+            var shift = new Shift
+            {
+                Id = shiftDto.Id,
+                StartDateTime = shiftDto.StartDateTime,
+                EndDateTime = shiftDto.EndDateTime,
+                TypeOfShift = shiftDto.TypeOfShift,
+                ShiftStatus = shiftDto.ShiftStatus,
+                Description = shiftDto.Description,
+                Location = shiftDto.Location
+            };
+
+            await _shiftRepository.AddAsync(shift);
+
+            var simpleShiftDto = new ShiftDTOWithoutId
+            {
+                StartDateTime = shiftDto.StartDateTime,
+                EndDateTime = shiftDto.EndDateTime,
+                TypeOfShift = shiftDto.TypeOfShift,
+                ShiftStatus = shiftDto.ShiftStatus,
+                Description = shiftDto.Description,
+                Location = shiftDto.Location
+            };
+
+            return Ok(simpleShiftDto);
         }
-        Shift newShift = new Shift()
+        catch (Exception e)
         {
-            Id = shiftDto.Id,
-            StartDateTime = shiftDto.StartDateTime,
-            EndDateTime = shiftDto.EndDateTime,
-            TypeOfShift = shiftDto.TypeOfShift,
-            ShiftStatus = shiftDto.ShiftStatus,
-            Description = shiftDto.Description,
-            Location = shiftDto.Location
-        };
-        Shift createdShift = await _shiftRepository.AddAsync(newShift);
-        return Results.Created($"shift/{createdShift.Id}", createdShift);
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet("{id}")]

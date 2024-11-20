@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using DTOs.Shift;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 
 
@@ -65,11 +66,46 @@ public class GrpcRepo
         return ogEmployeeDto;
     }
 
-    public async Task<DTOs.Shift.ShiftDTO> CreateShift(DTOs.Shift.ShiftDTOWithoutId shiftDtoWithoutId)
+    public async Task<DTOs.Shift.ShiftDTO> CreateShift(ShiftDTOWithoutId shiftDtoWithoutId)
     {
         using var channel = GrpcChannel.ForAddress("http://localhost:50051");
-        var client = new 
+        var client = new Shift.ShiftClient(channel);
+        var newShiftDto = new NewShiftDTO
+        {
+            Description = shiftDtoWithoutId.Description,
+            TypeOfShift = shiftDtoWithoutId.TypeOfShift,
+            ShiftStatus = shiftDtoWithoutId.ShiftStatus,
+            StartDateTime = new DateTimeOffset(shiftDtoWithoutId.StartDateTime).ToUnixTimeMilliseconds(),
+            EndDateTime = new DateTimeOffset(shiftDtoWithoutId.EndDateTime).ToUnixTimeMilliseconds(),
+            Location = shiftDtoWithoutId.Location
+        };
+        var reply = await client.AddSingleShiftAsync(newShiftDto);
+        
+
+        ShiftDTO shiftDto = new ShiftDTO
+        {
+         Description = reply.Description,
+         TypeOfShift = reply.TypeOfShift,
+         Id = reply.Id,
+         ShiftStatus = reply.ShiftStatus,
+         StartDateTime = reply.StartDateTime,
+         EndDateTime = reply.EndDateTime,
+         Location = reply.Location
+        };
+
+        DTOs.Shift.ShiftDTO ogShiftDto = new DTOs.Shift.ShiftDTO
+        {
+            Description = shiftDto.Description,
+            TypeOfShift = shiftDto.TypeOfShift,
+            Id = shiftDto.Id,
+            ShiftStatus = shiftDto.ShiftStatus,
+            StartDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.StartDateTime).DateTime,
+            EndDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.EndDateTime).Date,
+            Location = shiftDto.Location
+        };
+        return ogShiftDto;
     }
+    
     // public async Task<string> SendHello(string name)
     // {
     //     using var channel = GrpcChannel.ForAddress("http://localhost:50051");
