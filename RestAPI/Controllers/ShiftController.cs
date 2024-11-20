@@ -27,7 +27,7 @@ public class ShiftController : ControllerBase
         try
         {
             Shift shift = await grpcRepo.AddAsync(ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request));
-            await _shiftRepository.AddAsync(shift);
+            // await _shiftRepository.AddAsync(shift);
 
             var simpleDto = new ShiftDTO
             {

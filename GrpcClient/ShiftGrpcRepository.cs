@@ -17,7 +17,7 @@ public class ShiftGrpcRepository : IShiftRepository
         using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051");
 
         var client = new Shift.ShiftClient(channel);
-
+        Console.WriteLine("Before adding shift");
         var reply = client.AddSingleShift(new NewShiftDTO
         { 
             Location = shift.Location,
@@ -26,7 +26,7 @@ public class ShiftGrpcRepository : IShiftRepository
             StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
             EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
         });
-        
+        Console.WriteLine("After adding shift");
         Entities.Shift shiftRecieved = grpcShiftObject(reply);
         return shiftRecieved;
     }
