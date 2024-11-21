@@ -44,24 +44,23 @@ public class ShiftController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("/shift/{id}")]
     public async Task<ActionResult<Shift>> GetSingleShift([FromRoute] long id)
     {
-        Console.WriteLine($"Requested ID: {id}");
         try
         {
             Shift shift = await _shiftRepository.GetSingleAsync(id);
             return Ok(shift);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             return NotFound(e.Message);
         }
     }
 
-    [HttpGet("Employee")]
-    public ActionResult<IEnumerable<Shift>> GetAllShifts([FromQuery] long? id)
+    [HttpGet("/Shift/GetAll")]  
+    public ActionResult<IEnumerable<Shift>> GetAllShifts([FromBody] long? id)
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
 
@@ -74,8 +73,8 @@ public class ShiftController : ControllerBase
     }
 
 
-    [HttpPut("Update-Shift-By-Id")]
-    public async Task<ActionResult<Shift>> UpdateShiftOfEmployee([FromQuery] long id, [FromBody] ShiftDTO shiftDto)
+    [HttpPut("/Shift/Update")]
+    public async Task<ActionResult<Shift>> UpdateShiftByItsId([FromRoute] long id, [FromRoute] ShiftDTO shiftDto)
     {
         try
         {
@@ -101,7 +100,7 @@ public class ShiftController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteShift([FromRoute] long id)
     {
@@ -116,3 +115,9 @@ public class ShiftController : ControllerBase
         }
     }
 }
+
+//TODO:change update to display in REST API ID everything
+//TODO:make so getallshifts get all shifts from data base
+//TODO:fix any problems that appear during testing
+
+//TODO: create shift works --- shift/{id} works  ---   ---   ---   ---   ---
