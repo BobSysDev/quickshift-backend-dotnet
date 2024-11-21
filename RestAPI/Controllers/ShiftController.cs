@@ -45,44 +45,44 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IResult> GetSingleShift([FromRoute] long id)
+    public async Task<ActionResult<Shift>> GetSingleShift([FromRoute] long id)
     {
         Console.WriteLine($"Requested ID: {id}");
         try
         {
             Shift shift = await _shiftRepository.GetSingleAsync(id);
-            return Results.Ok(shift);
+            return Ok(shift);
         }
         catch(Exception e)
         {
             Console.WriteLine(e);
-            return Results.NotFound(e.Message);
+            return NotFound(e.Message);
         }
     }
 
     [HttpGet("Employee")]
-    public async Task<IResult> GetAllShifts([FromQuery] long? id)
+    public ActionResult<IEnumerable<Shift>> GetAllShifts([FromQuery] long? id)
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
-        
+
         if (id is not null)
         {
             shifts = shifts.Where(x => x.Id == id);
         }
-        
-        return Results.Ok(shifts);
+
+        return Ok(shifts.ToList());
     }
 
 
     [HttpPut("Update-Shift-By-Id")]
-    public async Task<IResult> UpdateShiftOfEmployee([FromQuery] long id, [FromBody] ShiftDTO shiftDto)
+    public async Task<ActionResult<Shift>> UpdateShiftOfEmployee([FromQuery] long id, [FromBody] ShiftDTO shiftDto)
     {
         try
         {
             Shift existingShift = await _shiftRepository.GetSingleAsync(id);
             if (existingShift == null)
             {
-                return Results.NotFound($"Shift with ID {id} not found");
+                return NotFound($"Shift with ID {id} not found");
             }
 
             existingShift.StartDateTime = shiftDto.StartDateTime;
@@ -93,19 +93,26 @@ public class ShiftController : ControllerBase
             existingShift.Location = shiftDto.Location;
 
             await _shiftRepository.UpdateAsync(existingShift);
-            return Results.Ok(existingShift);
+            return Ok(existingShift);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return Results.BadRequest(e.Message);
+            return BadRequest(e.Message);
         }
     }
     
     [HttpDelete("{id}")]
-    public async Task<IResult> DeleteShift([FromRoute] long id)
+    public async Task<ActionResult> DeleteShift([FromRoute] long id)
     {
-        await _shiftRepository.DeleteAsync(id);
-        return Results.Ok();
+        try
+        {
+            await _shiftRepository.DeleteAsync(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }

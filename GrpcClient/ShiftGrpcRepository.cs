@@ -15,8 +15,6 @@ public class ShiftGrpcRepository : IShiftRepository
     
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
     {
-        try
-        {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
 
             var client = new Shift.ShiftClient(channel);
@@ -32,15 +30,7 @@ public class ShiftGrpcRepository : IShiftRepository
             Console.WriteLine("After adding shift");
             Entities.Shift shiftRecieved = grpcShiftObject(reply);
             return shiftRecieved;
-        }
-        catch (RpcException e)
-        {
-            if (e.StatusCode == StatusCode.AlreadyExists)
-            {
-                throw new ArgumentException(e.Message);
-            }
-            throw;
-        }
+        
     }
 
     public async Task<Entities.Shift> UpdateAsync(Entities.Shift shift)
@@ -68,10 +58,6 @@ public class ShiftGrpcRepository : IShiftRepository
             {
                 throw new ArgumentException(e.Message);
             } 
-            else if(e.StatusCode == StatusCode.Cancelled) // change this to the right one
-            {
-                throw new ArgumentException(e.Message);
-            }
             throw;
         }
     }
@@ -145,26 +131,52 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public async Task<Entities.Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new Shift.ShiftClient(channel);
-        var assignEmployeeRequest = new ShiftEmployeePair
+        try
         {
-            ShiftId = shiftId,
-            EmployeeId = employeeId
-        };
-        var reply = await client.AssignEmployeeToShiftAsync(assignEmployeeRequest);
-        var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-        return grpcShiftObject(updatedShift);
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Shift.ShiftClient(channel);
+            var assignEmployeeRequest = new ShiftEmployeePair
+            {
+                ShiftId = shiftId,
+                EmployeeId = employeeId
+            };
+            var reply = await client.AssignEmployeeToShiftAsync(assignEmployeeRequest);
+            var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
+            return grpcShiftObject(updatedShift);
+        }
+        catch (RpcException e)
+        {
+            if (e.StatusCode == StatusCode.NotFound)
+            {
+                throw new ArgumentException(e.Message);
+            }
+
+            throw;
+        }
+        
     }
 
     public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new Shift.ShiftClient(channel);
-        var unassignRequest = new Id { Id_ = shiftId };
-        var reply = await client.UnAssignEmployeeFromShiftAsync(unassignRequest);
-        var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-        return grpcShiftObject(updatedShift);
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Shift.ShiftClient(channel);
+            var unassignRequest = new Id { Id_ = shiftId };
+            var reply = await client.UnAssignEmployeeFromShiftAsync(unassignRequest);
+            var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
+            return grpcShiftObject(updatedShift);
+        }
+        catch (RpcException e)
+        {
+            if (e.StatusCode == StatusCode.NotFound)
+            {
+                throw new ArgumentException(e.Message);
+            }
+
+            throw;
+        }
+        
     }
 
     public static Entities.Shift grpcShiftObject(ShiftDTO shiftDto)
