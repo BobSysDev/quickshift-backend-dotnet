@@ -49,17 +49,24 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
 
     public async Task<Employee> GetSingleAsync(long id)
     {
-        RefreshCache();
+        await RefreshCache();
         return await _employeeCachingRepository.GetSingleAsync(id);
     }
 
+    public async Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)
+    {
+        await RefreshCache();
+        return await _employeeCachingRepository.GetSingleEmployeeByWorkingNumberAsync(WorkingNumber);
+    }
+    
+    
     public async Task<bool> IsEmployeeInRepository(long id)
     {
-        RefreshCache();
+        await RefreshCache();
         return await _employeeCachingRepository.IsEmployeeInRepository(id);
     }
     
-    private async void RefreshCache()
+    private async Task RefreshCache()
     {
         if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
         {

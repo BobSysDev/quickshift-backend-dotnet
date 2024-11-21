@@ -7,10 +7,10 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
 {
     private List<Employee> _employees = new List<Employee>();
 
-    public Task<Employee> AddAsync(Employee employee)
+    public async Task<Employee> AddAsync(Employee employee)
     {
         _employees.Add(employee);
-        return Task.FromResult(employee);
+        return employee;
     }
 
     public async Task<Employee> UpdateAsync(Employee employee)
@@ -35,12 +35,19 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         return _employees.AsQueryable();
     }
 
-    public Task<Employee> GetSingleAsync(long id)
+    public async Task<Employee> GetSingleAsync(long id)
     {
         Employee? employeeToReturn = _employees.SingleOrDefault(u => u.Id == id);
         // Console.WriteLine($"Attempted to find User with Id {id}, but none was found.");
         if (employeeToReturn is null) throw new InvalidOperationException($"User({id}) not found");
-        return Task.FromResult(employeeToReturn);
+        return employeeToReturn;
+    }
+
+    public async Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)
+    {
+        Employee? employeeToReturn = _employees.SingleOrDefault(u => u.WorkingNumber == WorkingNumber);
+        if (employeeToReturn is null) throw new InvalidOperationException($"User({WorkingNumber}) not found");
+        return employeeToReturn;
     }
 
     public async Task<bool> IsEmployeeInRepository(long id)

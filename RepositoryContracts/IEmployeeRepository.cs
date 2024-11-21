@@ -9,5 +9,6 @@ public interface IEmployeeRepository
     Task DeleteAsync(long id);
     IQueryable<Employee> GetManyAsync();
     Task<Employee> GetSingleAsync(long id);
+    Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber);
     Task<Boolean> IsEmployeeInRepository(long id);
 }
