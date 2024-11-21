@@ -58,14 +58,18 @@ public class ShiftRepositoryProxy : IShiftRepository
         return await _shiftCachingRepository.IsShiftInRepository(id);
     }
 
-    public Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
+    public async Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
-        throw new NotImplementedException();
+        await _shiftCachingRepository.AssignEmployeeToShift(shiftId, employeeId);
+        await _shiftStorageRepository.AssignEmployeeToShift(shiftId, employeeId);
+        return new Shift();
     }
 
-    public Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        throw new NotImplementedException();
+        await _shiftCachingRepository.UnassignEmployeeToShift(shiftId, employeeId);
+        await _shiftStorageRepository.UnassignEmployeeToShift(shiftId, employeeId);
+        return new Shift();
     }
 
     private async void RefreshCache()
