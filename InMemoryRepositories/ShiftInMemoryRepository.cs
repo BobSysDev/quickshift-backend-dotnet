@@ -25,8 +25,8 @@ public class ShiftInMemoryRepository : IShiftRepository
         return Task.FromResult(shift);
     }
 
-    //implement
-    public Task UpdateAsync(Shift shift)
+    
+    public Task<Shift> UpdateAsync(Shift shift)
     {
         Shift? exisitingShift = shifts.SingleOrDefault(p => p.Id == shift.Id);
 
@@ -34,9 +34,9 @@ public class ShiftInMemoryRepository : IShiftRepository
 
         shifts.Remove(exisitingShift);
         shifts.Add(shift);
-        return Task.CompletedTask;
+        return Task.FromResult(shift);
     }
-
+    
     public Task DeleteAsync(long id)
     {
         Shift? shiftToRemove = shifts.FirstOrDefault(p => p.Id == id);
@@ -67,11 +67,38 @@ public class ShiftInMemoryRepository : IShiftRepository
 
     public Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
-        throw new NotImplementedException();
+        var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
+        if (shift == null)
+        {
+            throw new InvalidOperationException($"Shift with ID {shiftId} not found");
+        }
+
+        if (shift.AssignedEmployees == null)
+        {
+            shift.AssignedEmployees = new List<long>();
+        }
+
+        if (!shift.AssignedEmployees.Contains(employeeId))
+        {
+            shift.AssignedEmployees.Add(employeeId);
+        }
+
+        return Task.FromResult(shift);
     }
 
     public Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        throw new NotImplementedException();
+        var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
+        if (shift == null)
+        {
+            throw new InvalidOperationException($"Shift with ID {shiftId} not found");
+        }
+
+        if (shift.AssignedEmployees != null && shift.AssignedEmployees.Contains(employeeId))
+        {
+            shift.AssignedEmployees.Remove(employeeId);
+        }
+
+        return Task.FromResult(shift);
     }
 }
