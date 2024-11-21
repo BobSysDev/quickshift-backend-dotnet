@@ -51,7 +51,7 @@ public class EmployeeController : ControllerBase
     }
 
 
-    [HttpPatch] //problem: shifts are erased when user is updated
+    [HttpPut] //problem: shifts are erased when user is updated
     public async Task<ActionResult<SimpleEmployeeDTO>> UpdateEmployee([FromQuery] long id, [FromBody] EmployeeDTO request)
     {
         try
@@ -94,24 +94,20 @@ public class EmployeeController : ControllerBase
     
     
     [HttpGet("/Employee/{Id}")]
-    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] long id)
+    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int id)
     {
-        if(id==null)
-        {
-            return BadRequest("Working number required.");
-        }
-
         try
         {
-            Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
-
+            Console.WriteLine(id);
+            Employee gotEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
+            Console.WriteLine(gotEmployee.FirstName);
             PublicEmployeeDTO dto = new()
             {
                 WorkingNumber = gotEmployee.WorkingNumber,
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName
             };
-            return Accepted($"/Employee/{dto.WorkingNumber}", dto);
+            return Accepted($"/Employee/{gotEmployee.Id}", dto);
         }
         catch (ArgumentException e)
         {
@@ -120,7 +116,7 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet("/Employee/")]
+    [HttpGet("/Employees/")]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         try
