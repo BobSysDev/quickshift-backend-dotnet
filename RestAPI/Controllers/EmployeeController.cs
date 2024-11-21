@@ -15,7 +15,7 @@ using ShiftDTO = DTOs.Shift.ShiftDTO;
 namespace RestAPI.Controllers;
 
 [ApiController]
-[Route("Employees")] 
+[Route("[controller]")] 
 
 public class EmployeeController : ControllerBase
 {
