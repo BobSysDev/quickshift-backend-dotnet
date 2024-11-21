@@ -59,16 +59,10 @@ public class ShiftController : ControllerBase
         }
     }
 
-    [HttpGet("/Shift/GetAll")]  
-    public ActionResult<IEnumerable<Shift>> GetAllShifts([FromBody] long? id)
+    [HttpGet("/Shift/GetAll")]
+    public ActionResult<IEnumerable<Shift>> GetAllShifts()
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
-
-        if (id is not null)
-        {
-            shifts = shifts.Where(x => x.Id == id);
-        }
-
         return Ok(shifts.ToList());
     }
 
@@ -101,7 +95,7 @@ public class ShiftController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("/shift/{id}")]
     public async Task<ActionResult> DeleteShift([FromRoute] long id)
     {
         try

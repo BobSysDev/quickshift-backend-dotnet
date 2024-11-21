@@ -62,21 +62,23 @@ public class ShiftGrpcRepository : IShiftRepository
         }
     }
 
-    public async Task DeleteAsync(long shift)
+    public async Task DeleteAsync(long shiftId)
     {
+        using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        var client = new Shift.ShiftClient(channel);
+        var request = new Id { Id_ = shiftId };
+
         try
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress);
-            var client = new Shift.ShiftClient(channel);
-            await client.DeleteSingleShiftAsync(new Id());
+            await client.DeleteSingleShiftAsync(request);
         }
         catch (RpcException e)
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new InvalidOperationException($"Shift with ID {shiftId} not found");
             }
-            throw;
+            throw; 
         }
     }
 
