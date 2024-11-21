@@ -35,7 +35,7 @@ public class ShiftGrpcRepository : IShiftRepository
     {
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
         var client = new Shift.ShiftClient(channel);
-        var updateShiftDto = new UpdateShiftDTO
+        var updateShiftDto = new ShiftDTO
         {
             Id = shift.Id,
             StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),

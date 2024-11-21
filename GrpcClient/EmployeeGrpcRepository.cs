@@ -45,12 +45,17 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         throw new NotImplementedException();
     }
 
-    public IQueryable<Entities.Employee> GetManyAsync()
+    public IQueryable<Entities.Employee> GetManyAsync()//TODO implement
     {
         throw new NotImplementedException();
     }
 
     public Task<Entities.Employee> GetSingleAsync(int WorkingNumber)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> IsEmployeeInRepository(long Id)
     {
         throw new NotImplementedException();
     }

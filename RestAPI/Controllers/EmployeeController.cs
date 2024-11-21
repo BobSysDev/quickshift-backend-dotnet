@@ -20,12 +20,10 @@ namespace RestAPI.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository employeeRepo;
-    private readonly IEmployeeRepository grpcRepo;
 
-    public EmployeeController(IEmployeeRepository employeeRepository, IEmployeeRepository grpcRepo)
+    public EmployeeController(IEmployeeRepository employeeRepository)
     {
         employeeRepo = employeeRepository;
-        this.grpcRepo = grpcRepo;
     }
 
 
@@ -34,14 +32,14 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            Employee employee = await grpcRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
-            await employeeRepo.AddAsync(employee);
+            Employee employee = await employeeRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
+            Employee addedEmployee = await employeeRepo.AddAsync(employee);
             var simpleDto = new SimpleEmployeeDTO
             {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                WorkingNumber = employee.WorkingNumber, 
-                Id = employee.Id
+                FirstName = addedEmployee.FirstName,
+                LastName = addedEmployee.LastName,
+                WorkingNumber = addedEmployee.WorkingNumber, 
+                Id = addedEmployee.Id
             };
             
             return Ok(simpleDto);

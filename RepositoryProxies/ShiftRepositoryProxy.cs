@@ -23,7 +23,7 @@ public class ShiftRepositoryProxy : IShiftRepository
     public async Task<Shift> AddAsync(Shift shift)
     {
         Shift addedShift = await _shiftStorageRepository.AddAsync(shift);
-        _shiftCachingRepository.AddAsync(shift);
+        await _shiftCachingRepository.AddAsync(shift);
         return addedShift;
     }
 
