@@ -20,6 +20,7 @@ namespace RestAPI.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeRepository employeeRepo;
+    
 
     public EmployeeController(IEmployeeRepository employeeRepository)
     {
@@ -61,7 +62,7 @@ public class EmployeeController : ControllerBase
             Employee existingEmployee = await employeeRepo.GetSingleAsync(id);
             if (existingEmployee == null)
             {
-                return NotFound($"Employee with that working number {id} not found");
+                return NotFound($"Employee with the ID {id} not found");
             }
 
 
@@ -141,38 +142,15 @@ public class EmployeeController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
     {
-        if (request.WorkingNumber == 0)
-        {
-            return BadRequest("Working Number is required.");
-        }
-        if (string.IsNullOrWhiteSpace(request.FirstName))
-        {
-            return BadRequest("First Name is required.");
-        }
-        if (string.IsNullOrWhiteSpace(request.LastName))
-        {
-            return BadRequest("First Name is required.");
-        }
-        if (!request.Password.Equals(employeeRepo.GetSingleAsync(request.WorkingNumber).Result.Password))
-        {
-            return Unauthorized("Incorrect password.");
-        }
-    
-        
-        
         try
         {
-            Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
-            
-            if (employeeToDelete == null)
+            Employee employee = await employeeRepo.GetSingleAsync(request.id);
+            if (AuthController.Validate(employee.Password, request.Password))
             {
-                return BadRequest($"Employee with that working number {request.WorkingNumber} not found");
+                await employeeRepo.DeleteAsync(request.id);
+                return Ok("Employee deleted successfully.");
             }
-            
-            
-            await employeeRepo.DeleteAsync(request.WorkingNumber);
-            return Ok("Employee deleted successfully.");
-            
+            return NotFound("Employee with these credentials not found.");
            
         }
         catch (ArgumentException e)

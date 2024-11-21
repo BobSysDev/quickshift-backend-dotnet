@@ -79,7 +79,7 @@ public class AuthController: ControllerBase
         }
     }
     
-    private static string Hash(string password)
+    public static string Hash(string password)
     {
         byte[] salt;
         new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
@@ -96,7 +96,7 @@ public class AuthController: ControllerBase
         return savedPasswordHash;
     }
 
-    private static bool Validate(string hashString, string password)
+    public static bool Validate(string hashString, string password)
     {
         byte[] hashBytes = Convert.FromBase64String(hashString);
     
