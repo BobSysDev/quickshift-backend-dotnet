@@ -15,8 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IShiftRepository, ShiftRepositoryProxy>();
-builder.Services.AddSingleton<IEmployeeRepository, EmployeeInMemoryRepository>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeGrpcRepository>();
+builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepositoryProxy>();
+
 
 
 var app = builder.Build();

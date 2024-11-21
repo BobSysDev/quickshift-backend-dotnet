@@ -42,4 +42,9 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         if (employeeToReturn is null) throw new InvalidOperationException($"User({workingNumber}) not found");
         return Task.FromResult(employeeToReturn);
     }
+
+    public Task<bool> IsEmployeeInRepository(long Id)//TODO implement
+    {
+        throw new NotImplementedException();
+    }
 }

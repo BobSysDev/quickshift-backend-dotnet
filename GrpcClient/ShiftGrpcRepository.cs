@@ -35,7 +35,7 @@ public class ShiftGrpcRepository : IShiftRepository
     {
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
         var client = new Shift.ShiftClient(channel);
-        var updateShiftDto = new ShiftDTO()
+        var updateShiftDto = new ShiftDTO
         {
             Id = shift.Id,
             StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
@@ -68,13 +68,9 @@ public class ShiftGrpcRepository : IShiftRepository
         return shifts.AsQueryable();
     }
 
-    public async Task<Entities.Shift> GetSingleAsync(long id)
+    public Task<Entities.Shift> GetSingleAsync(long id)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress); 
-        var client = new Shift.ShiftClient(channel);
-        var request = new Id { Id_ = id };
-        var reply = await client.GetSingleShiftByIdAsync(request);
-        return grpcShiftObject(reply);
+        throw new NotImplementedException();
     }
 
     public async Task<bool> IsShiftInRepository(long id)
@@ -85,28 +81,14 @@ public class ShiftGrpcRepository : IShiftRepository
         return reply.Result;
     }
 
-    public async Task<Entities.Shift> AssignEmployeeToShift(long shiftId, long employeeId)
+    public Task<Entities.Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new Shift.ShiftClient(channel);
-        var assignRequest = new ShiftEmployeePair
-        {
-            ShiftId = shiftId,
-            EmployeeId = employeeId
-        };
-        var reply = await client.AssignEmployeeToShiftAsync(assignRequest);
-        var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-        return grpcShiftObject(updatedShift);
+        throw new NotImplementedException();
     }
 
-    public  async Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    public Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new Shift.ShiftClient(channel);
-        var unassignRequest = new Id { Id_ = shiftId };
-        var reply = await client.UnAssignEmployeeFromShiftAsync(unassignRequest);
-        var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-        return grpcShiftObject(updatedShift);
+        throw new NotImplementedException();
     }
 
     public static Entities.Shift grpcShiftObject(ShiftDTO shiftDto)
