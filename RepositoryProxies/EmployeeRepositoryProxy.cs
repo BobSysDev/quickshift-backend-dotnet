@@ -27,29 +27,34 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
         return addedEmployee;
     }
 
-    public Task UpdateAsync(Employee employee)
+    public async Task UpdateAsync(Employee employee)
     {
-        throw new NotImplementedException();
+        await _employeeCachingRepository.UpdateAsync(employee);
+        await _employeeCachingRepository.UpdateAsync(employee);
     }
 
-    public Task DeleteAsync(int WorkingNumber)
+    public async Task DeleteAsync(int WorkingNumber)
     {
-        throw new NotImplementedException();
+        await _employeeCachingRepository.DeleteAsync(WorkingNumber);
+        await _employeeCachingRepository.DeleteAsync(WorkingNumber);
     }
 
     public IQueryable<Employee> GetManyAsync()
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return _employeeCachingRepository.GetManyAsync();
     }
 
-    public Task<Employee> GetSingleAsync(int WorkingNumber)
+    public async Task<Employee> GetSingleAsync(int WorkingNumber)
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return await _employeeCachingRepository.GetSingleAsync(WorkingNumber);
     }
 
-    public Task<bool> IsEmployeeInRepository(long Id)
+    public async Task<bool> IsEmployeeInRepository(long Id)
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return await _employeeCachingRepository.IsEmployeeInRepository(Id);
     }
     
     private async void RefreshCache()
