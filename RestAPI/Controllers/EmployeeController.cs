@@ -33,13 +33,12 @@ public class EmployeeController : ControllerBase
         try
         {
             Employee employee = await employeeRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
-            Employee addedEmployee = await employeeRepo.AddAsync(employee);
             var simpleDto = new SimpleEmployeeDTO
             {
-                FirstName = addedEmployee.FirstName,
-                LastName = addedEmployee.LastName,
-                WorkingNumber = addedEmployee.WorkingNumber, 
-                Id = addedEmployee.Id
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                WorkingNumber = employee.WorkingNumber, 
+                Id = employee.Id
             };
             
             return Ok(simpleDto);
@@ -52,60 +51,45 @@ public class EmployeeController : ControllerBase
     }
 
 
-    [HttpPatch] //TODO: sebo fix this
-    public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromBody] EmployeeDTO request)
+    [HttpPatch] //problem: shifts are erased when user is updated
+    public async Task<IResult> UpdateEmployee([FromQuery] int WorkingNumber, [FromBody] EmployeeDTO request)
     {
-        if(request.FirstName == null || request.FirstName.Equals(""))
-        {
-            return BadRequest("First Name required.");
-        }
-        
-        if(request.LastName == null || request.LastName.Equals(""))
-        {
-            return BadRequest("Last Name required.");
-        }
-        
-        if(request.FirstName.Equals("string")|| request.LastName.Equals("string"))
-        {
-            return BadRequest("Invalid input.");
-        }
-
         try
         {
-            List<ShiftDTO> shiftDTOs = request.Shifts;
             List<Shift> shifts = new List<Shift>();
             
-            Employee employee = new Employee
+            Employee existingEmployee = await employeeRepo.GetSingleAsync(WorkingNumber);
+            if (existingEmployee == null)
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                WorkingNumber = request.WorkingNumber,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                Shifts = shifts,
-                Id = request.Id
-            };
+                return Results.NotFound($"Employee with that working number {WorkingNumber} not found");
+            }
+
+
+            existingEmployee.FirstName = request.FirstName;
+            existingEmployee.LastName = request.LastName;
+            existingEmployee.WorkingNumber = request.WorkingNumber;
+            existingEmployee.Email = request.Email;
+            existingEmployee.PhoneNumber = request.PhoneNumber;
+            existingEmployee.Shifts = EmployeeGrpcRepository.EntityShiftDtosToEntityShiftsList(request.Shifts);
+            existingEmployee.Id = request.Id;
+
+            Employee updated = await employeeRepo.UpdateAsync(existingEmployee);
             
-            await employeeRepo.UpdateAsync(employee);
-            Employee updated = await employeeRepo.GetSingleAsync(employee.WorkingNumber);
             PublicEmployeeDTO dto = new()
             {
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
                 WorkingNumber = updated.WorkingNumber
             };
-            return Accepted($"/Employees/{dto.WorkingNumber}", updated);
-        }
-        catch (InvalidDataException e)
-        {
-            return Problem(e.Message); 
+            return Results.Accepted($"/Employees/{dto.WorkingNumber}", " was updated.");
         }
         catch (InvalidOperationException e)
         {
-            return NotFound(e.Message); 
+            return Results.NotFound(e.Message); 
         }
-        
     }
+    
+    
     
     [HttpGet("/Employee/{WorkingNumber}")]
     public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int WorkingNumber)
@@ -138,7 +122,7 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet("/Employee/")] //TODO: sebo fix getmany
+    [HttpGet("/Employee/")]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         try
@@ -159,7 +143,7 @@ public class EmployeeController : ControllerBase
         }
     }
     
-    [HttpDelete]//TODO maybe not working sebo samo
+    [HttpDelete]
     public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
     {
         if (request.WorkingNumber == 0)
@@ -174,38 +158,26 @@ public class EmployeeController : ControllerBase
         {
             return BadRequest("First Name is required.");
         }
-    
         if (!request.Password.Equals(employeeRepo.GetSingleAsync(request.WorkingNumber).Result.Password))
         {
             return Unauthorized("Incorrect password.");
         }
     
+        
+        
         try
         {
-            //TODO get working number form DTO(request)
-            Boolean reply = await employeeRepo.DeleteAsync(request);
-            //Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
+            Employee employeeToDelete = await employeeRepo.GetSingleAsync(request.WorkingNumber);
             
-            if (reply == false)
+            if (employeeToDelete == null)
             {
-                return NotFound("Employee not found.");
+                return BadRequest($"Employee with that working number {request.WorkingNumber} not found");
             }
             
-            // if (!employeeToDelete.FirstName.Equals(request.FirstName, StringComparison.OrdinalIgnoreCase))
-            // {
-            //     return Unauthorized("First Name does not match.");
-            // }
-    
-            // if (!string.IsNullOrEmpty(request.Password) && request.Password != employeeToDelete.Password)
-            // {
-            //     return Unauthorized("Incorrect password.");
-            // }
             
-            if (reply)
-            {
-                await employeeRepo.DeleteAsync(request.WorkingNumber);
-                return Ok("Employee deleted successfully.");
-            }
+            await employeeRepo.DeleteAsync(request.WorkingNumber);
+            return Ok("Employee deleted successfully.");
+            
            
         }
         catch (Exception e)
@@ -213,6 +185,5 @@ public class EmployeeController : ControllerBase
             return Problem(e.Message); 
         }
     
-        return Problem("Shit failed...");
     }
 }
