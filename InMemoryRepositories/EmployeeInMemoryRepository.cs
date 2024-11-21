@@ -13,19 +13,19 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         return Task.FromResult(employee);
     }
 
-    public Task UpdateAsync(Employee employee)
+    public async Task<Employee> UpdateAsync(Employee employee)
     {
         Employee? existingEmployee = _employees.SingleOrDefault(e => e.Id == employee.Id);
         if (existingEmployee is null) throw new InvalidOperationException($"User({employee.Id}) not found");
         _employees.Remove(existingEmployee);
         _employees.Add(employee);
-        return Task.CompletedTask;
+        return employee;
     }
 
-    public Task DeleteAsync(int WorkingNumber)
+    public Task DeleteAsync(long id)
     {
-        Employee? employeeToRemove = _employees.SingleOrDefault(e => e.WorkingNumber == WorkingNumber);
-        if (employeeToRemove is null) throw new InvalidOperationException($"User({WorkingNumber}) not found");
+        Employee? employeeToRemove = _employees.SingleOrDefault(e => e.Id == id);
+        if (employeeToRemove is null) throw new InvalidOperationException($"User({id}) not found");
         _employees.Remove(employeeToRemove);
         return Task.CompletedTask;
     }
@@ -35,16 +35,21 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         return _employees.AsQueryable();
     }
 
-    public Task<Employee> GetSingleAsync(int workingNumber)
+    public Task<Employee> GetSingleAsync(long id)
     {
-        Employee? employeeToReturn = _employees.SingleOrDefault(u => u.WorkingNumber == workingNumber);
+        Employee? employeeToReturn = _employees.SingleOrDefault(u => u.Id == id);
         // Console.WriteLine($"Attempted to find User with Id {id}, but none was found.");
-        if (employeeToReturn is null) throw new InvalidOperationException($"User({workingNumber}) not found");
+        if (employeeToReturn is null) throw new InvalidOperationException($"User({id}) not found");
         return Task.FromResult(employeeToReturn);
     }
 
-    public Task<bool> IsEmployeeInRepository(long Id)//TODO implement
+    public async Task<bool> IsEmployeeInRepository(long id)
     {
-        throw new NotImplementedException();
+        Employee? employeeToReturn = _employees.SingleOrDefault(u => u.Id == id);
+        if (employeeToReturn==null)
+        {
+            return false;
+        }
+        return true;
     }
 }

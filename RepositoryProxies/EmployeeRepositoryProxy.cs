@@ -27,16 +27,18 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
         return addedEmployee;
     }
 
-    public async Task UpdateAsync(Employee employee)
+    public async Task<Employee> UpdateAsync(Employee employee)
     {
+        Employee e =  await _employeeStorageRepository.UpdateAsync(employee);
         await _employeeCachingRepository.UpdateAsync(employee);
-        await _employeeCachingRepository.UpdateAsync(employee);
+        
+        return e;
     }
 
-    public async Task DeleteAsync(int WorkingNumber)
+    public async Task DeleteAsync(long id)
     {
-        await _employeeCachingRepository.DeleteAsync(WorkingNumber);
-        await _employeeCachingRepository.DeleteAsync(WorkingNumber);
+        await _employeeCachingRepository.DeleteAsync(id);
+        await _employeeStorageRepository.DeleteAsync(id);
     }
 
     public IQueryable<Employee> GetManyAsync()
@@ -45,16 +47,16 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
         return _employeeCachingRepository.GetManyAsync();
     }
 
-    public async Task<Employee> GetSingleAsync(int WorkingNumber)
+    public async Task<Employee> GetSingleAsync(long id)
     {
         RefreshCache();
-        return await _employeeCachingRepository.GetSingleAsync(WorkingNumber);
+        return await _employeeCachingRepository.GetSingleAsync(id);
     }
 
-    public async Task<bool> IsEmployeeInRepository(long Id)
+    public async Task<bool> IsEmployeeInRepository(long id)
     {
         RefreshCache();
-        return await _employeeCachingRepository.IsEmployeeInRepository(Id);
+        return await _employeeCachingRepository.IsEmployeeInRepository(id);
     }
     
     private async void RefreshCache()

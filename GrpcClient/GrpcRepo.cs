@@ -8,7 +8,6 @@ namespace GrpcClient;
 
 public class GrpcRepo
 {
-    //TODO sebo - prototype for your fixing session
     public async Task<DTOs.EmployeeDTO> CreateEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
         //create channel for connection to JAVA

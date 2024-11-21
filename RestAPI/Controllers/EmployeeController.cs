@@ -44,24 +44,24 @@ public class EmployeeController : ControllerBase
             return Ok(simpleDto);
 
         }
-        catch(Exception e)
+        catch(ArgumentException e)
         {
-            return Problem(e.Message);
+            return BadRequest(e.Message);
         }
     }
 
 
     [HttpPatch] //problem: shifts are erased when user is updated
-    public async Task<IResult> UpdateEmployee([FromQuery] int WorkingNumber, [FromBody] EmployeeDTO request)
+    public async Task<ActionResult<SimpleEmployeeDTO>> UpdateEmployee([FromQuery] long id, [FromBody] EmployeeDTO request)
     {
         try
         {
             List<Shift> shifts = new List<Shift>();
             
-            Employee existingEmployee = await employeeRepo.GetSingleAsync(WorkingNumber);
+            Employee existingEmployee = await employeeRepo.GetSingleAsync(id);
             if (existingEmployee == null)
             {
-                return Results.NotFound($"Employee with that working number {WorkingNumber} not found");
+                return NotFound($"Employee with that working number {id} not found");
             }
 
 
@@ -75,33 +75,35 @@ public class EmployeeController : ControllerBase
 
             Employee updated = await employeeRepo.UpdateAsync(existingEmployee);
             
-            PublicEmployeeDTO dto = new()
+            SimpleEmployeeDTO dto = new()
             {
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
-                WorkingNumber = updated.WorkingNumber
+                WorkingNumber = updated.WorkingNumber,
+                Id = updated.Id
+                
             };
-            return Results.Accepted($"/Employees/{dto.WorkingNumber}", " was updated.");
+            return Accepted($"/Employee/{dto.Id}", " was updated.");
         }
-        catch (InvalidOperationException e)
+        catch (ArgumentException e)
         {
-            return Results.NotFound(e.Message); 
+            return BadRequest(e.Message);
         }
     }
     
     
     
-    [HttpGet("/Employee/{WorkingNumber}")]
-    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int WorkingNumber)
+    [HttpGet("/Employee/{Id}")]
+    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] long id)
     {
-        if(WorkingNumber==null)
+        if(id==null)
         {
             return BadRequest("Working number required.");
         }
 
         try
         {
-            Employee gotEmployee = await employeeRepo.GetSingleAsync(WorkingNumber);
+            Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
 
             PublicEmployeeDTO dto = new()
             {
@@ -109,15 +111,11 @@ public class EmployeeController : ControllerBase
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName
             };
-            return Accepted($"/Employees/{dto.WorkingNumber}", dto);
+            return Accepted($"/Employee/{dto.WorkingNumber}", dto);
         }
-        catch (InvalidDataException e)
+        catch (ArgumentException e)
         {
-            return Problem(e.Message); 
-        }
-        catch (InvalidOperationException e)
-        {
-            return NotFound(e.Message); 
+            return BadRequest(e.Message); 
         }
         
     }
@@ -180,9 +178,9 @@ public class EmployeeController : ControllerBase
             
            
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
-            return Problem(e.Message); 
+            return BadRequest(e.Message); 
         }
     
     }

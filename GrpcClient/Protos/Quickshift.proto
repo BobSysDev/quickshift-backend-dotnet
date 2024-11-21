@@ -8,24 +8,24 @@ package org.grpc.service;
 
 service Shift{
   rpc AddSingleShift (NewShiftDTO) returns (ShiftDTO);
-  rpc GetSingleShiftById (Id) returns (ShiftDTO);
+  rpc GetSingleShiftById (Id) returns (ShiftDTO); //Throws NOT_FOUND if shift with this ID was not found
   rpc GetAllShifts(Empty) returns (ShiftDTOList);
   rpc GetManyShiftsAfterStartDate (DateTimeInMillis) returns (ShiftDTOList);
-  rpc GetManyShiftsByEmployee (Id) returns (ShiftDTOList);
+  rpc GetManyShiftsByEmployee (Id) returns (ShiftDTOList); //Throws NOT_FOUND if employee with this ID not found
   rpc UpdateSingleShift (ShiftDTO) returns (ShiftDTO);
   rpc DeleteSingleShift (Id) returns (GenericTextMessage);
   rpc IsShiftInRepository (Id) returns (Boolean);
-  rpc AssignEmployeeToShift (ShiftEmployeePair) returns (GenericTextMessage);
-  rpc UnAssignEmployeeFromShift (Id) returns (GenericTextMessage);
+  rpc AssignEmployeeToShift (ShiftEmployeePair) returns (GenericTextMessage); // Throws NOT_FOUND if employee or shift with the given IDs were not found
+  rpc UnAssignEmployeeFromShift (Id) returns (GenericTextMessage); // Throws NOT_FOUND if shift with this ID was not found
 }
 
 service Employee{
-  rpc AddSingleEmployee (NewEmployeeDTO) returns (EmployeeDTO);
-  rpc GetSingleEmployeeById (Id) returns (EmployeeDTO);
+  rpc AddSingleEmployee (NewEmployeeDTO) returns (EmployeeDTO); //Throws ALREADY_EXISTS if it detects a duplicate working number
+  rpc GetSingleEmployeeById (Id) returns (EmployeeDTO); //Throws NOT_FOUND if employee with this ID was not found
   rpc GetAllEmployees (Empty) returns (EmployeeDTOList);
   rpc GetManyEmployeesByName (GenericTextMessage) returns (EmployeeDTOList);
   rpc UpdateSingleEmployee (UpdateEmployeeDTO) returns (EmployeeDTO);
-  rpc DeleteSingleEmployee (Id) returns (GenericTextMessage);
+  rpc DeleteSingleEmployee (Id) returns (GenericTextMessage); //Throws NOT_FOUND if employee with was this ID not found
   rpc IsEmployeeInRepository (Id) returns (Boolean);
 }
 
