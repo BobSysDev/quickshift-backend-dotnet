@@ -93,12 +93,13 @@ public class EmployeeController : ControllerBase
     
     
     
-    [HttpGet("/Employee/{Id}")]
+    [HttpGet("/Employee/{id:int}")]
     public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int id)
     {
+        Console.WriteLine("Bruh");
+        //int id = Int32.Parse(stringId);
         try
         {
-            Console.WriteLine(id);
             Employee gotEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
             Console.WriteLine(gotEmployee.FirstName);
             PublicEmployeeDTO dto = new()

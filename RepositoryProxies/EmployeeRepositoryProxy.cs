@@ -50,7 +50,8 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     public async Task<Employee> GetSingleAsync(long id)
     {
         await RefreshCache();
-        return await _employeeCachingRepository.GetSingleAsync(id);
+        //return await _employeeCachingRepository.GetSingleAsync(id);
+        return await _employeeStorageRepository.GetSingleAsync(id);
     }
 
     public async Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)
