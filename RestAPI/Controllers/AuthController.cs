@@ -2,8 +2,10 @@
 using DTOs;
 using Entities;
 using Grpc.Core;
+using GrpcClient;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using NewEmployeeDTO = DTOs.NewEmployeeDTO;
 
 namespace RestAPI.Controllers;
 [ApiController]
@@ -48,6 +50,10 @@ public class AuthController: ControllerBase
         {
             return BadRequest(e.Message);
         }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPost("register")]
@@ -55,15 +61,8 @@ public class AuthController: ControllerBase
     {
         try
         {
-            Employee employee = new Employee
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                WorkingNumber = request.WorkingNumber,
-                Email = request.Email,
-                Password = Hash(request.Password)
-            };
-            var newEmployee = await _employeeRepository.AddAsync(employee);
+            request.Password = Hash(request.Password);
+            var newEmployee = await _employeeRepository.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
             SimpleEmployeeDTO dto = new SimpleEmployeeDTO
             {
                 Id = newEmployee.Id,

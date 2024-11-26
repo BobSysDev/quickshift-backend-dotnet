@@ -23,14 +23,14 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     public async Task<Employee> AddAsync(Employee employee)
     {
         Employee addedEmployee = await _employeeStorageRepository.AddAsync(employee);
-        await _employeeCachingRepository.AddAsync(employee);
+        await _employeeCachingRepository.AddAsync(addedEmployee);
         return addedEmployee;
     }
 
     public async Task<Employee> UpdateAsync(Employee employee)
     {
         Employee e =  await _employeeStorageRepository.UpdateAsync(employee);
-        await _employeeCachingRepository.UpdateAsync(employee);
+        await _employeeCachingRepository.UpdateAsync(e);
         
         return e;
     }
@@ -50,8 +50,7 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     public async Task<Employee> GetSingleAsync(long id)
     {
         await RefreshCache();
-        //return await _employeeCachingRepository.GetSingleAsync(id);
-        return await _employeeStorageRepository.GetSingleAsync(id);
+        return await _employeeCachingRepository.GetSingleAsync(id);
     }
 
     public async Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)

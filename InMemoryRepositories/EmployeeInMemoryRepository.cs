@@ -45,7 +45,9 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
 
     public async Task<Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)
     {
+        _employees.ForEach(c => Console.WriteLine($"Working number: {c.WorkingNumber}, ID: {c.Id}"));
         Employee? employeeToReturn = _employees.SingleOrDefault(u => u.WorkingNumber == WorkingNumber);
+        //Console.WriteLine(_employees.ToString());
         if (employeeToReturn is null) throw new InvalidOperationException($"User({WorkingNumber}) not found");
         return employeeToReturn;
     }
