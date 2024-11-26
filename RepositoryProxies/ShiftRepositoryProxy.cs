@@ -64,14 +64,14 @@ public class ShiftRepositoryProxy : IShiftRepository
     {
         await _shiftCachingRepository.AssignEmployeeToShift(shiftId, employeeId);
         await _shiftStorageRepository.AssignEmployeeToShift(shiftId, employeeId);
-        return new Shift();
+        return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
     public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
         await _shiftCachingRepository.UnassignEmployeeToShift(shiftId, employeeId);
         await _shiftStorageRepository.UnassignEmployeeToShift(shiftId, employeeId);
-        return new Shift();
+        return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
     private async void RefreshCache()
