@@ -21,4 +21,10 @@
       <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Protobuf Include="Protos\Generic.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Shift.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Employee.proto" GrpcServices="Client" />
+    </ItemGroup>
+
 </Project>

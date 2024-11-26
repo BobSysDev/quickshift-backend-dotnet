@@ -43,6 +43,34 @@ public class ShiftController : ControllerBase
             return Problem(e.Message);
         }
     }
+    
+    [HttpPost("/shift/{shiftId}/assign/{employeeId}")]
+    public async Task<ActionResult> AssignEmployeeToShift([FromRoute] long shiftId, [FromRoute] long employeeId)
+    {
+        try
+        {
+            await _shiftRepository.AssignEmployeeToShift(shiftId, employeeId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+    
+    [HttpPost("/shift/{shiftId}/unassign/{employeeId}")]
+    public async Task<ActionResult> UnassignEmployeeFromShift([FromRoute] long shiftId, [FromRoute] long employeeId)
+    {
+        try
+        {
+            await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
 
     [HttpGet("/shift/{id}")]
     public async Task<ActionResult<Shift>> GetSingleShift([FromRoute] long id)

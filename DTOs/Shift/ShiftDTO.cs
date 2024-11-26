@@ -9,6 +9,4 @@ public class ShiftDTO
     public string Description { get; set; }
     public string Location { get; set; }
     public long Id { get; set; }
-    
-    
 }
