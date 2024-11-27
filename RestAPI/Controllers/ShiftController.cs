@@ -58,11 +58,11 @@ public class ShiftController : ControllerBase
     }
 
     [HttpPatch("/Shift/{shiftId}/Unassign")]
-    public async Task<ActionResult> UnassignEmployeeFromShift([FromRoute] long shiftId)
+    public async Task<ActionResult> UnassignEmployeeFromShift([FromRoute] long shiftId, [FromRoute] long employeeId)
     {
         try
         {
-            await _shiftRepository.UnassignEmployeeToShift(shiftId);
+            await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
             return Ok();
         }
         catch (Exception e)
@@ -110,7 +110,8 @@ public class ShiftController : ControllerBase
             StartDateTime = shift.StartDateTime,
             EndDateTime = shift.EndDateTime,
             Location = shift.Location,
-            EmployeeId = shift.EmployeeId == -1 ? null : shift.EmployeeId
+            AssingnedEmployees = shift.AssingnedEmployees
+            //EmployeeId = shift.EmployeeId == -1 ? null : shift.EmployeeId
         });
         
         
@@ -125,7 +126,7 @@ public class ShiftController : ControllerBase
 
         foreach (var shift in shifts)
         {
-            if (shift.EmployeeId == long.CreateChecked(id))
+            if (shift.AssingnedEmployees.Contains(id))
             {
                 shiftDtos.Add(new ShiftDTO
                 {
@@ -136,7 +137,7 @@ public class ShiftController : ControllerBase
                     Id = shift.Id,
                     ShiftStatus = shift.ShiftStatus,
                     Location = shift.Location,
-                    EmployeeId = shift.EmployeeId
+                    AssingnedEmployees = shift.AssingnedEmployees
                 });
             }
         }
@@ -173,7 +174,7 @@ public class ShiftController : ControllerBase
                 StartDateTime = updatedShift.StartDateTime,
                 EndDateTime = updatedShift.EndDateTime,
                 Location = updatedShift.Location,
-                EmployeeId = updatedShift.EmployeeId
+                AssingnedEmployees = updatedShift.AssingnedEmployees
             };
 
             return Ok(updatedDto);

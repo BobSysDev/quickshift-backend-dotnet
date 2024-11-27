@@ -9,5 +9,5 @@ public class Shift
     public string ShiftStatus { get; set; }
     public string Description { get; set; }
     public string Location { get; set; }
-    public long? EmployeeId { get; set; }
+    public List<long> AssingnedEmployees { get; set; }
 }
