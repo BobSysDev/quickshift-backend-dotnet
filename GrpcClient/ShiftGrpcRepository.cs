@@ -150,12 +150,19 @@ public class ShiftGrpcRepository : IShiftRepository
                 ShiftId = shiftId,
                 EmployeeId = employeeId
             };
+
+            Console.WriteLine($"Assigning Employee ID: {employeeId} to Shift ID: {shiftId}");
             var reply = await client.AssignEmployeeToShiftAsync(assignEmployeeRequest);
+            Console.WriteLine("Assignment successful, fetching updated shift");
+
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
+            Console.WriteLine($"Updated Shift: {updatedShift.Id}, Employee ID: {updatedShift.AssignedEmployeeId}");
+
             return grpcShiftObject(updatedShift);
         }
         catch (RpcException e)
         {
+            Console.WriteLine($"Error: {e.StatusCode}, Message: {e.Message}");
             if (e.StatusCode == StatusCode.NotFound)
             {
                 throw new ArgumentException(e.Message);
@@ -163,7 +170,6 @@ public class ShiftGrpcRepository : IShiftRepository
 
             throw;
         }
-        
     }
 
     public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId)
@@ -220,3 +226,22 @@ public class ShiftGrpcRepository : IShiftRepository
         return shift;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
