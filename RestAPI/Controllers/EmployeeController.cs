@@ -95,12 +95,13 @@ public class EmployeeController : ControllerBase
     
     
     
-    [HttpGet("/Employee/{id:int}")]
-    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int id)
+    [HttpGet("/Employee/{id:long}")]
+    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] long id)
     {
+       // Console.WriteLine(id.GetType());
         try
         {
-            Employee gotEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
+            Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
             Console.WriteLine(gotEmployee.FirstName);
             PublicEmployeeDTO dto = new()
             {
