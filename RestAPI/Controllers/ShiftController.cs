@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using GrpcClient;
-using Microsoft.Extensions.Logging;
 using Shift = Entities.Shift;
 using ShiftDTO = DTOs.Shift.ShiftDTO;
 
@@ -73,12 +72,23 @@ public class ShiftController : ControllerBase
     }
 
     [HttpGet("/shift/{id}")]
-    public async Task<ActionResult<Shift>> GetSingleShift([FromRoute] long id)
+    public async Task<ActionResult<ShiftDTO>> GetSingleShift([FromRoute] long id)
     {
         try
         {
             Shift shift = await _shiftRepository.GetSingleAsync(id);
-            return Ok(shift);
+            
+            var shiftDto = new ShiftDTO
+            {
+                Id = shift.Id,
+                Description = shift.Description,
+                TypeOfShift = shift.TypeOfShift,
+                ShiftStatus = shift.ShiftStatus,
+                StartDateTime = shift.StartDateTime,
+                EndDateTime = shift.EndDateTime,
+                Location = shift.Location
+            };
+            return Ok(shiftDto);
         }
         catch (Exception e)
         {
@@ -87,11 +97,24 @@ public class ShiftController : ControllerBase
         }
     }
 
-    [HttpGet("/Shift/GetAll")]  
-    public ActionResult<IEnumerable<Shift>> GetAllShifts()
+
+    [HttpGet("/Shift/GetAll")]
+    public ActionResult<IEnumerable<ShiftDTO>> GetAllShifts()
     {
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
-        return Ok(shifts.ToList());
+        
+        var shiftDtos = shifts.Select(shift => new ShiftDTO
+        {
+            Id = shift.Id,
+            Description = shift.Description,
+            TypeOfShift = shift.TypeOfShift,
+            ShiftStatus = shift.ShiftStatus,
+            StartDateTime = shift.StartDateTime,
+            EndDateTime = shift.EndDateTime,
+            Location = shift.Location
+        });
+
+        return Ok(shiftDtos.ToList());
     }
     
     [HttpGet("/Employee/{id:int}/Shifts")]  
@@ -118,33 +141,14 @@ public class ShiftController : ControllerBase
             }
         }
         
-        // foreach (var shift in shifts)
-        // {
-        //     if (!shift.AssignedEmployees.Any())
-        //     {
-        //         continue;
-        //     }
-        //     if (shift.AssignedEmployees.Contains(long.CreateChecked(id)))
-        //     {
-        //         shiftDTOS.Add(new ShiftDTO
-        //         {
-        //             StartDateTime = shift.StartDateTime,
-        //             EndDateTime = shift.EndDateTime,
-        //             Description = shift.Description,
-        //             TypeOfShift = shift.TypeOfShift,
-        //             Id = shift.Id,
-        //             ShiftStatus = shift.ShiftStatus,
-        //             Location = shift.Location
-        //         });
-        //     }
-        // }
         
         return Ok(_shiftRepository);
     }
 
 
+
     [HttpPut("/Shift/{id:int}")]
-    public async Task<ActionResult<Shift>> UpdateShiftByItsId([FromRoute] int id, [FromBody] ShiftDTO shiftDto)
+    public async Task<ActionResult<ShiftDTO>> UpdateShiftByItsId([FromRoute] int id, [FromBody] ShiftDTO shiftDto)
     {
         try
         {
@@ -162,8 +166,20 @@ public class ShiftController : ControllerBase
             existingShift.Location = shiftDto.Location;
             existingShift.EmployeeId = shiftDto.EmployeeId;
 
-            await _shiftRepository.UpdateAsync(existingShift);
-            return Ok(existingShift);
+            Shift updatedShift = await _shiftRepository.UpdateAsync(existingShift);
+
+            var updatedDto = new ShiftDTO
+            {
+                Id = updatedShift.Id,
+                Description = updatedShift.Description,
+                TypeOfShift = updatedShift.TypeOfShift,
+                ShiftStatus = updatedShift.ShiftStatus,
+                StartDateTime = updatedShift.StartDateTime,
+                EndDateTime = updatedShift.EndDateTime,
+                Location = updatedShift.Location
+            };
+
+            return Ok(updatedDto);
         }
         catch (Exception e)
         {
@@ -171,6 +187,7 @@ public class ShiftController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteShift([FromRoute] long id)
@@ -186,9 +203,3 @@ public class ShiftController : ControllerBase
         }
     }
 }
-
-//TODO:change update to display in REST API ID everything
-//TODO:make so getallshifts get all shifts from data base
-//TODO:fix any problems that appear during testing
-
-//TODO: create shift works --- shift/{id} works  ---   ---   ---   ---   ---
