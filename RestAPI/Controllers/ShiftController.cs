@@ -110,7 +110,7 @@ public class ShiftController : ControllerBase
             StartDateTime = shift.StartDateTime,
             EndDateTime = shift.EndDateTime,
             Location = shift.Location,
-            AssingnedEmployees = shift.AssingnedEmployees
+            AssignedEmployees = shift.AssingnedEmployees
             //EmployeeId = shift.EmployeeId == -1 ? null : shift.EmployeeId
         });
         
@@ -137,7 +137,7 @@ public class ShiftController : ControllerBase
                     Id = shift.Id,
                     ShiftStatus = shift.ShiftStatus,
                     Location = shift.Location,
-                    AssingnedEmployees = shift.AssingnedEmployees
+                    AssignedEmployees = shift.AssingnedEmployees
                 });
             }
         }
@@ -174,7 +174,7 @@ public class ShiftController : ControllerBase
                 StartDateTime = updatedShift.StartDateTime,
                 EndDateTime = updatedShift.EndDateTime,
                 Location = updatedShift.Location,
-                AssingnedEmployees = updatedShift.AssingnedEmployees
+                AssignedEmployees = updatedShift.AssingnedEmployees
             };
 
             return Ok(updatedDto);
