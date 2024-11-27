@@ -259,5 +259,25 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         return employee;
     }
 
+    public static List<DTOs.Shift.ShiftDTO> EntityShiftsToEntityShiftDTOs(List<Entities.Shift> shifts)
+    {
+        List<DTOs.Shift.ShiftDTO> shiftsToReturn = new List<DTOs.Shift.ShiftDTO>();
+        foreach (var shiftTemp in shifts)
+        {
+            var shiftDTO = new DTOs.Shift.ShiftDTO
+            {
+                Id = shiftTemp.Id,
+                StartDateTime = shiftTemp.StartDateTime,
+                EndDateTime = shiftTemp.EndDateTime,
+                TypeOfShift = shiftTemp.TypeOfShift,
+                ShiftStatus = shiftTemp.TypeOfShift,
+                Description = shiftTemp.Description,
+                Location = shiftTemp.Description
+            };
+            shiftsToReturn.Add(shiftDTO);
+        }
+
+        return shiftsToReturn;
+    }
 
 }

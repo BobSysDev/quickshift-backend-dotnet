@@ -96,19 +96,21 @@ public class EmployeeController : ControllerBase
     
     
     [HttpGet("/Employee/{id:long}")]
-    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] long id)
+    public async Task<ActionResult<ShiftEmpoyeeDTO>> GetSingle([FromRoute] long id)
     {
        // Console.WriteLine(id.GetType());
         try
         {
             Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
             Console.WriteLine(gotEmployee.FirstName);
-            PublicEmployeeDTO dto = new()
+            
+            ShiftEmpoyeeDTO dto = new()
             {
                 WorkingNumber = gotEmployee.WorkingNumber,
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName,
-                Id = gotEmployee.Id
+                Id = gotEmployee.Id,
+                Shifts = EmployeeGrpcRepository.EntityShiftsToEntityShiftDTOs(gotEmployee.Shifts),
             };
             return Accepted($"/Employee/{gotEmployee.Id}", dto);
         }
