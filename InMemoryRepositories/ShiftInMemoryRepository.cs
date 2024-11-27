@@ -94,6 +94,7 @@ public class ShiftInMemoryRepository : IShiftRepository
         else if (shift.AssingnedEmployees.Contains(employeeId))
         {
             shift.AssingnedEmployees.Remove(employeeId);
+            return shift;
         }
         else
         {

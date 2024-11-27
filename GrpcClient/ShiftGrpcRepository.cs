@@ -184,7 +184,7 @@ public class ShiftGrpcRepository : IShiftRepository
             
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Shift.ShiftClient(channel);
-            var unassignRequest = new Id { Id_ = shiftId };
+            var unassignRequest = new ShiftEmployeePair { ShiftId = shiftId, EmployeeId = employeeId};
             var reply = await client.UnAssignEmployeeFromShiftAsync(unassignEmployeeRequest);
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
             return grpcShiftObject(updatedShift);

@@ -1,4 +1,5 @@
 ﻿using DTOs.Shift;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using GrpcClient;
@@ -51,13 +52,17 @@ public class ShiftController : ControllerBase
             await _shiftRepository.AssignEmployeeToShift(long.CreateChecked(shiftId), long.CreateChecked(employeeId));
             return Ok();
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
-            return Problem(e.Message);
+            return BadRequest(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
-    [HttpPatch("/Shift/{shiftId}/Unassign")]
+    [HttpPatch("/Shift/{shiftId}/Unassign/{employeeId}")]
     public async Task<ActionResult> UnassignEmployeeFromShift([FromRoute] long shiftId, [FromRoute] long employeeId)
     {
         try
@@ -65,9 +70,13 @@ public class ShiftController : ControllerBase
             await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
             return Ok();
         }
-        catch (Exception e)
+        catch (ArgumentException e)
         {
-            return Problem(e.Message);
+            return BadRequest(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -89,10 +98,9 @@ public class ShiftController : ControllerBase
             };
             return Ok(shiftDto);
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            Console.WriteLine(e);
-            return NotFound(e.Message);
+            return BadRequest(e.Message);
         }
     }
 
@@ -179,9 +187,8 @@ public class ShiftController : ControllerBase
 
             return Ok(updatedDto);
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            Console.WriteLine(e);
             return BadRequest(e.Message);
         }
     }
@@ -194,9 +201,9 @@ public class ShiftController : ControllerBase
             await _shiftRepository.DeleteAsync(id);
             return Ok();
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            return NotFound(e.Message);
+            return BadRequest(e.Message);
         }
     }
 }
