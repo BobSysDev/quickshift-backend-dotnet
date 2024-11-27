@@ -166,7 +166,7 @@ public class ShiftGrpcRepository : IShiftRepository
         
     }
 
-    public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId)
     {
         try
         {

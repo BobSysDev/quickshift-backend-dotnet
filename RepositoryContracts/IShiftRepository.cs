@@ -12,5 +12,5 @@ public interface IShiftRepository
     Task<Shift> GetSingleAsync(long id);
     Task<Boolean> IsShiftInRepository(long id);
     Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId);
-    Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId);
+    Task<Shift> UnassignEmployeeToShift(long shiftId);
 }

@@ -89,7 +89,7 @@ public class ShiftInMemoryRepository : IShiftRepository
         return shift;
     }
 
-    public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    public async Task<Shift> UnassignEmployeeToShift(long shiftId)
     {
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
@@ -97,23 +97,7 @@ public class ShiftInMemoryRepository : IShiftRepository
             throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
 
-        if(shift.EmployeeId == null)
-        {
-            throw new InvalidOperationException($"Shift with ID {shiftId} has nobody assigned yet.");
-        }
-        else if (shift.EmployeeId != employeeId)
-        {
-            throw new InvalidOperationException($"Shift with ID {shiftId} has not been assigned to employee with ID {employeeId}, but to employee with ID {shift.EmployeeId}");
-        }
-        else if (shift.EmployeeId == employeeId)
-        {
-            shift.EmployeeId = null;
-        }
-        
-        // if (shift.AssignedEmployees != null && shift.AssignedEmployees.Contains(employeeId))
-        // {
-        //     shift.AssignedEmployees.Remove(employeeId);
-        // }
+        shift.EmployeeId = null;
 
         return shift;
     }
