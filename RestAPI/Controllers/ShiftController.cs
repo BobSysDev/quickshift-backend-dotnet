@@ -93,6 +93,54 @@ public class ShiftController : ControllerBase
         IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
         return Ok(shifts.ToList());
     }
+    
+    [HttpGet("/Employee/{id:int}/Shifts")]  
+    public ActionResult<IEnumerable<Shift>> GetShiftsByEmployeeId([FromRoute] int id)
+    {
+        IQueryable<Shift> shifts = _shiftRepository.GetManyAsync();
+        List<ShiftDTO> shiftDTOS = new List<ShiftDTO>();
+        
+        foreach (var shift in shifts)
+        {
+            if (shift.EmployeeId == long.CreateChecked(id))
+            {
+                shiftDTOS.Add(new ShiftDTO
+                {
+                    StartDateTime = shift.StartDateTime,
+                    EndDateTime = shift.EndDateTime,
+                    Description = shift.Description,
+                    TypeOfShift = shift.TypeOfShift,
+                    Id = shift.Id,
+                    ShiftStatus = shift.ShiftStatus,
+                    Location = shift.Location,
+                    EmployeeId = shift.EmployeeId
+                });
+            }
+        }
+        
+        // foreach (var shift in shifts)
+        // {
+        //     if (!shift.AssignedEmployees.Any())
+        //     {
+        //         continue;
+        //     }
+        //     if (shift.AssignedEmployees.Contains(long.CreateChecked(id)))
+        //     {
+        //         shiftDTOS.Add(new ShiftDTO
+        //         {
+        //             StartDateTime = shift.StartDateTime,
+        //             EndDateTime = shift.EndDateTime,
+        //             Description = shift.Description,
+        //             TypeOfShift = shift.TypeOfShift,
+        //             Id = shift.Id,
+        //             ShiftStatus = shift.ShiftStatus,
+        //             Location = shift.Location
+        //         });
+        //     }
+        // }
+        
+        return Ok(_shiftRepository);
+    }
 
 
     [HttpPut("/Shift/{id:int}")]
@@ -112,6 +160,7 @@ public class ShiftController : ControllerBase
             existingShift.ShiftStatus = shiftDto.ShiftStatus;
             existingShift.Description = shiftDto.Description;
             existingShift.Location = shiftDto.Location;
+            existingShift.EmployeeId = shiftDto.EmployeeId;
 
             await _shiftRepository.UpdateAsync(existingShift);
             return Ok(existingShift);

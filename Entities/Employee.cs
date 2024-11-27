@@ -10,5 +10,5 @@ public class Employee
     public string PhoneNumber { get; set; }
     public long Id { get; set; }
     public string Password { get; set; }
-    public List<Shift> Shifts = new List<Shift>();
+    public List<Shift> Shifts { get; set; } 
 }

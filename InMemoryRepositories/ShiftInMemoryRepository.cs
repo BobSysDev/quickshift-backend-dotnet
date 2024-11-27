@@ -69,17 +69,21 @@ public class ShiftInMemoryRepository : IShiftRepository
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} not found");
+            throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
 
-        if (shift.AssignedEmployees == null)
+        // shift.EmployeeId = employeeId;
+        if (shift.EmployeeId == null)
         {
-            shift.AssignedEmployees = new List<long>();
+            shift.EmployeeId = employeeId;
         }
-
-        if (!shift.AssignedEmployees.Contains(employeeId))
+        else if (shift.EmployeeId == employeeId)
         {
-            shift.AssignedEmployees.Add(employeeId);
+            throw new InvalidOperationException($"Shift with ID {shiftId} already has this employee with ID {employeeId}!");
+        }
+        else if (shift.EmployeeId != null)
+        {
+            throw new InvalidOperationException($"Shift with ID {shiftId} already has assigned employee with ID {shift.EmployeeId}!");
         }
 
         return shift;
@@ -90,13 +94,26 @@ public class ShiftInMemoryRepository : IShiftRepository
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} not found");
+            throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
 
-        if (shift.AssignedEmployees != null && shift.AssignedEmployees.Contains(employeeId))
+        if(shift.EmployeeId == null)
         {
-            shift.AssignedEmployees.Remove(employeeId);
+            throw new InvalidOperationException($"Shift with ID {shiftId} has nobody assigned yet.");
         }
+        else if (shift.EmployeeId != employeeId)
+        {
+            throw new InvalidOperationException($"Shift with ID {shiftId} has not been assigned to employee with ID {employeeId}, but to employee with ID {shift.EmployeeId}");
+        }
+        else if (shift.EmployeeId == employeeId)
+        {
+            shift.EmployeeId = null;
+        }
+        
+        // if (shift.AssignedEmployees != null && shift.AssignedEmployees.Contains(employeeId))
+        // {
+        //     shift.AssignedEmployees.Remove(employeeId);
+        // }
 
         return shift;
     }
