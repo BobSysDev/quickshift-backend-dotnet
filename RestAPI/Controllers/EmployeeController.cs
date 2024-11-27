@@ -54,7 +54,7 @@ public class EmployeeController : ControllerBase
 
 
     [HttpPut("/Employee/{id:int}")] //problem: shifts are erased when user is updated
-    public async Task<ActionResult<SimpleEmployeeDTO>> UpdateEmployee([FromRoute] int id, [FromBody] DTOs.UpdateEmployeeDTO request)
+    public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromRoute] int id, [FromBody] DTOs.UpdateEmployeeDTO request)
     {
         try
         {
@@ -77,7 +77,7 @@ public class EmployeeController : ControllerBase
 
             Employee updated = await employeeRepo.UpdateAsync(existingEmployee);
             
-            SimpleEmployeeDTO dto = new()
+            PublicEmployeeDTO dto = new()
             {
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
@@ -95,18 +95,20 @@ public class EmployeeController : ControllerBase
     
     
     
-    [HttpGet("/Employee/{id:int}")]
-    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] int id)
+    [HttpGet("/Employee/{id:long}")]
+    public async Task<ActionResult<PublicEmployeeDTO>> GetSingle([FromRoute] long id)
     {
+       // Console.WriteLine(id.GetType());
         try
         {
-            Employee gotEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
+            Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
             Console.WriteLine(gotEmployee.FirstName);
             PublicEmployeeDTO dto = new()
             {
                 WorkingNumber = gotEmployee.WorkingNumber,
                 FirstName = gotEmployee.FirstName,
-                LastName =  gotEmployee.LastName
+                LastName =  gotEmployee.LastName,
+                Id = gotEmployee.Id
             };
             return Accepted($"/Employee/{gotEmployee.Id}", dto);
         }
@@ -130,7 +132,8 @@ public class EmployeeController : ControllerBase
             {
                 WorkingNumber = employee.WorkingNumber,
                 FirstName = employee.FirstName,
-                LastName = employee.LastName
+                LastName = employee.LastName,
+                Id = employee.Id
             }).ToList();
             Console.WriteLine("3");
 
