@@ -71,7 +71,6 @@ public class EmployeeController : ControllerBase
             existingEmployee.LastName = request.LastName;
             existingEmployee.WorkingNumber = request.WorkingNumber;
             existingEmployee.Email = request.Email;
-            existingEmployee.PhoneNumber = request.PhoneNumber;
             //existingEmployee.Shifts = EmployeeGrpcRepository.EntityShiftDtosToEntityShiftsList(request.Shifts);
             //existingEmployee.Id = request.Id;
             existingEmployee.Password = AuthController.Hash(request.Password);
