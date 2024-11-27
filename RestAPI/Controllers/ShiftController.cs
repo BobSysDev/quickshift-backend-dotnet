@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using GrpcClient;
+using Shift = Entities.Shift;
 using ShiftDTO = DTOs.Shift.ShiftDTO;
 
 namespace RestAPI.Controllers;
@@ -108,9 +109,11 @@ public class ShiftController : ControllerBase
             ShiftStatus = shift.ShiftStatus,
             StartDateTime = shift.StartDateTime,
             EndDateTime = shift.EndDateTime,
-            Location = shift.Location
+            Location = shift.Location,
+            EmployeeId = shift.EmployeeId == -1 ? null : shift.EmployeeId
         });
-
+        
+        
         return Ok(shiftDtos.ToList());
     }
 
