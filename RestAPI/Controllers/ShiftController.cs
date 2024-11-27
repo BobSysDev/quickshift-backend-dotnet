@@ -117,10 +117,10 @@ public class ShiftController : ControllerBase
         return Ok(shiftDtos.ToList());
     }
 
-    [HttpGet("/Employee/{id:int}/Shifts")]
-    public ActionResult<IEnumerable<ShiftDTO>> GetShiftsByEmployeeId([FromRoute] int id)
+    [HttpGet("/Shifts/Employee/{id:int}")]
+    public async Task<ActionResult<IEnumerable<ShiftDTO>>> GetShiftsByEmployeeId([FromRoute] int id)
     {
-        var shifts = _shiftRepository.GetManyAsync();
+        var shifts =  _shiftRepository.GetManyAsync();
         var shiftDtos = new List<ShiftDTO>();
 
         foreach (var shift in shifts)

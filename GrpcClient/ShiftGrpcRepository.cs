@@ -207,7 +207,7 @@ public class ShiftGrpcRepository : IShiftRepository
             StartDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.StartDateTime).DateTime,
             EndDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.EndDateTime).Date,
             Location = shiftDto.Location,
-            EmployeeId = shiftDto.AssignedEmployeeId
+            EmployeeId = shiftDto.AssignedEmployeeId==-1?null:shiftDto.AssignedEmployeeId
         };
         return shift;
     }
