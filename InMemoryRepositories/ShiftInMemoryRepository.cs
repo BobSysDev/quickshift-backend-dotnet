@@ -71,33 +71,34 @@ public class ShiftInMemoryRepository : IShiftRepository
         {
             throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
-
-        // shift.EmployeeId = employeeId;
-        if (shift.EmployeeId == null)
+        else if (shift.AssingnedEmployees.Contains(employeeId))
         {
-            shift.EmployeeId = employeeId;
+            throw new InvalidOperationException($"Shift with ID {shiftId} has already assigned employee with ID {employeeId}.");
         }
-        else if (shift.EmployeeId == employeeId)
+        else
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} already has this employee with ID {employeeId}!");
+            shift.AssingnedEmployees.Add(employeeId);
         }
-        else if (shift.EmployeeId != null)
-        {
-            throw new InvalidOperationException($"Shift with ID {shiftId} already has assigned employee with ID {shift.EmployeeId}!");
-        }
-
+        
         return shift;
     }
+    
 
-    public async Task<Shift> UnassignEmployeeToShift(long shiftId)
+    public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
         {
             throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
-
-        shift.EmployeeId = null;
+        else if (shift.AssingnedEmployees.Contains(employeeId))
+        {
+            shift.AssingnedEmployees.Remove(employeeId);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Shift with ID {shiftId} has not assigned employee with ID {employeeId}!");
+        }
 
         return shift;
     }

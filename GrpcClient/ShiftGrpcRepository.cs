@@ -156,7 +156,7 @@ public class ShiftGrpcRepository : IShiftRepository
             Console.WriteLine("Assignment successful, fetching updated shift");
 
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-            Console.WriteLine($"Updated Shift: {updatedShift.Id}, Employee ID: {updatedShift.AssignedEmployeeId}");
+            Console.WriteLine($"Updated Shift: {updatedShift.Id}, Employee ID: {employeeId}");
 
             return grpcShiftObject(updatedShift);
         }
@@ -172,14 +172,20 @@ public class ShiftGrpcRepository : IShiftRepository
         }
     }
 
-    public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId)
+    public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
         try
         {
+            var unassignEmployeeRequest = new ShiftEmployeePair
+            {
+                ShiftId = shiftId,
+                EmployeeId = employeeId
+            };
+            
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Shift.ShiftClient(channel);
             var unassignRequest = new Id { Id_ = shiftId };
-            var reply = await client.UnAssignEmployeeFromShiftAsync(unassignRequest);
+            var reply = await client.UnAssignEmployeeFromShiftAsync(unassignEmployeeRequest);
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
             return grpcShiftObject(updatedShift);
         }
@@ -207,7 +213,8 @@ public class ShiftGrpcRepository : IShiftRepository
             StartDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.StartDateTime).DateTime,
             EndDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.EndDateTime).Date,
             Location = shiftDto.Location,
-            EmployeeId = shiftDto.AssignedEmployeeId==-1?null:shiftDto.AssignedEmployeeId
+            //EmployeeId = shiftDto.AssignedEmployeeId==-1?null:shiftDto.AssignedEmployeeId
+            AssingnedEmployees = shiftDto.AssignedEmployeeIds.ToList()
         };
         return shift;
     }
