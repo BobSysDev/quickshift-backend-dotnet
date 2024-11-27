@@ -10,4 +10,5 @@ public class ShiftDTO
     public string Location { get; set; }
     public long Id { get; set; }
     public long? EmployeeId { get; set; }
+    public List<long> AssingnedEmployees { get; set; }
 }
