@@ -6,11 +6,11 @@ using RepositoryContracts;
 
 namespace GrpcClient;
 
-public class ShiftReplyGrpcRepository : IShiftReplyRepository
+public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
 {
     private string _grpcAddress { get; set; }
 
-    public ShiftReplyGrpcRepository()
+    public ShiftSwitchReplyGrpcRepository()
     {
         _grpcAddress = "http://192.168.140.143:50051";
     }

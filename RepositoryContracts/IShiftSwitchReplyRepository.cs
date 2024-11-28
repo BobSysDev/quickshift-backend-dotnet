@@ -2,7 +2,7 @@
 namespace RepositoryContracts;
 
 
-public interface IShiftReplyRepository 
+public interface IShiftSwitchReplyRepository 
 {
     Task<ShiftSwitchReply> AddAsync(ShiftSwitchReply shiftSwitchReply);
     Task<ShiftSwitchReply> UpdateAsync(ShiftSwitchReply shiftSwitchReply);
