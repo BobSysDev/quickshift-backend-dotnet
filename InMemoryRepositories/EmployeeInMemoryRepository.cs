@@ -40,6 +40,7 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         Employee? employeeToReturn = _employees.SingleOrDefault(u => u.Id == id);
         // Console.WriteLine($"Attempted to find User with Id {id}, but none was found.");
         if (employeeToReturn is null) throw new InvalidOperationException($"User({id}) not found");
+        Console.Write("inmemrepoemp getsingle shifts: "+employeeToReturn.PrintShifts());
         return employeeToReturn;
     }
 

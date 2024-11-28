@@ -77,7 +77,8 @@ public class ShiftInMemoryRepository : IShiftRepository
         }
         else
         {
-            shift.AssingnedEmployees.Add(employeeId);
+            shifts.SingleOrDefault(s => s.Id == shiftId).AssingnedEmployees.Add(employeeId);
+            //shift.AssingnedEmployees.Add(employeeId);
         }
         
         return shift;

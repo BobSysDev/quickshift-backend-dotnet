@@ -18,20 +18,22 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
     {
-        Console.WriteLine("Before getting the channel");
+        
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        Console.WriteLine("Before connecting");
+        
         var client = new Shift.ShiftClient(channel);
-        Console.WriteLine("Before adding shift");
+        
         var reply = await client.AddSingleShiftAsync(new NewShiftDTO
         {
+            TypeOfShift = shift.TypeOfShift,
             Location = shift.Location,
             ShiftStatus = shift.ShiftStatus,
             Description = shift.Description,
             StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
             EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
+            
         });
-        Console.WriteLine("After adding shift");
+        
         Entities.Shift shiftRecieved = grpcShiftObject(reply);
         return shiftRecieved;
     }
@@ -204,6 +206,7 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public static Entities.Shift grpcShiftObject(ShiftDTO shiftDto)
     {
+        //Console.WriteLine(shiftDto.AssignedEmployeeIds);
         Entities.Shift shift = new Entities.Shift()
         {
             Description = shiftDto.Description,

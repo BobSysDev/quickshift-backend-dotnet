@@ -10,4 +10,16 @@ public class Shift
     public string Description { get; set; }
     public string Location { get; set; }
     public List<long> AssingnedEmployees { get; set; }
+
+    public string Print()
+    {
+        return "Start: " + StartDateTime +
+               "\n End: " + EndDateTime +
+               "\n Type: " + TypeOfShift +
+               "\n Status: " + ShiftStatus +
+               "\n Description: " + Description +
+               "\n Location: " + Location +
+               "\n Assigned Employees: " + AssingnedEmployees;
+
+    }
 }

@@ -65,8 +65,6 @@ public class EmployeeController : ControllerBase
             {
                 return NotFound($"Employee with the ID {id} not found");
             }
-
-
             existingEmployee.FirstName = request.FirstName;
             existingEmployee.LastName = request.LastName;
             existingEmployee.WorkingNumber = request.WorkingNumber;
@@ -102,7 +100,7 @@ public class EmployeeController : ControllerBase
         try
         {
             Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
-            Console.WriteLine(gotEmployee.FirstName);
+            Console.WriteLine("ecntrl-get single eShifts: " + gotEmployee.PrintShifts());
             
             ShiftEmpoyeeDTO dto = new()
             {
