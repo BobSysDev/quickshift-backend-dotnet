@@ -11,8 +11,6 @@ using NewEmployeeDTO = DTOs.NewEmployeeDTO;
 using Shift = Entities.Shift;
 using ShiftDTO = DTOs.Shift.ShiftDTO;
 using UpdateEmployeeDTO = GrpcClient.UpdateEmployeeDTO;
-
-
 namespace RestAPI.Controllers;
 
 [ApiController]
