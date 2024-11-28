@@ -1,0 +1,39 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GrpcClient";
+option java_multiple_files = true;
+option java_package = "quickshift.grpc.service";
+
+package org.grpc.service;
+
+import "Protos/Generic.proto";
+
+service ShiftSwitchReply{
+  rpc AddReply (NewReplyDTO) returns (ShiftReplyDTO);
+  rpc DeleteReply (Id) returns (GenericTextMessage);
+  rpc UpdateReply (ShiftReplyDTO) returns (ShiftReplyDTO);
+  rpc GetSingleById (Id) returns (ShiftReplyDTO);
+  rpc GetAll (Empty) returns (ShiftReplyDTOList);
+  rpc GetAllRepliesByEmployeeId (Id) returns (ShiftReplyDTOList);
+  rpc SetAcceptReplyOrigin (IdBooleanPair) returns (Boolean);
+  rpc SetAcceptReplyTarget (IdBooleanPair) returns (Boolean);
+}
+
+message ShiftReplyDTO{
+  sint64 Id = 1;
+  sint64 EmployeeId = 2;
+  sint64 TargetShiftId = 3;
+  string Details = 4;
+  bool OriginAccepted = 5;
+  bool TargetAccepted = 6;
+}
+
+message NewReplyDTO{
+  sint64 EmployeeId = 1;
+  sint64 TargetShiftId = 2;
+  string Details = 3;
+}
+
+message ShiftReplyDTOList{
+  repeated ShiftReplyDTO dtos = 1;
+}
