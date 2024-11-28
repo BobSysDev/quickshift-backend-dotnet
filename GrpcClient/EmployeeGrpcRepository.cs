@@ -179,9 +179,10 @@ public class EmployeeGrpcRepository : IEmployeeRepository
                 StartDateTime = new DateTime(shiftDTO.StartDateTime),
                 EndDateTime = new DateTime(shiftDTO.EndDateTime),
                 TypeOfShift = shiftDTO.TypeOfShift,
-                ShiftStatus = shiftDTO.TypeOfShift,
+                ShiftStatus = shiftDTO.ShiftStatus,
                 Description = shiftDTO.Description,
-                Location = shiftDTO.Description
+                Location = shiftDTO.Location,
+                AssingnedEmployees = shiftDTO.AssignedEmployeeIds.ToList()
             };
             shifts.Add(shift);
         }
@@ -200,9 +201,10 @@ public class EmployeeGrpcRepository : IEmployeeRepository
                 StartDateTime = shiftDto.StartDateTime,
                 EndDateTime = shiftDto.EndDateTime,
                 TypeOfShift = shiftDto.TypeOfShift,
-                ShiftStatus = shiftDto.TypeOfShift,
+                ShiftStatus = shiftDto.ShiftStatus,
                 Description = shiftDto.Description,
-                Location = shiftDto.Description
+                Location = shiftDto.Location,
+                AssingnedEmployees = shiftDto.AssignedEmployees
             };
             shifts.Add(shift);
         }
@@ -220,7 +222,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             WorkingNumber = int.CreateChecked(employeeDto.WorkingNumber),
             Shifts = shifts,
             Email = employeeDto.Email,
-            Password = employeeDto.Password
+            Password = employeeDto.Password,
         };
         return employee;
     }
@@ -270,9 +272,10 @@ public class EmployeeGrpcRepository : IEmployeeRepository
                 StartDateTime = shiftTemp.StartDateTime,
                 EndDateTime = shiftTemp.EndDateTime,
                 TypeOfShift = shiftTemp.TypeOfShift,
-                ShiftStatus = shiftTemp.TypeOfShift,
+                ShiftStatus = shiftTemp.ShiftStatus,
                 Description = shiftTemp.Description,
-                Location = shiftTemp.Description
+                Location = shiftTemp.Location,
+                AssignedEmployees = shiftTemp.AssingnedEmployees
             };
             shiftsToReturn.Add(shiftDTO);
         }
