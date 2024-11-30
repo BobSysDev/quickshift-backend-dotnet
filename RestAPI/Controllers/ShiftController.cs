@@ -1,4 +1,5 @@
-﻿using DTOs.Shift;
+﻿using System.Text.Json.Serialization;
+using DTOs.Shift;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
@@ -24,8 +25,10 @@ public class ShiftController : ControllerBase
     {
         try
         {
-            var shift = await _shiftRepository.AddAsync(ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request));
-
+            Shift tmp = ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request);
+            //Console.WriteLine(tmp.Print());
+            var shift = await _shiftRepository.AddAsync(tmp);
+            //Console.WriteLine(shift.Print());
             var simpleDto = new ShiftDTO
             {
                 Description = shift.Description,
@@ -34,7 +37,8 @@ public class ShiftController : ControllerBase
                 Id = shift.Id,
                 StartDateTime = shift.StartDateTime,
                 EndDateTime = shift.EndDateTime,
-                Location = shift.Location
+                Location = shift.Location,
+                AssignedEmployees = shift.AssingnedEmployees
             };
             return Ok(simpleDto);
         }
@@ -94,7 +98,9 @@ public class ShiftController : ControllerBase
                 ShiftStatus = shift.ShiftStatus,
                 StartDateTime = shift.StartDateTime,
                 EndDateTime = shift.EndDateTime,
-                Location = shift.Location
+                Location = shift.Location,
+                Id = shift.Id,
+                AssignedEmployees = shift.AssingnedEmployees
             };
             return Ok(shiftDto);
         }

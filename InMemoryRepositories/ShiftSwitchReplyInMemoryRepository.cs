@@ -4,7 +4,7 @@ using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class ShiftReplyInMemoryRepository : IShiftReplyRepository
+public class ShiftSwitchReplyInMemoryRepository : IShiftSwitchReplyRepository
 {
     private List<ShiftSwitchReply> replies = new List<ShiftSwitchReply>();
     

@@ -1,4 +1,6 @@
-﻿
+﻿using DTOs.Shift;
+using Entities;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using RepositoryContracts;
@@ -16,16 +18,22 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
     {
+        
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        
         var client = new Shift.ShiftClient(channel);
+        
         var reply = await client.AddSingleShiftAsync(new NewShiftDTO
         {
+            TypeOfShift = shift.TypeOfShift,
             Location = shift.Location,
             ShiftStatus = shift.ShiftStatus,
             Description = shift.Description,
             StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
             EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
+            
         });
+        
         Entities.Shift shiftRecieved = grpcShiftObject(reply);
         return shiftRecieved;
     }
@@ -198,6 +206,7 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public static Entities.Shift grpcShiftObject(ShiftDTO shiftDto)
     {
+        //Console.WriteLine(shiftDto.AssignedEmployeeIds);
         Entities.Shift shift = new Entities.Shift()
         {
             Description = shiftDto.Description,

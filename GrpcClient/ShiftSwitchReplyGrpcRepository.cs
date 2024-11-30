@@ -6,19 +6,20 @@ using RepositoryContracts;
 
 namespace GrpcClient;
 
-public class ShiftReplyGrpcRepository : IShiftReplyRepository
+public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
 {
     private string _grpcAddress { get; set; }
 
-    public ShiftReplyGrpcRepository()
+    public ShiftSwitchReplyGrpcRepository()
     {
         _grpcAddress = "http://192.168.140.143:50051";
     }
 
-
-    public Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply shiftSwitchReply)
+    public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply shiftSwitchReply)
     {
-        throw new NotImplementedException();
+        using var channel = GrpcChannel.ForAddress(_grpcAddress);
+        var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
+        return null;
     }
 
     public Task<Entities.ShiftSwitchReply> UpdateAsync(Entities.ShiftSwitchReply shiftSwitchReply)
