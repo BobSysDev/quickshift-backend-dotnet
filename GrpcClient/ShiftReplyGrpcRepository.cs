@@ -15,45 +15,44 @@ public class ShiftReplyGrpcRepository : IShiftReplyRepository
         _grpcAddress = "http://192.168.140.143:50051";
     }
 
-    public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply shiftSwitchReply)
-    {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
 
+    public Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply shiftSwitchReply)
+    {
+        throw new NotImplementedException();
     }
 
-    public Task<ShiftSwitchReply> UpdateAsync(ShiftSwitchReply shiftSwitchReply)
+    public Task<Entities.ShiftSwitchReply> UpdateAsync(Entities.ShiftSwitchReply shiftSwitchReply)
     {
-
+        throw new NotImplementedException();
     }
 
     public Task DeleteAsync(long id)
     {
-
+        throw new NotImplementedException();
     }
 
-    public IQueryable<ShiftSwitchReply> GetManyAsync()
+    public IQueryable<Entities.ShiftSwitchReply> GetManyAsync()
     {
-
+        throw new NotImplementedException();
     }
 
-    public Task<ShiftSwitchReply> GetSingleAsync(long id)
+    public Task<Entities.ShiftSwitchReply> GetSingleAsync(long id)
     {
-
+        throw new NotImplementedException();
     }
 
     public Task<bool> IsReplyInRepository(long id)
     {
-
+        throw new NotImplementedException();
     }
 
-    public Task<ShiftSwitchReply> SetTargetAcceptedAsync(long id, bool accepted)
+    public Task<Entities.ShiftSwitchReply> SetTargetAcceptedAsync(long id, bool accepted)
     {
-
+        throw new NotImplementedException();
     }
 
-    public Task<ShiftSwitchReply> SetOriginAcceptedAsync(long id, bool accepted)
+    public Task<Entities.ShiftSwitchReply> SetOriginAcceptedAsync(long id, bool accepted)
     {
-  
+        throw new NotImplementedException();
     }
 }
