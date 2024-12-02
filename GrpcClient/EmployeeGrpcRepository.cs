@@ -163,7 +163,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         using var channel = GrpcChannel.ForAddress(_grpcAddress); 
         var client = new Employee.EmployeeClient(channel);
         var reply = await client.IsEmployeeInRepositoryAsync(new Id { Id_ = Id });
-        b = reply.Boolean_;
+        b = reply.Result;
         
         return b;
     }
