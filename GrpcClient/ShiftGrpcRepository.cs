@@ -128,7 +128,7 @@ public class ShiftGrpcRepository : IShiftRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Shift.ShiftClient(channel);
             var reply = await client.IsShiftInRepositoryAsync(new Id { Id_ = id });
-            return reply.Result;
+            return reply.Boolean_;
         }
         catch (RpcException e)
         {

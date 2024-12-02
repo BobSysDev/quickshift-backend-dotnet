@@ -6,7 +6,7 @@ option java_package = "quickshift.grpc.service";
 
 package org.grpc.service;
 
-import "Generic.proto";
+import "Protos/Generic.proto";
 
 service ShiftSwitchRequestTimeframe {
   rpc AddTimeframe (NewTimeframeDTO) returns (TimeframeDTO); // Throws NOT_FOUND

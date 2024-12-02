@@ -15,10 +15,10 @@ public class ShiftRepositoryProxy : IShiftRepository
     {
         _shiftCachingRepository = new ShiftInMemoryRepository();
         _shiftStorageRepository = new ShiftGrpcRepository();
-        Console.Write("Trying to get shifts from repo");
+        
         List<Shift> shifts = _shiftStorageRepository.GetManyAsync().ToList();
-        Console.Write("Got them shifts");
         shifts.ForEach(shift => _shiftCachingRepository.AddAsync(shift));
+        
         _lastCacheUpdate = DateTime.Now;
     }
 
@@ -80,17 +80,10 @@ public class ShiftRepositoryProxy : IShiftRepository
         if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
         {
             List<Shift> shifts =_shiftStorageRepository.GetManyAsync().ToList();
-            shifts.ForEach(async shift =>
-            {
-                if (await _shiftCachingRepository.IsShiftInRepository(shift.Id))
-                {
-                    await _shiftCachingRepository.UpdateAsync(shift);
-                }
-                else
-                {
-                    await _shiftCachingRepository.AddAsync(shift);
-                }
-            });
+
+            _shiftCachingRepository = new ShiftInMemoryRepository();
+            shifts.ForEach(shift => _shiftCachingRepository.AddAsync(shift));
+            
             _lastCacheUpdate = DateTime.Now;
         }
     }

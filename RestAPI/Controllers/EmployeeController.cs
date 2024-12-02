@@ -26,29 +26,29 @@ public class EmployeeController : ControllerBase
         employeeRepo = employeeRepository;
     }
 
-
-    [HttpPost]
-    public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] NewEmployeeDTO request)
-    {
-        try
-        {
-            Employee employee = await employeeRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
-            var simpleDto = new SimpleEmployeeDTO
-            {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                WorkingNumber = employee.WorkingNumber, 
-                Id = employee.Id
-            };
-            
-            return Ok(simpleDto);
-
-        }
-        catch(ArgumentException e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
+//this is the explanation --->             method is commented out as it was replaced by AuthController.cs/Register                
+    // [HttpPost]
+    // public async Task<ActionResult<SimpleEmployeeDTO>> AddEmployee([FromBody] NewEmployeeDTO request)
+    // {
+    //     try
+    //     {
+    //         Employee employee = await employeeRepo.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
+    //         var simpleDto = new SimpleEmployeeDTO
+    //         {
+    //             FirstName = employee.FirstName,
+    //             LastName = employee.LastName,
+    //             WorkingNumber = employee.WorkingNumber, 
+    //             Id = employee.Id
+    //         };
+    //         
+    //         return Ok(simpleDto);
+    //
+    //     }
+    //     catch(ArgumentException e)
+    //     {
+    //         return BadRequest(e.Message);
+    //     }
+    // }
 
 
     [HttpPut("/Employee/{id:int}")] //problem: shifts are erased when user is updated
@@ -143,24 +143,18 @@ public class EmployeeController : ControllerBase
         }
     }
     
-    [HttpDelete]
-    public async Task<ActionResult> Delete([FromBody] DeleteEmployeeDTO request)
+    [HttpDelete("{id:long}")]
+    public async Task<ActionResult> Delete([FromRoute] long id)
     {
         try
         {
-            Employee employee = await employeeRepo.GetSingleAsync(request.id);
-            if (AuthController.Validate(employee.Password, request.Password))
-            {
-                await employeeRepo.DeleteAsync(request.id);
-                return Ok("Employee deleted successfully.");
-            }
-            return NotFound("Employee with these credentials not found.");
-           
+            await employeeRepo.DeleteAsync(id);
+            return Ok();
         }
         catch (ArgumentException e)
         {
             return BadRequest(e.Message); 
         }
-    
+        
     }
 }

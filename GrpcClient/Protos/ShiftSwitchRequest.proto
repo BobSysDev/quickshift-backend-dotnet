@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 option csharp_namespace = "GrpcClient";
 option java_multiple_files = true;
@@ -6,9 +6,9 @@ option java_package = "quickshift.grpc.service";
 
 package org.grpc.service;
 
-import "Generic.proto";
-import "ShiftSwitchReply.proto";
-import "ShiftSwitchRequestTimeframe.proto";
+import "Protos/Generic.proto";
+import "Protos/ShiftSwitchReply.proto";
+import "Protos/ShiftSwitchRequestTimeframe.proto";
 
 service ShiftSwitchRequest{
   rpc AddRequest (NewRequestDTO) returns (RequestDTO); // Throws NOT_FOUND
