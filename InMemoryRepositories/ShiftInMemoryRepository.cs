@@ -9,18 +9,6 @@ public class ShiftInMemoryRepository : IShiftRepository
     
     public async Task<Shift> AddAsync(Shift shift)
     {
-        if (shift.Id == 0)
-        {
-            if (shifts.Any())
-            {
-                var maxId = shifts.Max(s => s.Id);
-                shift.Id = maxId + 1;
-            }
-            else
-            {
-                shift.Id = 1;
-            }
-        }
         shifts.Add(shift);
         return shift;
     }
@@ -92,16 +80,16 @@ public class ShiftInMemoryRepository : IShiftRepository
         {
             throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
         }
-        else if (shift.AssingnedEmployees.Contains(employeeId))
+        if (shift.AssingnedEmployees.Contains(employeeId))
         {
             shift.AssingnedEmployees.Remove(employeeId);
             return shift;
         }
-        else
-        {
-            throw new InvalidOperationException($"Shift with ID {shiftId} has not assigned employee with ID {employeeId}!");
-        }
+        throw new InvalidOperationException($"Shift with ID {shiftId} has not assigned employee with ID {employeeId}!");
+    }
 
-        return shift;
+    public void UpdateChache(List<Shift> newShifts)
+    {
+        shifts = new List<Shift>(newShifts);
     }
 }
