@@ -11,7 +11,7 @@ public class GrpcRepo
     public async Task<DTOs.EmployeeDTO> CreateEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
         //create channel for connection to JAVA
-        using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051"); //TODO the port might change
+        using var channel = GrpcChannel.ForAddress("http://192.168.195.143:50051"); //TODO the port might change
         //create client for employee entity, "EmployeeClient" method is auto-genereted               
         var client = new Employee.EmployeeClient(channel);
         //reply - "AddSingleEmployee(newEmployeeDto)" comes from .proto file + need to convert the og-DTO to .proto-DTO
@@ -79,20 +79,20 @@ public class GrpcRepo
     //     return false;
     // }
 
-    public async Task<DTOs.Shift.ShiftDTO> CreateShift(ShiftDTOWithoutId shiftDtoWithoutId)
+    public async Task<DTOs.Shift.ShiftDTO> CreateShift(DTOs.Shift.NewShiftDTO newShiftDto)
     {
         using var channel = GrpcChannel.ForAddress("http://192.168.125.143:50051");
         var client = new Shift.ShiftClient(channel);
-        var newShiftDto = new NewShiftDTO
+        var newShiftDtoToAdd = new NewShiftDTO
         {
-            Description = shiftDtoWithoutId.Description,
-            TypeOfShift = shiftDtoWithoutId.TypeOfShift,
-            ShiftStatus = shiftDtoWithoutId.ShiftStatus,
-            StartDateTime = new DateTimeOffset(shiftDtoWithoutId.StartDateTime).ToUnixTimeMilliseconds(),
-            EndDateTime = new DateTimeOffset(shiftDtoWithoutId.EndDateTime).ToUnixTimeMilliseconds(),
-            Location = shiftDtoWithoutId.Location
+            Description = newShiftDto.Description,
+            TypeOfShift = newShiftDto.TypeOfShift,
+            ShiftStatus = newShiftDto.ShiftStatus,
+            StartDateTime = new DateTimeOffset(newShiftDto.StartDateTime).ToUnixTimeMilliseconds(),
+            EndDateTime = new DateTimeOffset(newShiftDto.EndDateTime).ToUnixTimeMilliseconds(),
+            Location = newShiftDto.Location
         };
-        var reply = client.AddSingleShift(newShiftDto);
+        var reply = client.AddSingleShift(newShiftDtoToAdd);
 
         ShiftDTO shiftDto = new ShiftDTO
         {

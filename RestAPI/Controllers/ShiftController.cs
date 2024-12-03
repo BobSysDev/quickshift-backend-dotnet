@@ -4,6 +4,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 using GrpcClient;
+using NewShiftDTO = DTOs.Shift.NewShiftDTO;
 using Shift = Entities.Shift;
 using ShiftDTO = DTOs.Shift.ShiftDTO;
 
@@ -21,7 +22,7 @@ public class ShiftController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ShiftDTO>> AddShift([FromBody] ShiftDTOWithoutId request)
+    public async Task<ActionResult<ShiftDTO>> AddShift([FromBody] NewShiftDTO request)
     {
         try
         {
@@ -160,7 +161,7 @@ public class ShiftController : ControllerBase
     }
 
     [HttpPut("/Shift/{id:int}")]
-    public async Task<ActionResult<ShiftDTO>> UpdateShiftByItsId([FromRoute] int id, [FromBody] ShiftDTOWithoutId shiftDto)
+    public async Task<ActionResult<ShiftDTO>> UpdateShiftByItsId([FromRoute] int id, [FromBody] NewShiftDTO newShiftDto)
     {
         try
         {
@@ -170,12 +171,12 @@ public class ShiftController : ControllerBase
                 return NotFound($"Shift with ID {id} not found");
             }
 
-            existingShift.StartDateTime = shiftDto.StartDateTime;
-            existingShift.EndDateTime = shiftDto.EndDateTime;
-            existingShift.TypeOfShift = shiftDto.TypeOfShift;
-            existingShift.ShiftStatus = shiftDto.ShiftStatus;
-            existingShift.Description = shiftDto.Description;
-            existingShift.Location = shiftDto.Location;
+            existingShift.StartDateTime = newShiftDto.StartDateTime;
+            existingShift.EndDateTime = newShiftDto.EndDateTime;
+            existingShift.TypeOfShift = newShiftDto.TypeOfShift;
+            existingShift.ShiftStatus = newShiftDto.ShiftStatus;
+            existingShift.Description = newShiftDto.Description;
+            existingShift.Location = newShiftDto.Location;
 
             var updatedShift = await _shiftRepository.UpdateAsync(existingShift);
 

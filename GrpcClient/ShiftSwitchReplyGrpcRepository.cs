@@ -12,7 +12,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
 
     public ShiftSwitchReplyGrpcRepository()
     {
-        _grpcAddress = "http://192.168.140.143:50051";
+        _grpcAddress = "http://192.168.195.143:50051";
     }
 
     public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply shiftSwitchReply)

@@ -1,21 +1,8 @@
-﻿// using Grpc.Net.Client;
-// using GrpcClient;
-//
+namespace GrpcClient;
 
-using GrpcClient;
-using NewEmployeeDTO = DTOs.NewEmployeeDTO;
-
-Console.WriteLine("Starting the client...");
-
-var repo = new GrpcRepo();
-
-Console.WriteLine(await repo.CreateEmployee(new NewEmployeeDTO
+public class Program
 {
-    FirstName = "Sam",
-    LastName = "Knieza",
-    WorkingNumber = 2137,
-    Email = "sam.knieza@gmail.com",
-    Password = "dupadupa123"
-}));
-// var client = new ClientRequester();
-// Console.WriteLine(await client.SendHello("Dupa"));
+    public static void Main(string[] args)
+    {
+    }
+}

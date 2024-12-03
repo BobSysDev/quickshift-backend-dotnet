@@ -10,7 +10,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
 
     public EmployeeGrpcRepository()
     {
-        _grpcAddress = "http://192.168.140.143:50051";
+        _grpcAddress = "http://192.168.195.143:50051";
     }
 
     public async Task<Entities.Employee> AddAsync(Entities.Employee employee)

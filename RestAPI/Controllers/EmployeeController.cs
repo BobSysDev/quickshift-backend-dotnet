@@ -56,7 +56,7 @@ public class EmployeeController : ControllerBase
     {
         try
         {
-            //List<Shift> shifts = new List<Shift>();
+            
             
             Employee existingEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
             if (existingEmployee == null)

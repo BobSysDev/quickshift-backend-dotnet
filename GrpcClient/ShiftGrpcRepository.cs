@@ -13,7 +13,7 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public ShiftGrpcRepository()
     {
-        _grpcAddress = "http://192.168.140.143:50051";
+        _grpcAddress = "http://192.168.195.143:50051";
     }
 
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
@@ -222,16 +222,16 @@ public class ShiftGrpcRepository : IShiftRepository
         return shift;
     }
 
-    public static Entities.Shift EntityShiftWithoutIdToEntityShift(DTOs.Shift.ShiftDTOWithoutId shiftDtoWithoutId)
+    public static Entities.Shift EntityShiftWithoutIdToEntityShift(DTOs.Shift.NewShiftDTO newShiftDto)
     {
         Entities.Shift shift = new Entities.Shift
         {
-            Description = shiftDtoWithoutId.Description,
-            Location = shiftDtoWithoutId.Location,
-            ShiftStatus = shiftDtoWithoutId.ShiftStatus,
-            StartDateTime = shiftDtoWithoutId.StartDateTime,
-            EndDateTime = shiftDtoWithoutId.EndDateTime,
-            TypeOfShift = shiftDtoWithoutId.TypeOfShift
+            Description = newShiftDto.Description,
+            Location = newShiftDto.Location,
+            ShiftStatus = newShiftDto.ShiftStatus,
+            StartDateTime = newShiftDto.StartDateTime,
+            EndDateTime = newShiftDto.EndDateTime,
+            TypeOfShift = newShiftDto.TypeOfShift
         };
         return shift;
     }
