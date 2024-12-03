@@ -57,7 +57,7 @@ public class ShiftController : ControllerBase
             await _shiftRepository.AssignEmployeeToShift(long.CreateChecked(shiftId), long.CreateChecked(employeeId));
             return Ok();
         }
-        catch (KeyNotFoundException e)
+        catch (ArgumentException e)
         {
             return NotFound(e.Message);
         }
@@ -75,7 +75,7 @@ public class ShiftController : ControllerBase
             await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
             return Ok();
         }
-        catch (KeyNotFoundException e)
+        catch (ArgumentException e)
         {
             return NotFound(e.Message);
         }
@@ -105,7 +105,7 @@ public class ShiftController : ControllerBase
             };
             return Ok(shiftDto);
         }
-        catch (KeyNotFoundException e)
+        catch (ArgumentException e)
         {
             return NotFound(e.Message);
         }
@@ -194,7 +194,7 @@ public class ShiftController : ControllerBase
 
             return Ok(updatedDto);
         }
-        catch (KeyNotFoundException e)
+        catch (ArgumentException e)
         {
             return NotFound(e.Message);
         }
@@ -208,7 +208,7 @@ public class ShiftController : ControllerBase
             await _shiftRepository.DeleteAsync(id);
             return Ok();
         }
-        catch (KeyNotFoundException e)
+        catch (ArgumentException e)
         {
             return NotFound(e.Message);
         }

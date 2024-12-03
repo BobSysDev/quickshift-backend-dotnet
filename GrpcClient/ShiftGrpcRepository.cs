@@ -61,7 +61,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new KeyNotFoundException(e.Message);
+                throw new ArgumentException(e.Message+": "+shift.Id, nameof(shift.Id));
             }
 
             throw;
@@ -83,7 +83,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new KeyNotFoundException(e.Message);
+                throw new ArgumentException(e.Message+": "+shiftId, nameof(shiftId));
             }
 
             throw;
@@ -114,7 +114,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new KeyNotFoundException(e.Message);
+                throw new ArgumentException(e.Message+": "+id, nameof(id));
             }
 
             throw;
@@ -164,10 +164,16 @@ public class ShiftGrpcRepository : IShiftRepository
         }
         catch (RpcException e)
         {
-            Console.WriteLine($"Error: {e.StatusCode}, Message: {e.Message}");
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new KeyNotFoundException(e.Message);
+                if (e.Message.Contains("Shift"))
+                {
+                    throw new ArgumentException(e.Message + ": " + shiftId, nameof(shiftId));
+                }
+                else
+                {
+                    throw new ArgumentException(e.Message + ": " + employeeId, nameof(employeeId));
+                }
             }
 
             throw;
@@ -195,7 +201,14 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new KeyNotFoundException(e.Message);
+                if (e.Message.Contains("Shift"))
+                {
+                    throw new ArgumentException(e.Message + ": " + shiftId, nameof(shiftId));
+                }
+                else
+                {
+                    throw new ArgumentException(e.Message + ": " + employeeId, nameof(employeeId));
+                }
             }
 
             throw;
