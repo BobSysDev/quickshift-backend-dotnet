@@ -61,7 +61,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new KeyNotFoundException(e.Message);
             }
 
             throw;
@@ -83,7 +83,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new KeyNotFoundException(e.Message);
             }
 
             throw;
@@ -114,7 +114,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new KeyNotFoundException(e.Message);
             }
 
             throw;
@@ -167,7 +167,7 @@ public class ShiftGrpcRepository : IShiftRepository
             Console.WriteLine($"Error: {e.StatusCode}, Message: {e.Message}");
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new KeyNotFoundException(e.Message);
             }
 
             throw;
@@ -195,7 +195,7 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new KeyNotFoundException(e.Message);
             }
 
             throw;

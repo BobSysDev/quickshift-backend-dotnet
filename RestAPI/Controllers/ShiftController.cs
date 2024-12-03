@@ -57,13 +57,13 @@ public class ShiftController : ControllerBase
             await _shiftRepository.AssignEmployeeToShift(long.CreateChecked(shiftId), long.CreateChecked(employeeId));
             return Ok();
         }
-        catch (ArgumentException e)
+        catch (KeyNotFoundException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return Conflict(e.Message);
         }
     }
 
@@ -75,13 +75,13 @@ public class ShiftController : ControllerBase
             await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
             return Ok();
         }
-        catch (ArgumentException e)
+        catch (KeyNotFoundException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return Conflict(e.Message);
         }
     }
 
@@ -105,9 +105,9 @@ public class ShiftController : ControllerBase
             };
             return Ok(shiftDto);
         }
-        catch (InvalidOperationException e)
+        catch (KeyNotFoundException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
     }
 
@@ -194,9 +194,9 @@ public class ShiftController : ControllerBase
 
             return Ok(updatedDto);
         }
-        catch (InvalidOperationException e)
+        catch (KeyNotFoundException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
     }
 
@@ -208,9 +208,9 @@ public class ShiftController : ControllerBase
             await _shiftRepository.DeleteAsync(id);
             return Ok();
         }
-        catch (InvalidOperationException e)
+        catch (KeyNotFoundException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
     }
 }

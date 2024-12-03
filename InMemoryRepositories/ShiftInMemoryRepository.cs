@@ -18,7 +18,7 @@ public class ShiftInMemoryRepository : IShiftRepository
     {
         Shift? exisitingShift = shifts.SingleOrDefault(p => p.Id == shift.Id);
 
-        if (exisitingShift is null) throw new InvalidOperationException($"Shift with ID {shift.Id} not found");
+        if (exisitingShift is null) throw new KeyNotFoundException($"Shift with ID {shift.Id} not found");
 
         shifts.Remove(exisitingShift);
         shifts.Add(shift);
@@ -29,7 +29,7 @@ public class ShiftInMemoryRepository : IShiftRepository
     {
         Shift? shiftToRemove = shifts.FirstOrDefault(p => p.Id == id);
 
-        if (shiftToRemove is null) throw new InvalidOperationException($"Shift with ID {id} not found");
+        if (shiftToRemove is null) throw new KeyNotFoundException($"Shift with ID {id} not found");
 
         shifts.Remove(shiftToRemove);
     }
@@ -42,7 +42,7 @@ public class ShiftInMemoryRepository : IShiftRepository
     public async Task<Shift> GetSingleAsync(long id)
     {
         var shift = shifts.FirstOrDefault(c => c.Id == id);
-        if (shift is null) throw new InvalidOperationException($"Shift with ID '{id}' not found");
+        if (shift is null) throw new KeyNotFoundException($"Shift with ID '{id}' not found");
         return shift;
     }
 
@@ -57,7 +57,7 @@ public class ShiftInMemoryRepository : IShiftRepository
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
+            throw new KeyNotFoundException($"Shift with ID {shiftId} not found!");
         }
         else if (shift.AssingnedEmployees.Contains(employeeId))
         {
@@ -78,7 +78,7 @@ public class ShiftInMemoryRepository : IShiftRepository
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
         if (shift == null)
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} not found!");
+            throw new KeyNotFoundException($"Shift with ID {shiftId} not found!");
         }
         if (shift.AssingnedEmployees.Contains(employeeId))
         {
