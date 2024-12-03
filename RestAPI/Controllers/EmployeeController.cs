@@ -112,7 +112,11 @@ public class EmployeeController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message); 
+            return NotFound(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
         }
         
     }
