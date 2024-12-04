@@ -25,7 +25,6 @@ public class ShiftRepositoryProxy : IShiftRepository
     public async Task<Shift> AddAsync(Shift shift)
     {
         Shift addedShift = await _shiftStorageRepository.AddAsync(shift);
-        //Console.WriteLine(addedShift.Print());
         await _shiftCachingRepository.AddAsync(shift);
         return addedShift;
     }
@@ -75,15 +74,13 @@ public class ShiftRepositoryProxy : IShiftRepository
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
-    private async void RefreshCache()
+    private void RefreshCache()
     {
         if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
         {
             List<Shift> shifts =_shiftStorageRepository.GetManyAsync().ToList();
-
             _shiftCachingRepository = new ShiftInMemoryRepository();
             shifts.ForEach(shift => _shiftCachingRepository.AddAsync(shift));
-            
             _lastCacheUpdate = DateTime.Now;
         }
     }

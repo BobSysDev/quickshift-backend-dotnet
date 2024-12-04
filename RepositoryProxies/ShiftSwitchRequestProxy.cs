@@ -5,7 +5,12 @@ namespace RepositoryProxies;
 
 public class ShiftSwitchRequestProxy : IShiftRequestRepository
 {
-    public Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
+
+    private IShiftRequestRepository _shiftSwitchRequestCachingRepository { get; set; }
+    private IShiftRequestRepository _shiftSwitchRequestStorageRepository { get; set; }
+    private DateTime _lastCacheUpdate { get; set; } 
+    
+    public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
     {
         throw new NotImplementedException();
     }
@@ -43,5 +48,13 @@ public class ShiftSwitchRequestProxy : IShiftRequestRepository
     public Task<List<ShiftSwitchRequest>> GetByShiftAsync(long shiftId)
     {
         throw new NotImplementedException();
+    }
+    
+    private async void RefreshCache()
+    {
+        List<ShiftSwitchRequest> shiftSwitchRequests = _shiftSwitchRequestStorageRepository.GetManyAsync().ToList();
+        _shiftSwitchRequestCachingRepository = new ShiftSwitchRequestProxy();
+        shiftSwitchRequests.ForEach(shiftSwitchRequest => _shiftSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest));
+        _lastCacheUpdate = DateTime.Now;
     }
 }

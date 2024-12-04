@@ -70,18 +70,9 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     {
         if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
         {
-            List<Employee> employees =_employeeStorageRepository.GetManyAsync().ToList();
-            employees.ForEach(async employee =>
-            {
-                if (await _employeeCachingRepository.IsEmployeeInRepository(employee.Id))
-                {
-                    await _employeeCachingRepository.UpdateAsync(employee);
-                }
-                else
-                {
-                    await _employeeCachingRepository.AddAsync(employee);
-                }
-            });
+            List<Employee> employees = _employeeStorageRepository.GetManyAsync().ToList();
+            _employeeCachingRepository = new EmployeeInMemoryRepository();
+            employees.ForEach(employee => _employeeCachingRepository.AddAsync(employee));
             _lastCacheUpdate = DateTime.Now;
         }
     }
