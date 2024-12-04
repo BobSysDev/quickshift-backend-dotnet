@@ -6,7 +6,7 @@ using RepositoryContracts;
 
 namespace DTOs;
 
-public class EntityDTOConverter
+public class EntityDtoConverter
 {
     
     //all emp. dtos to emp. entity
@@ -239,22 +239,7 @@ public class EntityDTOConverter
         
         return shift;
     }
-    // public static Entities.Shift ShiftProposalDtoToShift(ShiftProposalDTO dto)
-    // {
-    //     Entities.Shift shift = new Entities.Shift()
-    //     {
-    //         Id = dto.Id,
-    //         StartDateTime = dto.StartDateTime,
-    //         EndDateTime = dto.EndDateTime,
-    //         TypeOfShift = dto.TypeOfShift,
-    //         ShiftStatus = dto.ShiftStatus,
-    //         Description = dto.Description,
-    //         Location = dto.Location,
-    //         AssingnedEmployees = dto.AssignedEmployees
-    //     };
-    //     
-    //     return shift;
-    // }
+    
     public static ShiftSwitchReply ShiftSwitchReplyDtoToShiftSwitchReply(ShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository)
     {
         ShiftSwitchReply shift = new ShiftSwitchReply()
@@ -265,13 +250,28 @@ public class EntityDTOConverter
         
         return shift;
     }
-    public static Entities.Shift ShiftSwitchRequestDtoToShift(ShiftSwitchRequestDTO dto)
+    public static ShiftSwitchRequest ShiftSwitchRequestDtoToShiftSwitchRequest(ShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
-        throw new NotImplementedException();
+        ShiftSwitchRequest shift = new ShiftSwitchRequest()
+        {
+            Id = dto.Id,
+            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            Details = dto.Details
+        };
+        
+        return shift;
     }
-    public static Entities.Shift ShiftSwitchRequestTimeframeDtoToShift(ShiftSwitchRequestTimeframeDTO dto)
+    public static ShiftSwitchRequestTimeframe ShiftSwitchRequestTimeframeDtoToShiftSwitchRequestTimeframe(ShiftSwitchRequestTimeframeDTO dto)
     {
-        throw new NotImplementedException();
+        ShiftSwitchRequestTimeframe shift = new ShiftSwitchRequestTimeframe()
+        {
+            Id = dto.Id,
+            TimeFrameStart = dto.StartDate,
+            TimeFrameEnd = dto.EndDate
+        };
+        
+        return shift;
     }
     
     
@@ -279,26 +279,69 @@ public class EntityDTOConverter
     
     public static List<ShiftDTO> ListShiftToListShiftDtos(List<Entities.Shift> list)
     {
-        throw new NotImplementedException();
+        List<ShiftDTO> shiftDtosToReturn = new List<ShiftDTO>();
+        foreach (var shift in list)
+        {
+            ShiftDTO dto = new ShiftDTO()
+            {
+                Id = shift.Id,
+                StartDateTime = shift.StartDateTime,
+                EndDateTime = shift.EndDateTime,
+                TypeOfShift = shift.TypeOfShift,
+                ShiftStatus = shift.ShiftStatus,
+                Description = shift.Description,
+                Location = shift.Location,
+                AssignedEmployees = shift.AssingnedEmployees
+            };
+            shiftDtosToReturn.Add(dto);
+        }
+
+        return shiftDtosToReturn;
     }
     public static NewShiftDTO ShiftToNewShiftDto(Entities.Shift s)
     {
-        throw new NotImplementedException();
+        NewShiftDTO dto = new NewShiftDTO()
+        {
+            StartDateTime = s.StartDateTime,
+            EndDateTime = s.EndDateTime,
+            TypeOfShift = s.TypeOfShift,
+            ShiftStatus = s.ShiftStatus,
+            Description = s.Description,
+            Location = s.Location,
+        };
+        
+        return dto;
     }
     
     public static ShiftDTO ShiftToShiftDto(Entities.Shift s)
     {
-        throw new NotImplementedException();
+        ShiftDTO dto = new ShiftDTO()
+        {
+            Id = s.Id,
+            StartDateTime = s.StartDateTime,
+            EndDateTime = s.EndDateTime,
+            TypeOfShift = s.TypeOfShift,
+            ShiftStatus = s.ShiftStatus,
+            Description = s.Description,
+            Location = s.Location,
+            AssignedEmployees = s.AssingnedEmployees
+        };
+        
+        return dto;
     }
     
-    public static ShiftProposalDTO ShiftToShiftProposalDto(Entities.Shift s)
-    {
-        throw new NotImplementedException();
-    }
     
-    public static ShiftSwitchReply ShiftToShiftSwitchReplyDto(Entities.ShiftSwitchReply s)
+    //TODO left here
+    public static ShiftSwitchReplyDTO ShiftToShiftSwitchReplyDto(Entities.ShiftSwitchReply s)
     {
-        throw new NotImplementedException();
+        ShiftSwitchReplyDTO dto = new ShiftSwitchReplyDTO()
+        {
+            Id = s.Id,
+            //RequestId = s.
+            
+        };
+        
+        return dto;
     }
     
     public static ShiftSwitchRequest ShiftToShiftSwitchRequest(Entities.ShiftSwitchRequest s)
