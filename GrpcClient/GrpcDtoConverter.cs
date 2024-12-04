@@ -1,4 +1,6 @@
+using Google.Protobuf.Collections;
 using Microsoft.VisualBasic.FileIO;
+using RepositoryContracts;
 
 namespace GrpcClient;
 
@@ -68,57 +70,167 @@ public class GrpcDtoConverter
 
     public static NewEmployeeDTO EmployeeToGrpcNewEmployeeDto(Entities.Employee e)
     {
-        throw new NotImplementedException();
+        NewEmployeeDTO dto = new NewEmployeeDTO
+        {
+            FirstName = e.FirstName,
+            LastName = e.LastName,
+            WorkingNumber = uint.CreateChecked(e.WorkingNumber),
+            Email = e.Email,
+            Password = e.Password,
+        };
+        return dto;
     }
     
     public static UpdateEmployeeDTO EmployeeToGrpcUpdateEmployeeDto(Entities.Employee e)
     {
-        throw new NotImplementedException();
+        UpdateEmployeeDTO dto = new UpdateEmployeeDTO
+        {
+            FirstName = e.FirstName,
+            LastName = e.LastName,
+            Id = e.Id,
+            WorkingNumber = uint.CreateChecked(e.WorkingNumber),
+            Email = e.Email,
+            Password = e.Password,
+        };
+        return dto;
     }
 
     
     //FOR SHIFT (grpcDto -> shift)
     public static Entities.Shift GrpcShiftDtoToShift(ShiftDTO dto)
     {
-        throw new NotImplementedException();
+        Entities.Shift shift = new Entities.Shift()
+        {
+            Id = dto.Id,
+            StartDateTime = new DateTime(dto.StartDateTime), 
+            EndDateTime = new DateTime(dto.EndDateTime), 
+            TypeOfShift = dto.TypeOfShift,
+            ShiftStatus = dto.ShiftStatus,
+            Description = dto.Description,
+            Location = dto.Location,
+            AssingnedEmployees = dto.AssignedEmployeeIds.ToList()
+        };
+        return shift;
     }
     public static Entities.Shift GrpcNewShiftDtoToShift(NewShiftDTO dto)
     {
-        throw new NotImplementedException();
+        Entities.Shift shift = new Entities.Shift()
+        {
+            StartDateTime = new DateTime(dto.StartDateTime), 
+            EndDateTime = new DateTime(dto.EndDateTime), 
+            TypeOfShift = dto.TypeOfShift,
+            ShiftStatus = dto.ShiftStatus,
+            Description = dto.Description,
+            Location = dto.Location,
+        };
+        return shift;
     }
     //list
     public static List<Entities.Shift> GrpcShiftDtoListToListShifts(ShiftDTOList dtos)
     {
-        throw new NotImplementedException();
+        List<ShiftDTO> dtos2 = dtos.Dtos.ToList();
+        List<Entities.Shift> shifts = new List<Entities.Shift>();
+        foreach (var dto in dtos2)
+        {
+            Entities.Shift shift = new Entities.Shift()
+            {
+                Id = dto.Id,
+                StartDateTime = new DateTime(dto.StartDateTime), 
+                EndDateTime = new DateTime(dto.EndDateTime), 
+                TypeOfShift = dto.TypeOfShift,
+                ShiftStatus = dto.ShiftStatus,
+                Description = dto.Description,
+                Location = dto.Location,
+                AssingnedEmployees = dto.AssignedEmployeeIds.ToList()
+            };
+            shifts.Add(shift);
+        }
+
+        return shifts;
     }
 
 
     //FOR SHIFT (shift -> grpcDto)
     public static ShiftDTO ShiftToGrpcShiftDto(Entities.Shift s)
     {
-        throw new NotImplementedException();
+        RepeatedField<long> Ids = new RepeatedField<long>();
+        Ids.Add(s.AssingnedEmployees);
+        ShiftDTO dto = new ShiftDTO()
+        {
+            Id = s.Id,
+            StartDateTime = s.StartDateTime.Ticks, 
+            EndDateTime = s.EndDateTime.Ticks, 
+            TypeOfShift = s.TypeOfShift,
+            ShiftStatus = s.ShiftStatus,
+            Description = s.Description,
+            Location = s.Location,
+            AssignedEmployeeIds = { Ids }
+            
+        };
+        return dto;
     }
     
     public static NewShiftDTO ShiftToGrpcNewShiftDto(Entities.Shift s)
     {
-        throw new NotImplementedException();
+        NewShiftDTO dto = new NewShiftDTO()
+        {
+            StartDateTime = s.StartDateTime.Ticks, 
+            EndDateTime = s.EndDateTime.Ticks, 
+            TypeOfShift = s.TypeOfShift,
+            ShiftStatus = s.ShiftStatus,
+            Description = s.Description,
+            Location = s.Location
+        };
+        return dto;
     }
     //list
     public static ShiftDTOList ListShiftsToGrpcShiftDtoList(List<Entities.Shift> shifts)
     {
-        throw new NotImplementedException();
+        ShiftDTOList shiftsToReturn = new ShiftDTOList();
+        foreach (var shift in shifts)
+        {
+            ShiftDTO dto = new ShiftDTO()
+            {
+                Id = shift.Id,
+                StartDateTime = shift.StartDateTime.Ticks, 
+                EndDateTime = shift.EndDateTime.Ticks, 
+                TypeOfShift = shift.TypeOfShift,
+                ShiftStatus = shift.ShiftStatus,
+                Description = shift.Description,
+                Location = shift.Location,
+                AssignedEmployeeIds = { shift.AssingnedEmployees }
+            };
+            shiftsToReturn.Dtos.Add(dto);
+        }
+
+        return shiftsToReturn;
     }
     
     
     //FOR REPLY (grpcDto -> reply)
-    public static Entities.ShiftSwitchReply GrpcReplyDtoToShiftSwitchReply(ReplyDTO dto)
+    public static Entities.ShiftSwitchReply GrpcReplyDtoToShiftSwitchReply(ReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchReply reply = new Entities.ShiftSwitchReply()
+        {
+            Id = dto.Id,
+            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
+            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            TargetAccepted = dto.TargetAccepted,
+            OriginAccepted = dto.OriginAccepted,
+            Details = dto.Details,
+        };
+        return reply;
     }
     
-    public static Entities.ShiftSwitchReply GrpcNewReplyDtoToShiftSwitchReply(NewReplyDTO dto)
+    public static Entities.ShiftSwitchReply GrpcNewReplyDtoToShiftSwitchReply(NewReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchReply reply = new Entities.ShiftSwitchReply()
+        {
+            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
+            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            Details = dto.Details
+        };
+        return reply;
     }
     
     
