@@ -3,11 +3,11 @@ using RepositoryContracts;
 
 namespace RepositoryProxies;
 
-public class ShiftSwitchRequestProxy : IShiftRequestRepository
+public class ShiftSwitchSwitchRequestProxy : IShiftSwitchRequestRepository
 {
 
-    private IShiftRequestRepository _shiftSwitchRequestCachingRepository { get; set; }
-    private IShiftRequestRepository _shiftSwitchRequestStorageRepository { get; set; }
+    private IShiftSwitchRequestRepository ShiftSwitchSwitchRequestCachingRepository { get; set; }
+    private IShiftSwitchRequestRepository ShiftSwitchSwitchRequestStorageRepository { get; set; }
     private DateTime _lastCacheUpdate { get; set; } 
     
     public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
@@ -52,9 +52,9 @@ public class ShiftSwitchRequestProxy : IShiftRequestRepository
     
     private async void RefreshCache()
     {
-        List<ShiftSwitchRequest> shiftSwitchRequests = _shiftSwitchRequestStorageRepository.GetManyAsync().ToList();
-        _shiftSwitchRequestCachingRepository = new ShiftSwitchRequestProxy();
-        shiftSwitchRequests.ForEach(shiftSwitchRequest => _shiftSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest));
+        List<ShiftSwitchRequest> shiftSwitchRequests = ShiftSwitchSwitchRequestStorageRepository.GetManyAsync().ToList();
+        ShiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestProxy();
+        shiftSwitchRequests.ForEach(shiftSwitchRequest => ShiftSwitchSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest));
         _lastCacheUpdate = DateTime.Now;
     }
 }

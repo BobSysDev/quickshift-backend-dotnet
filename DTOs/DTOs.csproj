@@ -10,4 +10,16 @@
       <ProjectReference Include="..\Entities\Entities.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="ShiftSwitching\ShiftSwitchRequestTimeframes\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="ShiftSwitching\ShiftSwitchRequestTimeframes\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ShiftSwitching\ShiftSwitchRequestTimeframes\**" />
+    </ItemGroup>
+
 </Project>
