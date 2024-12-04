@@ -1,5 +1,7 @@
+using System.Numerics;
 using System.Runtime.InteropServices;
 using DTOs.Shift;
+using DTOs.ShiftSwitching;
 using Entities;
 using RepositoryContracts;
 
@@ -276,7 +278,7 @@ public class EntityDtoConverter
     
     
     //all shift entity to shift dtos
-    
+    //list1
     public static List<ShiftDTO> ListShiftToListShiftDtos(List<Entities.Shift> list)
     {
         List<ShiftDTO> shiftDtosToReturn = new List<ShiftDTO>();
@@ -298,6 +300,48 @@ public class EntityDtoConverter
 
         return shiftDtosToReturn;
     }
+    
+    //list2
+    public static List<ShiftSwitchReplyDTO> ListShiftSwitchRepliesToListShiftSwitchReplyDtos(List<ShiftSwitchReply> list, long requestId)
+    {
+        List<ShiftSwitchReplyDTO> shiftDtosToReturn = new List<ShiftSwitchReplyDTO>();
+        foreach (var reply in list)
+        {
+            ShiftSwitchReplyDTO dto = new ShiftSwitchReplyDTO()
+            {
+                Id = reply.Id,
+                RequestId = requestId,
+                TargetEmployeeId = reply.TargetEmployee.Id,
+                TargetShiftId = reply.TargetShift.Id,
+                Details = reply.Details,
+                OriginAccepted = reply.OriginAccepted,
+                TargetAccepted = reply.TargetAccepted
+            };
+            shiftDtosToReturn.Add(dto);
+        }
+
+        return shiftDtosToReturn;
+    }
+    
+    //list3
+    public static List<ShiftSwitchRequestTimeframeDTO> ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(List<ShiftSwitchRequestTimeframe> list, long requestId)
+    {
+        List<ShiftSwitchRequestTimeframeDTO> TrequestTimeframeDtos = new List<ShiftSwitchRequestTimeframeDTO>();
+        foreach (var reply in list)
+        {
+            ShiftSwitchRequestTimeframeDTO dto = new ShiftSwitchRequestTimeframeDTO()
+            {
+                Id = reply.Id,
+                RequestId = requestId,
+                StartDate = reply.TimeFrameStart,
+                EndDate = reply.TimeFrameEnd
+            };
+            TrequestTimeframeDtos.Add(dto);
+        }
+
+        return TrequestTimeframeDtos;
+    }
+    
     public static NewShiftDTO ShiftToNewShiftDto(Entities.Shift s)
     {
         NewShiftDTO dto = new NewShiftDTO()
@@ -331,26 +375,99 @@ public class EntityDtoConverter
     }
     
     
-    //TODO left here
-    public static ShiftSwitchReplyDTO ShiftToShiftSwitchReplyDto(Entities.ShiftSwitchReply s)
+    public static ShiftSwitchReplyDTO ShiftSwitchReplyToShiftSwitchReplyDto(Entities.ShiftSwitchReply s, long requestId)
     {
         ShiftSwitchReplyDTO dto = new ShiftSwitchReplyDTO()
         {
             Id = s.Id,
-            //RequestId = s.
-            
+            RequestId = requestId,
+            TargetEmployeeId = s.TargetEmployee.Id,
+            TargetShiftId = s.TargetShift.Id,
+            Details = s.Details,
+            OriginAccepted = s.OriginAccepted,
+            TargetAccepted = s.TargetAccepted
         };
         
         return dto;
     }
     
-    public static ShiftSwitchRequest ShiftToShiftSwitchRequest(Entities.ShiftSwitchRequest s)
+    public static ShiftSwitchRequestDTO ShiftSwitchRequestToShiftSwitchRequestDto(Entities.ShiftSwitchRequest s)
     {
-        throw new NotImplementedException();
+        ShiftSwitchRequestDTO dto = new ShiftSwitchRequestDTO()
+        {
+            Id = s.Id,
+            OriginEmployeeId = s.OriginEmployee.Id,
+            OriginShiftId = s.OriginShift.Id,
+            Details = s.Details,
+            ReplyDtos = ListShiftSwitchRepliesToListShiftSwitchReplyDtos(s.SwitchReplies,s.Id),
+            TimeframeDtos = ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(s.Timeframes,s.Id)
+        };
+        
+        return dto;
     }
     
-    public static ShiftSwitchRequestTimeframeDTO ShiftToShiftSwitchRequestTimeframeDto(Entities.ShiftSwitchRequestTimeframe s)
+    public static ShiftSwitchRequestTimeframeDTO ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(Entities.ShiftSwitchRequestTimeframe s, long requestId)
     {
-        throw new NotImplementedException();
+        ShiftSwitchRequestTimeframeDTO dto = new ShiftSwitchRequestTimeframeDTO()
+        {
+            Id = s.Id,
+            RequestId = requestId,
+            StartDate = s.TimeFrameStart,
+            EndDate = s.TimeFrameEnd
+        };
+        return dto;
+    }
+    
+    //other shift switch ones: (dtos->entities)
+    //--replies
+    public static ShiftSwitchReply NewShiftSwitchReplyDtoToShiftSwitchReply(NewShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
+    {
+        ShiftSwitchReply reply = new ShiftSwitchReply()
+        {
+            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
+            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            Details = dto.Details
+        };
+        return reply;
+    }
+    
+    public static ShiftSwitchReply UpdateShiftSwitchReplyDtoToShiftSwitchReply(UpdateShiftSwitchReplyDTO dto)
+    {
+        ShiftSwitchReply reply = new ShiftSwitchReply()
+        {
+            Details = dto.Details
+        };
+        return reply;
+    }
+    //--requests
+    public static ShiftSwitchRequest NewShiftSwitchRequestDtoToShiftSwitchRequest(NewShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
+    {
+        ShiftSwitchRequest request = new ShiftSwitchRequest()
+        {
+            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+            Details = dto.Details
+        };
+        return request;
+    }
+    
+    public static ShiftSwitchRequest UpdateShiftSwitchRequestDtoToShiftSwitchRequest(UpdateShiftSwitchRequestDTO dto )
+    {
+        ShiftSwitchRequest request = new ShiftSwitchRequest()
+        {
+            Details = dto.Details
+        };
+        return request;
+    }
+    
+    //--timeframes
+    public static ShiftSwitchRequestTimeframe NewShiftSwitchRequestTimeframeDtoToShiftSwitchRequestTimeframe(ShiftSwitchRequestTimeframeDTO dto)
+    {
+        ShiftSwitchRequestTimeframe timeframe = new ShiftSwitchRequestTimeframe()
+        {
+            TimeFrameStart = dto.StartDate,
+            TimeFrameEnd = dto.EndDate
+        };
+        return timeframe;
     }
 }
