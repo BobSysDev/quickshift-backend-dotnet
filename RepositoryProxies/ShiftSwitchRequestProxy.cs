@@ -15,7 +15,8 @@ public class ShiftSwitchSwitchRequestProxy : IShiftSwitchRequestRepository
     public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
     {
         ShiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
-        ShiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
+        // ShiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
+        throw new NotImplementedException();
     }
 
     public Task<ShiftSwitchRequest> UpdateAsync(ShiftSwitchRequest request)
