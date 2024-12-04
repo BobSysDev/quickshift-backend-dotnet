@@ -5,59 +5,84 @@ using ShiftSwitchRequest = Entities.ShiftSwitchRequest;
 
 namespace RepositoryProxies;
 
-public class ShiftSwitchSwitchRequestProxy : IShiftSwitchRequestRepository
+public class ShiftSwitchRequestProxy : IShiftSwitchRequestRepository
 {
 
-    private IShiftSwitchRequestRepository ShiftSwitchSwitchRequestCachingRepository { get; set; }
-    private IShiftSwitchRequestRepository ShiftSwitchSwitchRequestStorageRepository { get; set; }
-    private DateTime _lastCacheUpdate { get; set; } 
+    private IShiftSwitchRequestRepository _shiftSwitchSwitchRequestCachingRepository { get; set; }
+    private IShiftSwitchRequestRepository _shiftSwitchSwitchRequestStorageRepository { get; set; }
+    private DateTime _lastCacheUpdate { get; set; }
+
+    public ShiftSwitchRequestProxy()
+    {
+        _shiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
+        _shiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
+
+        List<ShiftSwitchRequest> shiftSwitchRequests =
+            _shiftSwitchSwitchRequestStorageRepository.GetManyAsync().ToList();
+        shiftSwitchRequests.ForEach(shiftSwitchRequests => _shiftSwitchSwitchRequestCachingRepository.AddAsync(shiftSwitchRequests));
+
+        _lastCacheUpdate = DateTime.Now;
+    }
     
-    public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
+    public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest shiftSwitchRequest)
     {
-        ShiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
-        ShiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
+        ShiftSwitchRequest addedShiftSwitchRequest =
+            await _shiftSwitchSwitchRequestStorageRepository.AddAsync(shiftSwitchRequest);
+        await _shiftSwitchSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest);
+        return addedShiftSwitchRequest;
     }
 
-    public Task<ShiftSwitchRequest> UpdateAsync(ShiftSwitchRequest request)
+    public async Task<ShiftSwitchRequest> UpdateAsync(ShiftSwitchRequest shiftSwitchRequest)
     {
-        throw new NotImplementedException();
+        await _shiftSwitchSwitchRequestCachingRepository.UpdateAsync(shiftSwitchRequest);
+        await _shiftSwitchSwitchRequestStorageRepository.UpdateAsync(shiftSwitchRequest);
+        return shiftSwitchRequest;
     }
 
-    public Task DeleteAsync(long id)
+    public async Task DeleteAsync(long id)
     {
-        throw new NotImplementedException();
+        await _shiftSwitchSwitchRequestCachingRepository.DeleteAsync(id);
+        await _shiftSwitchSwitchRequestStorageRepository.DeleteAsync(id);
     }
 
     public IQueryable<ShiftSwitchRequest> GetManyAsync()
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return _shiftSwitchSwitchRequestCachingRepository.GetManyAsync();
     }
 
-    public Task<ShiftSwitchRequest> GetSingleAsync(long id)
-    {
-        throw new NotImplementedException();
+    public async Task<ShiftSwitchRequest> GetSingleAsync(long id)
+    { 
+        RefreshCache();
+        return await _shiftSwitchSwitchRequestCachingRepository.GetSingleAsync(id);
     }
 
-    public Task<bool> IsRequestInRepository(long id)
+    public async Task<bool> IsRequestInRepository(long id)
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return await _shiftSwitchSwitchRequestCachingRepository.IsRequestInRepository(id);
     }
 
-    public Task<List<ShiftSwitchRequest>> GetByEmployeeAsync(long employeeId)
+    public async Task<List<ShiftSwitchRequest>> GetByEmployeeAsync(long employeeId)
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return await _shiftSwitchSwitchRequestCachingRepository.GetByEmployeeAsync(employeeId);
     }
 
-    public Task<List<ShiftSwitchRequest>> GetByShiftAsync(long shiftId)
+    public async Task<List<ShiftSwitchRequest>> GetByShiftAsync(long shiftId)
     {
-        throw new NotImplementedException();
+        RefreshCache();
+        return await _shiftSwitchSwitchRequestCachingRepository.GetByShiftAsync(shiftId);
     }
     
-    private async void RefreshCache()
+    private void RefreshCache()
     {
-        List<ShiftSwitchRequest> shiftSwitchRequests = ShiftSwitchSwitchRequestStorageRepository.GetManyAsync().ToList();
-        ShiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestProxy();
-        shiftSwitchRequests.ForEach(shiftSwitchRequest => ShiftSwitchSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest));
+        List<ShiftSwitchRequest> shiftSwitchRequests = _shiftSwitchSwitchRequestStorageRepository.GetManyAsync().ToList();
+        _shiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
+        foreach (var shiftSwitchRequest in shiftSwitchRequests)
+        { 
+            _shiftSwitchSwitchRequestCachingRepository.AddAsync(shiftSwitchRequest);
+        }
         _lastCacheUpdate = DateTime.Now;
     }
 }
