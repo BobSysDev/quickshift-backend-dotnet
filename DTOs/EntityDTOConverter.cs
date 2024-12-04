@@ -121,17 +121,17 @@ public class EntityDTOConverter
         throw new NotImplementedException();
     }
     
-    public static ShiftSwitchReply ShiftToShiftSwitchReplyDto(Entities.Shift s)
+    public static ShiftSwitchReply ShiftToShiftSwitchReplyDto(Entities.ShiftSwitchReply s)
     {
         throw new NotImplementedException();
     }
     
-    public static ShiftSwitchRequest ShiftToShiftSwitchRequest(Entities.Shift s)
+    public static ShiftSwitchRequest ShiftToShiftSwitchRequest(Entities.ShiftSwitchRequest s)
     {
         throw new NotImplementedException();
     }
     
-    public static ShiftSwitchRequestTimeframeDTO ShiftToShiftSwitchRequestTimeframeDto(Entities.Shift s)
+    public static ShiftSwitchRequestTimeframeDTO ShiftToShiftSwitchRequestTimeframeDto(Entities.ShiftSwitchRequestTimeframe s)
     {
         throw new NotImplementedException();
     }
