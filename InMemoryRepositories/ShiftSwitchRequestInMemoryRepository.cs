@@ -3,7 +3,7 @@ using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class ShiftSwitchRequestInMemoryRepository : IShiftRequestRepository
+public class ShiftSwitchSwitchRequestInMemoryRepository : IShiftSwitchRequestRepository
 {
     private readonly List<ShiftSwitchRequest> requests = new List<ShiftSwitchRequest>();
     

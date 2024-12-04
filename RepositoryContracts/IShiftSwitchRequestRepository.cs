@@ -1,7 +1,7 @@
 ﻿using Entities;
 namespace RepositoryContracts;
 
-    public interface IShiftRequestRepository
+    public interface IShiftSwitchRequestRepository
     {
         Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request);
         Task<ShiftSwitchRequest> UpdateAsync(ShiftSwitchRequest request);
