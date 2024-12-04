@@ -1,5 +1,6 @@
 ﻿
 
+using DTOs;
 using Grpc.Core;
 using Grpc.Net.Client;
 using RepositoryContracts;
@@ -19,7 +20,13 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
     {
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
         var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
-        return null;
+        var reply = new ShiftSwitchReplyDTO
+        {
+           Id = shiftSwitchReply.Id,
+           OriginShiftId = shiftSwitchReply.
+        };
+        
+        
     }
 
     public Task<Entities.ShiftSwitchReply> UpdateAsync(Entities.ShiftSwitchReply shiftSwitchReply)

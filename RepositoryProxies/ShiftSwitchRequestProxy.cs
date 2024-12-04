@@ -1,5 +1,7 @@
-﻿using Entities;
+﻿using GrpcClient;
+using InMemoryRepositories;
 using RepositoryContracts;
+using ShiftSwitchRequest = Entities.ShiftSwitchRequest;
 
 namespace RepositoryProxies;
 
@@ -12,7 +14,8 @@ public class ShiftSwitchSwitchRequestProxy : IShiftSwitchRequestRepository
     
     public async Task<ShiftSwitchRequest> AddAsync(ShiftSwitchRequest request)
     {
-        throw new NotImplementedException();
+        ShiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
+        ShiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
     }
 
     public Task<ShiftSwitchRequest> UpdateAsync(ShiftSwitchRequest request)

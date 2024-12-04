@@ -9,3 +9,4 @@ public class SwitchShiftReply
     public bool OriginAccepted { get; set; }
     public string Details { get; set; }
 }
+//TODO: IM PRETTY SURE THIS NEEDS TO BE DELETED
