@@ -2,33 +2,35 @@
 using DTOs.ShiftSwitching;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using RepositoryProxies;
 
 namespace RestAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("ShiftSwitching/[controller]")]
 
 public class RequestController
 {
-    private readonly IShiftSwitchRequestRepository _requestRepository;
-    public RequestController(IShiftSwitchRequestRepository requestRepository)
+    private readonly IShiftSwitchRepository _shiftSwitchRepository;
+    
+    public RequestController(IShiftSwitchRepository shiftSwitchRepository)
     {
-        _requestRepository = requestRepository;
+        _shiftSwitchRepository = shiftSwitchRepository;
     }
     
-    [HttpPost("/ShiftSwitching/[controller]")]
+    [HttpPost]
     public async Task<ShiftSwitchRequestDTO> AddSwitchRequest([FromBody] NewShiftSwitchRequestDTO dto)
     {
         throw new NotImplementedException();
     }
 
-    [HttpGet("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpGet("{id:long}")]
     public async Task<ShiftSwitchRequestDTO> GetSingleShiftRequestById([FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpGet("/ShiftSwitching/[controller]")]
+    [HttpGet]
     public async Task<List<ShiftSwitchRequestDTO>> GetAllShiftRequests()
     {
         throw new NotImplementedException();
@@ -46,20 +48,14 @@ public class RequestController
         throw new NotImplementedException();
     }
 
-    [HttpPut("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpPut("{id:long}")]
     public async Task<ShiftSwitchRequestDTO> UpdateShiftRequest([FromRoute] long id, [FromBody] UpdateShiftSwitchRequestDTO dto)
     {
         throw new NotImplementedException();
     }
 
-    [HttpDelete("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpDelete("{id:long}")]
     public async Task DeleteShiftRequest([FromRoute] long id)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPatch("/ShiftSwitching/[controller]/{id:long}/Reply/{replyId:long}/Resolve")]
-    public async Task<List<ShiftDTO>> ResolveRequest([FromRoute] long id, [FromRoute] long replyId)
     {
         throw new NotImplementedException();
     }

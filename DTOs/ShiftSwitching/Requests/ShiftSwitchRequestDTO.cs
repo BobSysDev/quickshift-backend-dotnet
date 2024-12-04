@@ -3,7 +3,6 @@
 public class ShiftSwitchRequestDTO
 {
     public long Id { get; set; }
-    public long RequestId { get; set; }
     public long OriginEmployeeId { get; set; }
     public long OriginShiftId { get; set; }
     public string? Details { get; set; }

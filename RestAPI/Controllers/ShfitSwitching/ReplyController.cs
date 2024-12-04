@@ -1,11 +1,12 @@
 ﻿using DTOs;
+using DTOs.Shift;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
 namespace RestAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("ShiftSwitching/Request/{requestId:long}/[controller]")]
 
 public class ReplyController
 {
@@ -16,68 +17,68 @@ public class ReplyController
         _replyRepository = replyRepository;
     }
 
-    [HttpPost("/ShiftSwitching/Request/{requestId:long}/[controller]")]
+    [HttpPost]
     public async Task<ShiftSwitchReplyDTO> AddSwitchReply([FromRoute] long requestId, [FromBody] NewShiftSwitchReplyDTO dto)
     {
         throw new NotImplementedException();
     }
     
-    [HttpGet("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpGet("/ShiftSwitching/Reply/{id:long}")]
     public async Task<ShiftSwitchReplyDTO> GetSingleSwitchReplyById([FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpGet("/ShiftSwitching/[controller]/")]
-    public async Task<ShiftSwitchReplyDTO> GetAllSwitchReplies()
-    {
-        throw new NotImplementedException();
-    }
-    
-    [HttpGet("/ShiftSwitching/Request/{requestId:long}/[controller]")]
-    public async Task<ShiftSwitchReplyDTO> GetAllSwitchRepliesByRequestId([FromRoute] long requestId)
+    [HttpGet]
+    public async Task<List<ShiftSwitchReplyDTO>> GetAllSwitchRepliesByRequestId([FromRoute] long requestId)
     {
         throw new NotImplementedException();
     }
     
     [HttpGet("/Employee/{employeeId:long}/ShiftSwitching/[controller]")]
-    public async Task<ShiftSwitchReplyDTO> GetAllSwitchRepliesByEmployeeId([FromRoute] long employeeId)
+    public async Task<List<ShiftSwitchReplyDTO>> GetAllSwitchRepliesByEmployeeId([FromRoute] long employeeId)
     {
         throw new NotImplementedException();
     }
     
-    [HttpPost("/ShiftSwitching/Request/{requestId:long}/[controller]/{id:long}/TargetAccept")]
+    [HttpPost("{id:long}/TargetAccept")]
     public async Task<ShiftSwitchReplyDTO> TargetAcceptSwitchReply([FromRoute] long requestId, [FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpDelete("/ShiftSwitching/Request/{requestId:long}/[controller]/{id:long}/TargetAccept")]
+    [HttpDelete("{id:long}/TargetAccept")]
     public async Task<ShiftSwitchReplyDTO> TargetRemoveAcceptSwitchReply([FromRoute] long requestId, [FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpPost("/ShiftSwitching/Request/{requestId:long}/[controller]/{id:long}/OriginAccept")]
+    [HttpPost("{id:long}/OriginAccept")]
     public async Task<ShiftSwitchReplyDTO> OriginAcceptSwitchReply([FromRoute] long requestId, [FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpDelete("/ShiftSwitching/Request/{requestId:long}/[controller]/{id:long}/OriginAccept")]
+    [HttpDelete("{id:long}/OriginAccept")]
     public async Task<ShiftSwitchReplyDTO> OriginRemoveAcceptSwitchReply([FromRoute] long requestId, [FromRoute] long id)
     {
         throw new NotImplementedException();
     }
     
-    [HttpPut("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpPut("/ShiftSwitching/Reply/{id:long}")]
     public async Task<ShiftSwitchReplyDTO> UpdateSingleSwitchReply([FromRoute] long id, [FromBody] UpdateShiftSwitchReplyDTO dto)
     {
         throw new NotImplementedException();
     }
 
-    [HttpDelete("/ShiftSwitching/[controller]/{id:long}")]
+    [HttpDelete("/ShiftSwitching/Reply/{id:long}")]
     public async Task DeleteSingleSwitchReplyById([FromRoute] long id)
+    {
+        throw new NotImplementedException();
+    }
+    
+    [HttpPatch("{id:long}/Resolve")]
+    public async Task<List<ShiftDTO>> ResolveRequest([FromRoute] long requestId, [FromRoute] long id)
     {
         throw new NotImplementedException();
     }
