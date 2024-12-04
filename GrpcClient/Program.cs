@@ -1,7 +1,8 @@
-﻿using Grpc.Net.Client;
-using GrpcClient;
+namespace GrpcClient;
 
-Console.WriteLine("Starting the client...");
-
-var client = new ClientRequester();
-Console.WriteLine(await client.SendHello("Dupa"));
+public class Program
+{
+    public static void Main(string[] args)
+    {
+    }
+}
