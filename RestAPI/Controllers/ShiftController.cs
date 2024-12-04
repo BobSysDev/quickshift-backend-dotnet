@@ -26,7 +26,7 @@ public class ShiftController : ControllerBase
     {
         try
         {
-            Shift tmp = ShiftGrpcRepository.EntityShiftWithoutIdToEntityShift(request);
+            Shift tmp = ShiftGrpcRepository.NewShiftDtoToEntityShift(request);
             //Console.WriteLine(tmp.Print());
             var shift = await _shiftRepository.AddAsync(tmp);
             //Console.WriteLine(shift.Print());

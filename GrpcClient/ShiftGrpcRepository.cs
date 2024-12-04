@@ -34,7 +34,7 @@ public class ShiftGrpcRepository : IShiftRepository
             
         });
         
-        Entities.Shift shiftRecieved = grpcShiftObject(reply);
+        Entities.Shift shiftRecieved = GrpcShiftDtoToEntityShift(reply);
         return shiftRecieved;
     }
 
@@ -55,7 +55,7 @@ public class ShiftGrpcRepository : IShiftRepository
                 Location = shift.Location
             };
             ShiftDTO shiftDto = await client.UpdateSingleShiftAsync(updateShiftDto);
-            return grpcShiftObject(shiftDto);
+            return GrpcShiftDtoToEntityShift(shiftDto);
         }
         catch (RpcException e)
         {
@@ -96,7 +96,7 @@ public class ShiftGrpcRepository : IShiftRepository
         var client = new Shift.ShiftClient(channel);
         List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
         List<Entities.Shift> shifts = new List<Entities.Shift>();
-        shiftDtos.ForEach(dto => { shifts.Add(grpcShiftObject(dto)); });
+        shiftDtos.ForEach(dto => { shifts.Add(GrpcShiftDtoToEntityShift(dto)); });
         return shifts.AsQueryable();
     }
 
@@ -108,7 +108,7 @@ public class ShiftGrpcRepository : IShiftRepository
             var client = new Shift.ShiftClient(channel);
             var request = new Id { Id_ = id };
             var reply = await client.GetSingleShiftByIdAsync(request);
-            return grpcShiftObject(reply);
+            return GrpcShiftDtoToEntityShift(reply);
         }
         catch (RpcException e)
         {
@@ -160,7 +160,7 @@ public class ShiftGrpcRepository : IShiftRepository
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
             Console.WriteLine($"Updated Shift: {updatedShift.Id}, Employee ID: {employeeId}");
 
-            return grpcShiftObject(updatedShift);
+            return GrpcShiftDtoToEntityShift(updatedShift);
         }
         catch (RpcException e)
         {
@@ -195,7 +195,7 @@ public class ShiftGrpcRepository : IShiftRepository
             var unassignRequest = new ShiftEmployeePair { ShiftId = shiftId, EmployeeId = employeeId};
             var reply = await client.UnAssignEmployeeFromShiftAsync(unassignEmployeeRequest);
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-            return grpcShiftObject(updatedShift);
+            return GrpcShiftDtoToEntityShift(updatedShift);
         }
         catch (RpcException e)
         {
@@ -217,9 +217,9 @@ public class ShiftGrpcRepository : IShiftRepository
     }
     
 
-    public static Entities.Shift grpcShiftObject(ShiftDTO shiftDto)
+    public static Entities.Shift GrpcShiftDtoToEntityShift(ShiftDTO shiftDto)
     {
-        //Console.WriteLine(shiftDto.AssignedEmployeeIds);
+
         Entities.Shift shift = new Entities.Shift()
         {
             Description = shiftDto.Description,
@@ -229,13 +229,12 @@ public class ShiftGrpcRepository : IShiftRepository
             StartDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.StartDateTime).DateTime,
             EndDateTime = DateTimeOffset.FromUnixTimeMilliseconds(shiftDto.EndDateTime).Date,
             Location = shiftDto.Location,
-            //EmployeeId = shiftDto.AssignedEmployeeId==-1?null:shiftDto.AssignedEmployeeId
             AssingnedEmployees = shiftDto.AssignedEmployeeIds.ToList()
         };
         return shift;
     }
 
-    public static Entities.Shift EntityShiftWithoutIdToEntityShift(DTOs.Shift.NewShiftDTO newShiftDto)
+    public static Entities.Shift NewShiftDtoToEntityShift(DTOs.Shift.NewShiftDTO newShiftDto)
     {
         Entities.Shift shift = new Entities.Shift
         {

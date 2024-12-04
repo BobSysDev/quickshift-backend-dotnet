@@ -62,7 +62,7 @@ public class AuthController: ControllerBase
         try
         {
             request.Password = Hash(request.Password);
-            var newEmployee = await _employeeRepository.AddAsync(EmployeeGrpcRepository.EntityNewEmployeeDtoToEntityEmployee(request));
+            var newEmployee = await _employeeRepository.AddAsync(EmployeeGrpcRepository.NewEmployeeDtoToEntityEmployee(request));
             SimpleEmployeeDTO dto = new SimpleEmployeeDTO
             {
                 Id = newEmployee.Id,
