@@ -232,75 +232,226 @@ public class GrpcDtoConverter
         };
         return reply;
     }
-    
+    //list
+    public static List<Entities.ShiftSwitchReply> GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(ReplyDTOList dtos, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    {
+        List<ReplyDTO> dtos2 = dtos.Dtos.ToList();
+        List<Entities.ShiftSwitchReply> replies = new List<Entities.ShiftSwitchReply>();
+        foreach (var dto in dtos2)
+        {
+            Entities.ShiftSwitchReply shift = GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository);
+            replies.Add(shift);
+        }
+
+        return replies;
+    }
     
     //FOR REPLY (reply -> grpcDto)
     public static ReplyDTO ShiftSwitchReplyToGrpcReplyDto(Entities.ShiftSwitchReply r)
     {
-        throw new NotImplementedException();
+        ReplyDTO dto = new ReplyDTO()
+        {
+            Id = r.Id,
+            TargetShiftId = r.TargetShift.Id,
+            TargetEmployeeId = r.TargetEmployee.Id,
+            TargetAccepted = r.TargetAccepted,
+            OriginAccepted = r.OriginAccepted,
+            Details = r.Details,
+        };
+        return dto;
     }
     
     public static NewReplyDTO ShiftSwitchReplyToGrpcNewReplyDto(Entities.ShiftSwitchReply r)
     {
-        throw new NotImplementedException();
+        NewReplyDTO dto = new NewReplyDTO()
+        {
+            TargetShiftId = r.TargetShift.Id,
+            TargetEmployeeId = r.TargetEmployee.Id,
+            Details = r.Details,
+        };
+        return dto;
+    }
+    //list
+    public static ReplyDTOList ShiftSwitchRequestListToGrpcShiftSwitchReplyListDto(List<Entities.ShiftSwitchReply> replies)
+    {
+        ReplyDTOList shiftsToReturn = new ReplyDTOList();
+        foreach (var r in replies)
+        {
+            ReplyDTO dto = new ReplyDTO()
+            {
+                Id = r.Id,
+                TargetShiftId = r.TargetShift.Id,
+                TargetEmployeeId = r.TargetEmployee.Id,
+                TargetAccepted = r.TargetAccepted,
+                OriginAccepted = r.OriginAccepted,
+                Details = r.Details,
+            };
+            shiftsToReturn.Dtos.Add(dto);
+        }
+
+        return shiftsToReturn;
     }
     
     
     //FOR REQUEST (grpcDto -> request)
-    public static Entities.ShiftSwitchRequest GrpcRequestDtoToShiftSwitchRequest(RequestDTO dto)
+    public static Entities.ShiftSwitchRequest GrpcRequestDtoToShiftSwitchRequest(RequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchRequest request = new Entities.ShiftSwitchRequest()
+        {
+            Id = dto.Id,
+            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            Details = dto.Details,
+            SwitchReplies =
+                GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(dto.Replies, _shiftRepository, _employeeRepository),
+            Timeframes = ShiftSwitchRequestTimeframeDtoListToShiftSwitchRequestTimeframeList(dto.Timeframes)
+        };
+        return request;
     }
     
-    public static Entities.ShiftSwitchRequest GrpcNewRequestDtoToShiftSwitchRequest(NewRequestDTO dto)
+    
+    
+    public static Entities.ShiftSwitchRequest GrpcNewRequestDtoToShiftSwitchRequest(NewRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchRequest request = new Entities.ShiftSwitchRequest()
+        {
+            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            Details = dto.Details,
+            Timeframes = ShiftSwitchRequestTimeframeDtoListToShiftSwitchRequestTimeframeList(dto.Timeframes)
+        };
+        return request;
     }
     
     public static Entities.ShiftSwitchRequest GrpcUpdateRequestDtoToShiftSwitchRequest(UpdateRequestDTO dto)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchRequest request = new Entities.ShiftSwitchRequest()
+        {
+            Id = dto.Id,
+            Details = dto.Details,
+        };
+        return request;
     }
     
     
     //FOR REQUEST (request -> grpcDto)
     public static RequestDTO ShiftSwitchRequestToGrpcRequestDto(Entities.ShiftSwitchRequest r)
     {
-        throw new NotImplementedException();
+        RequestDTO request = new RequestDTO()
+        {
+            Id = r.Id,
+            OriginShiftId = r.OriginShift.Id,
+            OriginEmployeeId = r.OriginEmployee.Id,
+            Details = r.Details,
+            Replies = ShiftSwitchRequestListToGrpcShiftSwitchReplyListDto(r.SwitchReplies),
+            Timeframes = ShiftSwitchRequestTimeframeListToShiftSwitchRequestTimeframeDtoList(r.Timeframes)
+        };
+        return request;
     }
     
     public static NewRequestDTO ShiftSwitchRequestToGrpcNewRequestDto(Entities.ShiftSwitchRequest r)
     {
-        throw new NotImplementedException();
+        NewRequestDTO request = new NewRequestDTO()
+        {
+            OriginShiftId = r.OriginShift.Id,
+            OriginEmployeeId = r.OriginEmployee.Id,
+            Details = r.Details,
+            Timeframes = ShiftSwitchRequestTimeframeListToShiftSwitchRequestTimeframeDtoList(r.Timeframes)
+        };
+        return request;
     }
     
     public static UpdateRequestDTO ShiftSwitchRequestToGrpcUpdateNewRequestDto(Entities.ShiftSwitchRequest r)
     {
-        throw new NotImplementedException();
+        UpdateRequestDTO request = new UpdateRequestDTO()
+        {
+            Id = r.Id,
+            Details = r.Details,
+        };
+        return request;
     }
     
     
     //FOR TIMEFRAME (grpcDto -> timeframe)
     public static Entities.ShiftSwitchRequestTimeframe GrpcTimeframeDtoToShiftSwitchRequestTimeframe(TimeframeDTO dto)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchRequestTimeframe timeframe = new Entities.ShiftSwitchRequestTimeframe()
+        {
+            Id = dto.Id,
+            TimeFrameStart = new DateTime(dto.TimeFrameStart),
+            TimeFrameEnd = new DateTime(dto.TimeFrameEnd)
+        };
+        return timeframe;
     }
     
     public static Entities.ShiftSwitchRequestTimeframe GrpcNewTimeframeDtoToShiftSwitchRequestTimeframe(NewTimeframeDTO dto)
     {
-        throw new NotImplementedException();
+        Entities.ShiftSwitchRequestTimeframe timeframe = new Entities.ShiftSwitchRequestTimeframe()
+        {
+            TimeFrameStart = new DateTime(dto.TimeFrameStart),
+            TimeFrameEnd = new DateTime(dto.TimeFrameEnd)
+        };
+        return timeframe;
     }
-    
-    
+    //list
+    public static List<Entities.ShiftSwitchRequestTimeframe>
+        ShiftSwitchRequestTimeframeDtoListToShiftSwitchRequestTimeframeList(TimeframeDTOList dtos)
+    {
+        List<Entities.ShiftSwitchRequestTimeframe> timeframes = new List<Entities.ShiftSwitchRequestTimeframe>();
+        List<TimeframeDTO> dtos2 = dtos.Dtos.ToList();
+        foreach (var dto in dtos2)
+        {
+            Entities.ShiftSwitchRequestTimeframe t = new Entities.ShiftSwitchRequestTimeframe()
+            {
+                Id = dto.Id,
+                TimeFrameStart = new DateTime(dto.TimeFrameStart), 
+                TimeFrameEnd = new DateTime(dto.TimeFrameEnd) 
+            };
+            timeframes.Add(t);
+        }
+
+        return timeframes;
+    }
+
     //FOR TIMEFRAME (timeframe -> grpcDto)
-    public static TimeframeDTO ShiftSwitchRequestTimeframeToGrpcTimeframeDto(Entities.ShiftSwitchRequestTimeframe dto)
+    public static TimeframeDTO ShiftSwitchRequestTimeframeToGrpcTimeframeDto(Entities.ShiftSwitchRequestTimeframe timeframe)
     {
-        throw new NotImplementedException();
+        TimeframeDTO dto = new TimeframeDTO()
+        {
+            Id = timeframe.Id,
+            TimeFrameStart = timeframe.TimeFrameStart.Ticks,
+            TimeFrameEnd = timeframe.TimeFrameEnd.Ticks
+        };
+        return dto;
     }
     
-    public static NewTimeframeDTO ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(Entities.ShiftSwitchRequestTimeframe dto)
+    public static NewTimeframeDTO ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(Entities.ShiftSwitchRequestTimeframe timeframe)
     {
-        throw new NotImplementedException();
+        NewTimeframeDTO dto = new NewTimeframeDTO()
+        {
+            TimeFrameStart = timeframe.TimeFrameStart.Ticks,
+            TimeFrameEnd = timeframe.TimeFrameEnd.Ticks
+        };
+        return dto;
+    }
+    //list
+    public static TimeframeDTOList
+        ShiftSwitchRequestTimeframeListToShiftSwitchRequestTimeframeDtoList(List<Entities.ShiftSwitchRequestTimeframe> timeframes)
+    {
+        TimeframeDTOList dtos = new TimeframeDTOList();
+        foreach (var timeframe in timeframes)
+        {
+            TimeframeDTO dto = new TimeframeDTO()
+            {
+                Id = timeframe.Id,
+                TimeFrameStart = timeframe.TimeFrameStart.Ticks,
+                TimeFrameEnd= timeframe.TimeFrameEnd.Ticks
+                
+            };
+            dtos.Dtos.Add(dto);
+        }
+
+        return dtos;
     }
 }
 
