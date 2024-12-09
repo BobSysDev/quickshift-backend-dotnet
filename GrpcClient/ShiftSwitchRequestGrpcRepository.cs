@@ -1,4 +1,4 @@
-﻿using DTOs;
+using DTOs;
 using DTOs.Shift;
 using DTOs.ShiftSwitching;
 using Grpc.Core;
