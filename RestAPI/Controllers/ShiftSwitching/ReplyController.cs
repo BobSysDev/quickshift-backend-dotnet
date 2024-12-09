@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.Shift;
 using Entities;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
@@ -34,10 +35,13 @@ public class ReplyController : ControllerBase
             var addedReply = await _shiftSwitchRepository.AddShiftSwitchReplyAsync(replyToAdd, requestId);
             return Ok(EntityDtoConverter.ShiftSwitchReplyToShiftSwitchReplyDto(addedReply, requestId));
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            Console.WriteLine(e);
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -50,9 +54,13 @@ public class ReplyController : ControllerBase
             long requestId = await _shiftSwitchRepository.GetShiftSwitchRequestIdByShiftSwitchReplyId(id);
             return Ok(EntityDtoConverter.ShiftSwitchReplyToShiftSwitchReplyDto(retrievedReply, requestId));
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -69,9 +77,13 @@ public class ReplyController : ControllerBase
                 replyDtos.Add(EntityDtoConverter.ShiftSwitchReplyToShiftSwitchReplyDto(reply, requestId)));
             return Ok(replyDtos);
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -91,9 +103,13 @@ public class ReplyController : ControllerBase
             });
             return Ok(replyDtos);
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -110,9 +126,13 @@ public class ReplyController : ControllerBase
             );
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            throw;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -129,9 +149,13 @@ public class ReplyController : ControllerBase
             );
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -148,9 +172,13 @@ public class ReplyController : ControllerBase
             );
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -167,9 +195,13 @@ public class ReplyController : ControllerBase
             );
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -185,9 +217,13 @@ public class ReplyController : ControllerBase
             var updatedReply = await _shiftSwitchRepository.UpdateShiftSwitchReplyAsync(replyToUpdate);
             return Ok(EntityDtoConverter.ShiftSwitchReplyToShiftSwitchReplyDto(updatedReply, requestId));
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -199,9 +235,13 @@ public class ReplyController : ControllerBase
             await _shiftSwitchRepository.DeleteShiftSwitchReplyAsync(id);
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null;  //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -237,9 +277,13 @@ public class ReplyController : ControllerBase
             
             return Ok(new List<ShiftDTO>{originShiftDto, targetShiftDto});
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 }

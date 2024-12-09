@@ -32,10 +32,13 @@ public class TimeframeController : ControllerBase
             var addedTimeframe = await _shiftSwitchRepository.AddShiftSwitchRequestTimeframeAsync(timeframeToAdd, requestId);
             return Ok(EntityDtoConverter.ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(addedTimeframe, requestId));
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            Console.WriteLine(e);
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
     
@@ -48,9 +51,14 @@ public class TimeframeController : ControllerBase
             var requestId = await _shiftSwitchRepository.GetShiftSwitchRequestIdByShiftSwitchRequestTimeframeId(id);
             return Ok(EntityDtoConverter.ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(timeframe, requestId));
         }
-        catch
+
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
     
@@ -71,9 +79,13 @@ public class TimeframeController : ControllerBase
             
             return Ok(timeframes);
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
@@ -85,9 +97,13 @@ public class TimeframeController : ControllerBase
             await _shiftSwitchRepository.DeleteShiftSwitchRequestTimeframeAsync(id);
             return Ok();
         }
-        catch
+        catch (InvalidOperationException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
     }
 }
