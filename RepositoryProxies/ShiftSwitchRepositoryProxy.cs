@@ -15,11 +15,12 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     private IShiftSwitchReplyRepository _replyStorageRepository { get; set; }
     private IShiftSwitchRequestTimeframeRepository _timeframeStorageRepository { get; set; }
     private DateTime _lastChacheUpdate{ get; set; }
+    private static string _grpcAddress = "http://192.168.195.143:50051";
 
     public ShiftSwitchRepositoryProxy(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
         _replyStorageRepository = new ShiftSwitchReplyGrpcRepository(shiftRepository, employeeRepository);
-        _requestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository(shiftRepository, employeeRepository);
+        _requestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
         _timeframeStorageRepository = new ShiftSwitchRequestTimeframeInMemoryRepository();
         List<ShiftSwitchRequest> shifts = _shiftSwitchCachingRepository.GetManyShiftSwitchRequestAsync().ToList();
         _shiftSwitchCachingRepository= new ShiftSwitchInMemoryRepository();

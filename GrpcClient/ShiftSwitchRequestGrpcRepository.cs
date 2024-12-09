@@ -13,9 +13,9 @@ namespace GrpcClient
         private readonly IShiftRepository _shiftRepository;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ShiftSwitchSwitchRequestGrpcRepository(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
+        public ShiftSwitchSwitchRequestGrpcRepository(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository, string grpcAddress)
         {
-            _grpcAddress = "http://192.168.195.143:50051";
+            _grpcAddress = grpcAddress;
             _shiftRepository = shiftRepository;
             _employeeRepository = employeeRepository;
         }

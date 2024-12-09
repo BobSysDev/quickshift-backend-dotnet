@@ -64,9 +64,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 Details = reply.Details,
                 Id = reply.Id
             });
-
             
-
             return GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
         }
         catch (RpcException e)

@@ -11,9 +11,9 @@ public class ShiftGrpcRepository : IShiftRepository
 {
     private string _grpcAddress { get; set; }
 
-    public ShiftGrpcRepository()
+    public ShiftGrpcRepository(string grpcAddress)
     {
-        _grpcAddress = "http://192.168.195.143:50051";
+        _grpcAddress = grpcAddress;
     }
 
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
