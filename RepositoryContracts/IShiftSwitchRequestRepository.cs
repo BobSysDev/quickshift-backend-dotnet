@@ -8,7 +8,6 @@ namespace RepositoryContracts;
         Task DeleteAsync(long id);
         IQueryable<ShiftSwitchRequest> GetManyAsync();
         Task<ShiftSwitchRequest> GetSingleAsync(long id);
-        Task<bool> IsRequestInRepository(long id);
         Task<List<ShiftSwitchRequest>> GetByEmployeeAsync(long employeeId);
         Task<List<ShiftSwitchRequest>> GetByShiftAsync(long shiftId);
     }

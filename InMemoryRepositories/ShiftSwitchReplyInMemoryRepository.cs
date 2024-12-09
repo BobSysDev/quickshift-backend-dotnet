@@ -48,26 +48,20 @@ public class ShiftSwitchReplyInMemoryRepository : IShiftSwitchReplyRepository
         if (reply is null) throw new InvalidOperationException($"Reply with ID {id} not found.");
         return reply;
     }
-
-    public Task<bool> IsReplyInRepository(long id)
-    {
-        var exists = replies.Any(reply => reply.Id == id);
-        return Task.FromResult(exists);
-    }
-
-    public async Task<ShiftSwitchReply> SetTargetAcceptedAsync(long id, bool accepted)
+    
+    public async Task<bool> SetTargetAcceptedAsync(long id, bool accepted)
     {
         var reply = replies.SingleOrDefault(r => r.Id == id);
         if (reply is null) throw new InvalidOperationException($"Reply with ID {id} not found.");
         reply.TargetAccepted = accepted;
-        return reply;
+        return await Task.FromResult(true);
     }
 
-    public async Task<ShiftSwitchReply> SetOriginAcceptedAsync(long id, bool accepted)
+    public async Task<bool> SetOriginAcceptedAsync(long id, bool accepted)
     {
         var reply = replies.SingleOrDefault(r => r.Id == id);
         if (reply is null) throw new InvalidOperationException($"Reply with ID {id} not found.");
         reply.OriginAccepted = accepted;
-        return await Task.FromResult(reply);
+        return await Task.FromResult(true);
     }
 }
