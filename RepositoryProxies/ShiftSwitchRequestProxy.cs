@@ -12,10 +12,10 @@ public class ShiftSwitchRequestProxy : IShiftSwitchRequestRepository
     private IShiftSwitchRequestRepository _shiftSwitchSwitchRequestStorageRepository { get; set; }
     private DateTime _lastCacheUpdate { get; set; }
 
-    public ShiftSwitchRequestProxy()
+    public ShiftSwitchRequestProxy(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
         _shiftSwitchSwitchRequestCachingRepository = new ShiftSwitchSwitchRequestInMemoryRepository();
-        _shiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository();
+        _shiftSwitchSwitchRequestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository(shiftRepository, employeeRepository);
 
         List<ShiftSwitchRequest> shiftSwitchRequests =
             _shiftSwitchSwitchRequestStorageRepository.GetManyAsync().ToList();
@@ -56,13 +56,7 @@ public class ShiftSwitchRequestProxy : IShiftSwitchRequestRepository
         RefreshCache();
         return await _shiftSwitchSwitchRequestCachingRepository.GetSingleAsync(id);
     }
-
-    public async Task<bool> IsRequestInRepository(long id)
-    {
-        RefreshCache();
-        return await _shiftSwitchSwitchRequestCachingRepository.IsRequestInRepository(id);
-    }
-
+    
     public async Task<List<ShiftSwitchRequest>> GetByEmployeeAsync(long employeeId)
     {
         RefreshCache();

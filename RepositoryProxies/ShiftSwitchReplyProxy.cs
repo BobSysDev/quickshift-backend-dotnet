@@ -12,10 +12,10 @@ public class ShiftSwitchReplyProxy : IShiftSwitchReplyRepository
     private IShiftSwitchReplyRepository _ShiftSwitchReplyShiftStorageRepository { get; set; }
     private DateTime _lastCacheUpdate { get; set; }
 
-    public ShiftSwitchReplyProxy()
+    public ShiftSwitchReplyProxy(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
         _ShiftSwitchReplyCachingRepository = new ShiftSwitchReplyInMemoryRepository();
-        _ShiftSwitchReplyShiftStorageRepository = new ShiftSwitchReplyGrpcRepository();
+        _ShiftSwitchReplyShiftStorageRepository = new ShiftSwitchReplyGrpcRepository(shiftRepository, employeeRepository);
         List<ShiftSwitchReply> shiftSwitchReplies = _ShiftSwitchReplyShiftStorageRepository.GetManyAsync().ToList();
         shiftSwitchReplies.ForEach(shiftSwitchReplies => _ShiftSwitchReplyCachingRepository.AddAsync(shiftSwitchReplies));
         _lastCacheUpdate = DateTime.Today;
@@ -52,26 +52,20 @@ public class ShiftSwitchReplyProxy : IShiftSwitchReplyRepository
         RefreshCache();
         return await _ShiftSwitchReplyCachingRepository.GetSingleAsync(id);
     }
-
-    public async Task<bool> IsReplyInRepository(long id)
-    {
-        RefreshCache();
-        return await _ShiftSwitchReplyCachingRepository.IsReplyInRepository(id);
-    }
-
-    public async Task<ShiftSwitchReply> SetTargetAcceptedAsync(long id, bool accepted)
+    
+    public async Task<bool> SetTargetAcceptedAsync(long id, bool accepted)
     {
         await _ShiftSwitchReplyCachingRepository.SetTargetAcceptedAsync(id, accepted);
         await _ShiftSwitchReplyShiftStorageRepository.SetTargetAcceptedAsync(id, accepted);
-        return await _ShiftSwitchReplyCachingRepository.GetSingleAsync(id);
+        return await Task.FromResult(true);
     }
 
-    public async Task<ShiftSwitchReply> SetOriginAcceptedAsync(long id, bool accepted)
+    public async Task<bool> SetOriginAcceptedAsync(long id, bool accepted)
     {
         
         await _ShiftSwitchReplyCachingRepository.SetOriginAcceptedAsync(id, accepted);
         await _ShiftSwitchReplyShiftStorageRepository.SetOriginAcceptedAsync(id, accepted);
-        return await _ShiftSwitchReplyCachingRepository.GetSingleAsync(id);
+        return await Task.FromResult(true); 
     }
     
     private async void RefreshCache()

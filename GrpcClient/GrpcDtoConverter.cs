@@ -1,3 +1,4 @@
+using System.Xml;
 using Google.Protobuf.Collections;
 using Microsoft.VisualBasic.FileIO;
 using RepositoryContracts;
@@ -125,6 +126,23 @@ public class GrpcDtoConverter
         };
         return shift;
     }
+
+    //TODO:DELETE
+    
+    // public static Entities.ShiftSwitchReply ShiftSwitchReplyDtoToShiftSwitch(ReplyDTO dto, IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
+    // {
+    //     Entities.ShiftSwitchReply shiftSwitchReply = new Entities.ShiftSwitchReply()
+    //     {
+    //         Details = dto.Details,
+    //         Id = dto.Id,
+    //         OriginAccepted = dto.OriginAccepted,
+    //         TargetEmployee = employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+    //         TargetAccepted = dto.TargetAccepted,
+    //         TargetShift = shiftRepository.GetSingleAsync(dto.TargetShiftId).Result
+    //     };
+    //     return shiftSwitchReply;
+    // }
+    
     //list
     public static List<Entities.Shift> GrpcShiftDtoListToListShifts(ShiftDTOList dtos)
     {
@@ -148,6 +166,8 @@ public class GrpcDtoConverter
 
         return shifts;
     }
+    
+    
 
 
     //FOR SHIFT (shift -> grpcDto)

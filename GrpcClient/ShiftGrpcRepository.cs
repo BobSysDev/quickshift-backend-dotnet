@@ -34,8 +34,8 @@ public class ShiftGrpcRepository : IShiftRepository
             
         });
         
-        Entities.Shift shiftRecieved = GrpcShiftDtoToEntityShift(reply);
-        return shiftRecieved;
+        Entities.Shift shiftReceived = GrpcShiftDtoToEntityShift(reply);
+        return shiftReceived;
     }
 
     public async Task<Entities.Shift> UpdateAsync(Entities.Shift shift)
