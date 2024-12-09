@@ -13,7 +13,8 @@ namespace GrpcClient
         private readonly IShiftRepository _shiftRepository;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ShiftSwitchSwitchRequestGrpcRepository(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository, string grpcAddress)
+        public ShiftSwitchSwitchRequestGrpcRepository(IShiftRepository shiftRepository,
+            IEmployeeRepository employeeRepository, string grpcAddress)
         {
             _grpcAddress = grpcAddress;
             _shiftRepository = shiftRepository;
@@ -33,16 +34,26 @@ namespace GrpcClient
                     OriginShiftId = request.OriginShift.Id,
                     Details = request.Details
                 });
-                
+
                 Entities.ShiftSwitchRequest shiftSwitchRequestReceived =
                     GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository, _employeeRepository);
                 return shiftSwitchRequestReceived;
             }
             catch (RpcException e)
             {
-                if (e.StatusCode == StatusCode.AlreadyExists)
+                if (e.StatusCode == StatusCode.NotFound)
                 {
-                    throw new ArgumentException($"Shift switch request already exists: {request.Id}", nameof(request.Id));
+                    if (e.Message.ToLower().Contains("employee"))
+                    {
+                        throw new ArgumentException($"Employee with ID: {request.OriginEmployee.Id} was not found.",
+                            nameof(request.OriginEmployee.Id));
+                    }
+
+                    if (e.Message.ToLower().Contains("shift"))
+                    {
+                        throw new ArgumentException($"Shift with ID: {request.OriginShift.Id} was not found.",
+                            nameof(request.OriginShift.Id));
+                    }
                 }
 
                 throw;
@@ -55,13 +66,14 @@ namespace GrpcClient
             {
                 using var channel = GrpcChannel.ForAddress(_grpcAddress);
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
-                
+
                 var reply = await client.UpdateRequestAsync(new UpdateRequestDTO
                 {
                     Details = request.Details
                 });
-             
-                return  GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository, _employeeRepository);
+
+                return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository,
+                    _employeeRepository);
             }
             catch (RpcException e)
             {
@@ -113,8 +125,10 @@ namespace GrpcClient
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var request = new Id { Id_ = id };
                 var response = await client.GetSingleByIdAsync(request);
-                return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(response, _shiftRepository, _employeeRepository);
-            } catch (RpcException e)
+                return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(response, _shiftRepository,
+                    _employeeRepository);
+            }
+            catch (RpcException e)
             {
                 if (e.StatusCode == StatusCode.NotFound)
                 {
@@ -124,7 +138,7 @@ namespace GrpcClient
                 throw;
             }
         }
-        
+
         public async Task<List<Entities.ShiftSwitchRequest>> GetByEmployeeAsync(long employeeId)
         {
             try
@@ -132,7 +146,9 @@ namespace GrpcClient
                 using var channel = GrpcChannel.ForAddress(_grpcAddress);
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var response = await client.GetRequestsByOriginEmployeeIdAsync(new Id { Id_ = employeeId });
-                return response.Dtos.Select(dto => GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository)).ToList();
+                return response.Dtos.Select(dto =>
+                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository))
+                    .ToList();
             }
             catch (RpcException e)
             {
@@ -147,10 +163,24 @@ namespace GrpcClient
 
         public async Task<List<Entities.ShiftSwitchRequest>> GetByShiftAsync(long shiftId)
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress);
-            var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
-            var response = await client.GetRequestsByOriginShiftIdAsync(new Id { Id_ = shiftId });
-            return response.Dtos.Select(dto => GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository)).ToList();
+            try
+            {
+                using var channel = GrpcChannel.ForAddress(_grpcAddress);
+                var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
+                var response = await client.GetRequestsByOriginShiftIdAsync(new Id { Id_ = shiftId });
+                return response.Dtos.Select(dto =>
+                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository))
+                    .ToList();
+            }
+            catch (RpcException e)
+            {
+                if (e.StatusCode == StatusCode.NotFound)
+                {
+                    throw new ArgumentException(e.Message + ": " + shiftId, nameof(shiftId));
+                }
+
+                throw;
+            }
         }
     }
 }

@@ -51,6 +51,7 @@ public class TimeframeController : ControllerBase
             var requestId = await _shiftSwitchRepository.GetShiftSwitchRequestIdByShiftSwitchRequestTimeframeId(id);
             return Ok(EntityDtoConverter.ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(timeframe, requestId));
         }
+
         catch (InvalidOperationException e)
         {
             return BadRequest(e.Message);
