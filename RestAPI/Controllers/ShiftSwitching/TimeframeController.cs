@@ -34,8 +34,7 @@ public class TimeframeController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
         }
     }
     
@@ -48,9 +47,9 @@ public class TimeframeController : ControllerBase
             var requestId = await _shiftSwitchRepository.GetShiftSwitchRequestIdByShiftSwitchRequestTimeframeId(id);
             return Ok(EntityDtoConverter.ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(timeframe, requestId));
         }
-        catch
+        catch (Exception e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
         }
     }
     
@@ -71,9 +70,9 @@ public class TimeframeController : ControllerBase
             
             return Ok(timeframes);
         }
-        catch
+        catch (Exception e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
         }
     }
 
@@ -85,9 +84,9 @@ public class TimeframeController : ControllerBase
             await _shiftSwitchRepository.DeleteShiftSwitchRequestTimeframeAsync(id);
             return Ok();
         }
-        catch
+        catch (Exception e)
         {
-            return null; //TODO: ERROR CATCHING
+            return BadRequest(e.Message);
         }
     }
 }
