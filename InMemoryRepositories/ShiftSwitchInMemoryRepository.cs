@@ -165,6 +165,10 @@ namespace InMemoryRepositories
         public async Task<List<ShiftSwitchReply>> GetManyShiftSwitchRepliesByRequestIdAsync(long requestId)
         {
             var reply = _requests.Where(r => r.Id == requestId).SelectMany(r => r.SwitchReplies).ToList();
+            
+            if (reply == null)
+                throw new InvalidOperationException($"ShiftSwitchReplies with ID {requestId} not found.");
+            
             return await Task.FromResult(reply);
         }
         
@@ -174,7 +178,10 @@ namespace InMemoryRepositories
         {
             var reply = _requests.SelectMany(r => r.SwitchReplies)
                 .Where(reply => reply.TargetEmployee.Id == employeeId).ToList();
-
+            
+            if (reply == null)
+                throw new InvalidOperationException($"ShiftSwitchReply with ID {employeeId} not found.");
+            
             return reply;
         }
         
