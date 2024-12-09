@@ -34,9 +34,10 @@ public class ReplyController : ControllerBase
             var addedReply = await _shiftSwitchRepository.AddShiftSwitchReplyAsync(replyToAdd, requestId);
             return Ok(EntityDtoConverter.ShiftSwitchReplyToShiftSwitchReplyDto(addedReply, requestId));
         }
-        catch
+        catch (Exception e)
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            Console.WriteLine(e);
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -51,7 +52,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -70,7 +71,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -92,7 +93,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -111,7 +112,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            throw;  //TODO: ERROR CATCHING
         }
     }
 
@@ -130,7 +131,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -149,7 +150,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -168,7 +169,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -186,7 +187,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -200,7 +201,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 
@@ -238,7 +239,7 @@ public class ReplyController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 }

@@ -11,7 +11,7 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     private IEmployeeRepository _employeeCachingRepository { get; set; } //caching = inmemory
     private IEmployeeRepository _employeeStorageRepository { get; set; }//storage = grpc(java) -> DB
     private DateTime _lastCacheUpdate { get; set; }
-    private static string _grpcAddress = "http://192.168.195.143:50051";
+    private static string _grpcAddress = "http://localhost:50051";
     
     public EmployeeRepositoryProxy()
     {

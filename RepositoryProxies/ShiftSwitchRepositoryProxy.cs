@@ -15,16 +15,16 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     private IShiftSwitchReplyRepository _replyStorageRepository { get; set; }
     private IShiftSwitchRequestTimeframeRepository _timeframeStorageRepository { get; set; }
     private DateTime _lastChacheUpdate{ get; set; }
-    private static string _grpcAddress = "http://192.168.195.143:50051";
+    private static string _grpcAddress = "http://localhost:50051";
 
     public ShiftSwitchRepositoryProxy(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
-        _replyStorageRepository = new ShiftSwitchReplyGrpcRepository(shiftRepository, employeeRepository);
+        _replyStorageRepository = new ShiftSwitchReplyGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
         _requestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
-        _timeframeStorageRepository = new ShiftSwitchRequestTimeframeInMemoryRepository();
-        List<ShiftSwitchRequest> shifts = _shiftSwitchCachingRepository.GetManyShiftSwitchRequestAsync().ToList();
+        _timeframeStorageRepository = new ShiftSwitchRequestTimeframeGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
+        List<ShiftSwitchRequest> requests = _requestStorageRepository.GetManyAsync().ToList();
         _shiftSwitchCachingRepository= new ShiftSwitchInMemoryRepository();
-        shifts.ForEach(request => _shiftSwitchCachingRepository.AddShiftSwitchRequestAsync(request));
+        requests.ForEach(request => _shiftSwitchCachingRepository.AddShiftSwitchRequestAsync(request));
         _lastChacheUpdate = DateTime.Now;
     }
     
@@ -75,7 +75,7 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
 
     public async Task<ShiftSwitchReply> AddShiftSwitchReplyAsync(ShiftSwitchReply reply, long requestId)
     {
-        ShiftSwitchReply addedReply = await _replyStorageRepository.AddAsync(reply);
+        ShiftSwitchReply addedReply = await _replyStorageRepository.AddAsync(reply, requestId);
         await _shiftSwitchCachingRepository.AddShiftSwitchReplyAsync(reply, requestId);
         return addedReply;
     }
@@ -121,7 +121,7 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     public async Task<ShiftSwitchReply> SetShiftSwitchReplyOriginAcceptedAsync(long id, bool accepted)
     {
         await _shiftSwitchCachingRepository.SetShiftSwitchReplyOriginAcceptedAsync(id, accepted);
-        await _replyStorageRepository.SetTargetAcceptedAsync(id, accepted);
+        await _replyStorageRepository.SetOriginAcceptedAsync(id, accepted);
         return await GetSingleShiftSwitchReplyAsync(id);
     }
 
@@ -134,7 +134,8 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     public async Task<ShiftSwitchRequestTimeframe> AddShiftSwitchRequestTimeframeAsync(ShiftSwitchRequestTimeframe timeframe, long requestId)
     {
         ShiftSwitchRequestTimeframe addedRequestTimeframe =
-            await _timeframeStorageRepository.AddAsync(timeframe);
+            await _timeframeStorageRepository.AddAsync(timeframe, requestId);
+        await _shiftSwitchCachingRepository.AddShiftSwitchRequestTimeframeAsync(addedRequestTimeframe, requestId);
         return addedRequestTimeframe;
     }
     

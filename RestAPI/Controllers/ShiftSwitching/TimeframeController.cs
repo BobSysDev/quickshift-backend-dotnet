@@ -32,9 +32,10 @@ public class TimeframeController : ControllerBase
             var addedTimeframe = await _shiftSwitchRepository.AddShiftSwitchRequestTimeframeAsync(timeframeToAdd, requestId);
             return Ok(EntityDtoConverter.ShiftSwitchRequestTimeframeToShiftSwitchRequestTimeframeDto(addedTimeframe, requestId));
         }
-        catch
+        catch (Exception e)
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            Console.WriteLine(e);
+            return null; //TODO: ERROR CATCHING
         }
     }
     
@@ -49,7 +50,7 @@ public class TimeframeController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
     
@@ -72,7 +73,7 @@ public class TimeframeController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -86,7 +87,7 @@ public class TimeframeController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 }

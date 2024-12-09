@@ -35,7 +35,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -49,7 +49,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
     
@@ -65,7 +65,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -81,7 +81,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
     
@@ -97,7 +97,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -113,7 +113,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null; //TODO: ERROR CATCHING
         }
     }
 
@@ -127,7 +127,7 @@ public class RequestController : ControllerBase
         }
         catch
         {
-            throw new NotImplementedException(); //TODO: ERROR CATCHING
+            return null;  //TODO: ERROR CATCHING
         }
     }
 }

@@ -4,7 +4,7 @@ namespace RepositoryContracts;
 
 public interface IShiftSwitchReplyRepository 
 {
-    Task<ShiftSwitchReply> AddAsync(ShiftSwitchReply shiftSwitchReply);
+    Task<ShiftSwitchReply> AddAsync(ShiftSwitchReply shiftSwitchReply, long requestId);
     Task<ShiftSwitchReply> UpdateAsync(ShiftSwitchReply shiftSwitchReply);
     Task DeleteAsync(long id);
     IQueryable<ShiftSwitchReply> GetManyAsync();

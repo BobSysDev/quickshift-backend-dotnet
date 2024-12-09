@@ -13,15 +13,15 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
     private readonly IShiftRepository _shiftRepository;
     private readonly IEmployeeRepository _employeeRepository;
 
-    public ShiftSwitchReplyGrpcRepository(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
+    public ShiftSwitchReplyGrpcRepository(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository, string grpcAddress)
     {
-        _grpcAddress = "http://192.168.195.143:50051";
+        _grpcAddress = grpcAddress;
         _shiftRepository = shiftRepository;
         _employeeRepository = employeeRepository;
     }
 
     
-    public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply reply)
+    public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply reply, long requestId)
     {
         try
         {
@@ -30,6 +30,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
 
             var response = await client.AddReplyAsync(new NewReplyDTO
             {
+                ShiftSwitchRequestId = requestId,
                 TargetEmployeeId = reply.TargetEmployee.Id,
                 TargetShiftId = reply.TargetShift.Id,
                 Details = reply.Details
@@ -134,12 +135,17 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
+            
+            Console.WriteLine("GRPC CONNECTED");
+            
             var response = await client.SetAcceptReplyTargetAsync(new IdBooleanPair
                 {
                    Id = id,
                    Boolean = accepted
                 });
-
+            
+            Console.WriteLine(response.Boolean_);
+            
             return response.Boolean_;
         }
         catch (RpcException e)

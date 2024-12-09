@@ -17,7 +17,7 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
         _employeeRepository = employeeRepository;
     }
 
-    public async Task<Entities.ShiftSwitchRequestTimeframe> AddAsync(Entities.ShiftSwitchRequestTimeframe timeframe)
+    public async Task<Entities.ShiftSwitchRequestTimeframe> AddAsync(Entities.ShiftSwitchRequestTimeframe timeframe, long requestId)
     {
         try
         {
@@ -25,7 +25,7 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
             var client = new ShiftSwitchRequestTimeframe.ShiftSwitchRequestTimeframeClient(channel);
             var request = await client.AddTimeframeAsync(new NewTimeframeDTO()
             {
-                ShiftSwitchRequestId = timeframe.Id,
+                ShiftSwitchRequestId = requestId,
                 TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
                 TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds()
             });

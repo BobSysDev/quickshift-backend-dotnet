@@ -180,7 +180,10 @@ namespace InMemoryRepositories
         
         public async Task<ShiftSwitchReply> SetShiftSwitchReplyTargetAcceptedAsync(long id, bool accepted)
         {
+            Console.WriteLine("DUPA");
             var reply = await GetSingleShiftSwitchReplyAsync(id);
+            Console.WriteLine("DUPA2");
+
 
             if (reply == null)
                 throw new InvalidOperationException($"ShiftSwitchReply with ID {id} not found.");
