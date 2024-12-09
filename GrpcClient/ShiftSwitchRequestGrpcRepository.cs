@@ -1,4 +1,4 @@
-﻿using DTOs;
+using DTOs;
 using DTOs.Shift;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -141,5 +141,4 @@ public class ShiftSwitchSwitchRequestGrpcRepository : IShiftSwitchRequestReposit
         var response = await client.GetRequestsByOriginShiftIdAsync(new Id { Id_ = shiftId });
         return response.Dtos.Select(EntityDTOConverter.ShiftSwitchRequestDtoToShift).ToList();
     }
-
-    }
+}

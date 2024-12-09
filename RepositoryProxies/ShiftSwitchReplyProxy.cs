@@ -15,7 +15,7 @@ public class ShiftSwitchReplyProxy : IShiftSwitchReplyRepository
     public ShiftSwitchReplyProxy()
     {
         _ShiftSwitchReplyCachingRepository = new ShiftSwitchReplyInMemoryRepository();
-        _ShiftSwitchReplyShiftStorageRepository = new ShiftSwitchReplyGrpcRepository();
+        // _ShiftSwitchReplyShiftStorageRepository = new ShiftSwitchReplyGrpcRepository();
         List<ShiftSwitchReply> shiftSwitchReplies = _ShiftSwitchReplyShiftStorageRepository.GetManyAsync().ToList();
         shiftSwitchReplies.ForEach(shiftSwitchReplies => _ShiftSwitchReplyCachingRepository.AddAsync(shiftSwitchReplies));
         _lastCacheUpdate = DateTime.Today;

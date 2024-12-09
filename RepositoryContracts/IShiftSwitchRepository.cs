@@ -1,7 +1,7 @@
-
 using Entities;
 
-namespace RepositoryProxies;
+namespace RepositoryContracts;
+
 
 public interface IShiftSwitchRepository
 {

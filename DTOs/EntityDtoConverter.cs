@@ -461,7 +461,7 @@ public class EntityDtoConverter
     }
     
     //--timeframes
-    public static ShiftSwitchRequestTimeframe NewShiftSwitchRequestTimeframeDtoToShiftSwitchRequestTimeframe(ShiftSwitchRequestTimeframeDTO dto)
+    public static ShiftSwitchRequestTimeframe NewShiftSwitchRequestTimeframeDtoToShiftSwitchRequestTimeframe(NewShiftSwitchRequestTimeframeDTO dto)
     {
         ShiftSwitchRequestTimeframe timeframe = new ShiftSwitchRequestTimeframe()
         {
