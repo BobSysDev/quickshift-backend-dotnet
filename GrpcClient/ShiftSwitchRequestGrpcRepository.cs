@@ -40,9 +40,18 @@ namespace GrpcClient
             }
             catch (RpcException e)
             {
-                if (e.StatusCode == StatusCode.AlreadyExists)
+                if (e.StatusCode == StatusCode.NotFound)
                 {
-                    throw new ArgumentException($"Shift switch request already exists: {request.Id}", nameof(request.Id));
+                    if (e.Message.ToLower().Contains("employee"))
+                    {
+                        throw new ArgumentException($"Employee with ID: {request.OriginEmployee.Id} was not found.",
+                            nameof(request.OriginEmployee.Id));
+                    }
+                    if (e.Message.ToLower().Contains("shift"))
+                    {
+                        throw new ArgumentException($"Shift with ID: {request.OriginShift.Id} was not found.",
+                            nameof(request.OriginShift.Id));
+                    }
                 }
 
                 throw;

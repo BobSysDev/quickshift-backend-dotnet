@@ -33,9 +33,9 @@ public class RequestController : ControllerBase
             var addedRequest = await _shiftSwitchRepository.AddShiftSwitchRequestAsync(requestToAdd);
             return Ok(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(addedRequest));
         }
-        catch
+        catch (ArgumentException e)
         {
-            return null; //TODO: ERROR CATCHING
+            return NotFound(e.Message);
         }
     }
 
