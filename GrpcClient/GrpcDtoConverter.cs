@@ -51,6 +51,28 @@ public class GrpcDtoConverter
         return employee;
     }
     
+    //list
+    
+    public static List<Entities.Employee>GrpcEmployeeDtoListToEntityEmployeeList(EmployeeDTOList list)
+    {
+        List<Entities.Employee> employees = new List<Entities.Employee>();
+        foreach (var dto in list.Dtos)
+        {
+            Entities.Employee employee = new Entities.Employee
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Id = dto.Id,
+                WorkingNumber = int.CreateChecked(dto.WorkingNumber),
+                Shifts = GrpcShiftDtoListToListShifts(dto.AssignedShifts),
+                Email = dto.Email,
+                Password = dto.Password
+            };
+            employees.Add(employee);
+        }
+        
+        return employees;
+    }
     
     
     //FOR EMPLOYEE: (emp->grpcDto)
@@ -252,6 +274,7 @@ public class GrpcDtoConverter
         };
         return reply;
     }
+    
     //list
     public static List<Entities.ShiftSwitchReply> GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(ReplyDTOList dtos, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
@@ -291,8 +314,18 @@ public class GrpcDtoConverter
         };
         return dto;
     }
+    
+    public static UpdateReplyDTO ShiftSwitchReplyToGrpcUpdateReplyDto(Entities.ShiftSwitchReply r)
+    {
+        UpdateReplyDTO dto = new UpdateReplyDTO()
+        {
+            Details = r.Details,
+            Id = r.Id
+        };
+        return dto;
+    }
     //list
-    public static ReplyDTOList ShiftSwitchRequestListToGrpcShiftSwitchReplyListDto(List<Entities.ShiftSwitchReply> replies)
+    public static ReplyDTOList ShiftSwitchReplyListToGrpcShiftSwitchReplyListDto(List<Entities.ShiftSwitchReply> replies)
     {
         ReplyDTOList shiftsToReturn = new ReplyDTOList();
         foreach (var r in replies)
@@ -363,7 +396,7 @@ public class GrpcDtoConverter
             OriginShiftId = r.OriginShift.Id,
             OriginEmployeeId = r.OriginEmployee.Id,
             Details = r.Details,
-            Replies = ShiftSwitchRequestListToGrpcShiftSwitchReplyListDto(r.SwitchReplies),
+            Replies = ShiftSwitchReplyListToGrpcShiftSwitchReplyListDto(r.SwitchReplies),
             Timeframes = ShiftSwitchRequestTimeframeListToShiftSwitchRequestTimeframeDtoList(r.Timeframes)
         };
         return request;

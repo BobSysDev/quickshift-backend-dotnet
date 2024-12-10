@@ -19,19 +19,9 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         var client = new Employee.EmployeeClient(channel);
         try
         {
-            var reply = await client.AddSingleEmployeeAsync(new NewEmployeeDTO
-            {
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                WorkingNumber = UInt32.CreateChecked(employee.WorkingNumber),
-                Email = employee.Email,
-                Password = employee.Password
-            });
-
-            List<ShiftDTO> grpcShiftDtos = reply.AssignedShifts.Dtos.ToList();
-            List<Entities.Shift> shifts = GrpcShiftDtosToEntityShiftsList(grpcShiftDtos);
-            Entities.Employee employeeReceived = GrpcEmployeeDtoToEntityEmployee(reply, shifts);
-
+            var reply = await client.AddSingleEmployeeAsync(GrpcDtoConverter.EmployeeToGrpcNewEmployeeDto(employee));
+            Entities.Employee employeeReceived = GrpcDtoConverter.GrpcEmployeeDtoToEmployee(reply);
+            
             return employeeReceived;
         }
         catch (RpcException e)
@@ -51,17 +41,9 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
-            var reply = await client.UpdateSingleEmployeeAsync(new UpdateEmployeeDTO
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                WorkingNumber = UInt32.CreateChecked(employee.WorkingNumber),
-                Email = employee.Email,
-                Password = employee.Password
-            });
+            var reply = await client.UpdateSingleEmployeeAsync(GrpcDtoConverter.EmployeeToGrpcUpdateEmployeeDto(employee));
 
-            return GrpcEmployeeDtoToEntityEmployee(reply, GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
+            return GrpcDtoConverter.GrpcEmployeeDtoToEmployee(reply);
         }
         catch (RpcException e)
         {
@@ -105,7 +87,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
             var reply = client.GetAllEmployees(new Empty());
-            var employees = GrpcEmployeeDtoListToEntityEmployeeList(reply);
+            var employees = GrpcDtoConverter.GrpcEmployeeDtoListToEntityEmployeeList(reply);
 
             return employees.AsQueryable();
         }
@@ -233,26 +215,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
         return employee;
     }
     
-    public static List<Entities.Employee>GrpcEmployeeDtoListToEntityEmployeeList(EmployeeDTOList list)
-    {
-        List<Entities.Employee> employees = new List<Entities.Employee>();
-        foreach (var dto in list.Dtos)
-        {
-            Entities.Employee employee = new Entities.Employee
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Id = dto.Id,
-                WorkingNumber = int.CreateChecked(dto.WorkingNumber),
-                Shifts = GrpcShiftDtosToEntityShiftsList(dto.AssignedShifts.Dtos.ToList()),
-                Email = dto.Email,
-                Password = dto.Password
-            };
-            employees.Add(employee);
-        }
-        
-        return employees;
-    }
+    
     
     public static Entities.Employee NewEmployeeDtoToEntityEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
     {
