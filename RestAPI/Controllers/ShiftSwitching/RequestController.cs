@@ -37,10 +37,7 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
     }
 
     [HttpGet("{id:long}")]
@@ -54,10 +51,6 @@ public class RequestController : ControllerBase
         catch (InvalidOperationException e)
         {
             return  NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
         }
     }
 
@@ -76,10 +69,7 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
     }
 
     [HttpGet("/Shift/{shiftId:long}/ShiftSwitching/[controller]")]
@@ -98,10 +88,7 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
         
     }
     
@@ -123,10 +110,7 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
     }
 
     [HttpPut("{id:long}")]
@@ -148,10 +132,7 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
     }
 
     [HttpDelete("{id:long}")]
@@ -169,10 +150,6 @@ public class RequestController : ControllerBase
         catch (InvalidOperationException e)
         {
             return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
         }
     }
 }
