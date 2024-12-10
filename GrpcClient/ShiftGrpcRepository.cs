@@ -96,7 +96,7 @@ public class ShiftGrpcRepository : IShiftRepository
         var client = new Shift.ShiftClient(channel);
         List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
         List<Entities.Shift> shifts = new List<Entities.Shift>();
-        shiftDtos.ForEach(dto => { shifts.Add(GrpcShiftDtoToEntityShift(dto)); });
+        shiftDtos.ForEach(dto => { shifts.Add(GrpcDtoConverter.GrpcShiftDtoToShift(dto)); });
         return shifts.AsQueryable();
     }
 
@@ -108,7 +108,7 @@ public class ShiftGrpcRepository : IShiftRepository
             var client = new Shift.ShiftClient(channel);
             var request = new Id { Id_ = id };
             var reply = await client.GetSingleShiftByIdAsync(request);
-            return GrpcShiftDtoToEntityShift(reply);
+            return GrpcDtoConverter.GrpcShiftDtoToShift(reply);
         }
         catch (RpcException e)
         {

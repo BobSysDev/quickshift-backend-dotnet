@@ -55,6 +55,8 @@ public class ShiftInMemoryRepository : IShiftRepository
     public async Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
         var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
+        Console.WriteLine("about to start throwin");
+
         if (shift == null)
         {
             throw new ArgumentException("No shift found with ID: " + shiftId, nameof(shiftId));

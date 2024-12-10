@@ -77,7 +77,7 @@ public class ShiftRepositoryProxy : IShiftRepository
 
     private void RefreshCache()
     {
-        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
+        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) <= 0)
         {
             List<Shift> shifts =_shiftStorageRepository.GetManyAsync().ToList();
             _shiftCachingRepository = new ShiftInMemoryRepository();
