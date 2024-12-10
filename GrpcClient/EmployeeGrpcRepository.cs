@@ -15,10 +15,8 @@ public class EmployeeGrpcRepository : IEmployeeRepository
 
     public async Task<Entities.Employee> AddAsync(Entities.Employee employee)
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress); 
-        //create client for employee entity, "EmployeeClient" method is auto-genereted               
+        using var channel = GrpcChannel.ForAddress(_grpcAddress);
         var client = new Employee.EmployeeClient(channel);
-        //reply - "AddSingleEmployee(newEmployeeDto)" comes from .proto file + need to convert the og-DTO to .proto-DTO
         try
         {
             var reply = await client.AddSingleEmployeeAsync(new NewEmployeeDTO
@@ -29,33 +27,29 @@ public class EmployeeGrpcRepository : IEmployeeRepository
                 Email = employee.Email,
                 Password = employee.Password
             });
-            //converting
+
             List<ShiftDTO> grpcShiftDtos = reply.AssignedShifts.Dtos.ToList();
             List<Entities.Shift> shifts = GrpcShiftDtosToEntityShiftsList(grpcShiftDtos);
-            Entities.Employee employeeRecieved = GrpcEmployeeDtoToEntityEmployee(reply, shifts);
-        
-            return employeeRecieved;
+            Entities.Employee employeeReceived = GrpcEmployeeDtoToEntityEmployee(reply, shifts);
+
+            return employeeReceived;
         }
         catch (RpcException e)
         {
             if (e.StatusCode == StatusCode.AlreadyExists)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException($"Employee already exists: {employee.Id}", nameof(employee.Id));
             }
+
+            throw new Exception("An error occurred while adding the employee.", e);
         }
-
-
-
-
-        return null;
     }
 
     public async Task<Entities.Employee> UpdateAsync(Entities.Employee employee)
     {
-        Entities.Employee employee2 = new Entities.Employee();
         try
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress); 
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
             var reply = await client.UpdateSingleEmployeeAsync(new UpdateEmployeeDTO
             {
@@ -66,73 +60,80 @@ public class EmployeeGrpcRepository : IEmployeeRepository
                 Email = employee.Email,
                 Password = employee.Password
             });
-            employee2 = GrpcEmployeeDtoToEntityEmployee(reply,
-                GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
+
+            return GrpcEmployeeDtoToEntityEmployee(reply, GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
         }
         catch (RpcException e)
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException($"Employee not found: {employee.Id}", nameof(employee.Id));
             }
             else if (e.StatusCode == StatusCode.AlreadyExists)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException($"Employee already exists: {employee.Id}", nameof(employee.Id));
             }
-        }
 
-        return employee2;
+            throw new Exception("An error occurred while updating the employee.", e);
+        }
     }
 
     public async Task DeleteAsync(long id)
     {
         try
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress); 
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
-            var reply = await client.DeleteSingleEmployeeAsync(new Id { Id_ = id });
+            await client.DeleteSingleEmployeeAsync(new Id { Id_ = id });
         }
         catch (RpcException e)
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException($"Employee not found: {id}", nameof(id));
             }
+
+            throw new Exception("An error occurred while deleting the employee.", e);
         }
     }
 
     public IQueryable<Entities.Employee> GetManyAsync()
     {
-        List<Entities.Employee> employees = new List<Entities.Employee>();
         
-        using var channel = GrpcChannel.ForAddress(_grpcAddress); 
-        var client = new Employee.EmployeeClient(channel);
-        var reply = client.GetAllEmployees(new Empty());
-        employees = GrpcEmployeeDtoListToEntityEmployeeList(reply);
-       
-        return employees.AsQueryable();
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Employee.EmployeeClient(channel);
+            var reply = client.GetAllEmployees(new Empty());
+            var employees = GrpcEmployeeDtoListToEntityEmployeeList(reply);
+
+            return employees.AsQueryable();
+        }
+        catch (RpcException e)
+        {
+            throw new Exception("An error occurred while retrieving employees.", e);
+        }
     }
 
     public async Task<Entities.Employee> GetSingleAsync(long id)
     {
-        Entities.Employee employee = new Entities.Employee();
         try
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress); 
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
-            var reply = await client.GetSingleEmployeeByIdAsync(new Id { Id_ = id }); 
-            employee = GrpcEmployeeDtoToEntityEmployee(reply,
-                GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
+            var reply = await client.GetSingleEmployeeByIdAsync(new Id { Id_ = id });
+
+            return GrpcEmployeeDtoToEntityEmployee(reply, GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
         }
         catch (RpcException e)
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message);
+                throw new ArgumentException($"Employee not found: {id}", nameof(id));
             }
-        }
 
-        return employee;
+            throw new Exception("An error occurred while retrieving the employee.", e);
+        }
     }
 
     public async Task<Entities.Employee> GetSingleEmployeeByWorkingNumberAsync(int WorkingNumber)
@@ -159,13 +160,18 @@ public class EmployeeGrpcRepository : IEmployeeRepository
     public async Task<bool> IsEmployeeInRepository(long Id)
     {
         System.Boolean b = new System.Boolean();
-        
-        using var channel = GrpcChannel.ForAddress(_grpcAddress); 
-        var client = new Employee.EmployeeClient(channel);
-        var reply = await client.IsEmployeeInRepositoryAsync(new Id { Id_ = Id });
-        b = reply.Boolean_;
-        
-        return b;
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Employee.EmployeeClient(channel);
+            var reply = await client.IsEmployeeInRepositoryAsync(new Id { Id_ = Id });
+            b = reply.Boolean_;
+            return b;
+        }
+        catch(RpcException e)
+        {
+            throw new Exception("An error occurred while checking if the employee is in the repository.", e);
+        }
     }
 
     public static List<Entities.Shift> GrpcShiftDtosToEntityShiftsList(List<ShiftDTO> grpcShiftDtos)

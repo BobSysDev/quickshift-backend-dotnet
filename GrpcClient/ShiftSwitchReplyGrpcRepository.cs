@@ -1,6 +1,4 @@
-
-
-using DTOs;
+﻿using DTOs;
 using Grpc.Core;
 using Grpc.Net.Client;
 using RepositoryContracts;
@@ -20,7 +18,6 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
         _employeeRepository = employeeRepository;
     }
 
-    
     public async Task<Entities.ShiftSwitchReply> AddAsync(Entities.ShiftSwitchReply reply, long requestId)
     {
         try
@@ -36,8 +33,6 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 Details = reply.Details
             });
 
-           
-
             Entities.ShiftSwitchReply shiftSwitchReplyReceived =
                 GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
             return shiftSwitchReplyReceived;
@@ -49,7 +44,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 throw new ArgumentException($"Shift switch reply already exists: {reply.Id}", nameof(reply.Id));
             }
 
-            throw;
+            throw new Exception("An error occurred while adding the shift switch reply.", e);
         }
     }
 
@@ -65,7 +60,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 Details = reply.Details,
                 Id = reply.Id
             });
-            
+
             return GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
         }
         catch (RpcException e)
@@ -75,7 +70,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 throw new ArgumentException(e.Message + ": " + reply.Id, nameof(reply.Id));
             }
 
-            throw;
+            throw new Exception("An error occurred while updating the shift switch reply.", e);
         }
     }
 
@@ -96,18 +91,26 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while deleting the shift switch reply.", e);
         }
     }
 
     public IQueryable<Entities.ShiftSwitchReply> GetManyAsync()
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
-        var response = client.GetAll(new Empty());
-        var shiftSwitchReplies = response.Dtos.Select(dto => GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository)).ToList();
-        return shiftSwitchReplies.AsQueryable();
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
+            var response = client.GetAll(new Empty());
+            var shiftSwitchReplies = response.Dtos.Select(dto => GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository)).ToList();
+            return shiftSwitchReplies.AsQueryable();
+        }
+        catch (RpcException e)
+        {
+            throw new Exception("An error occurred while retrieving shift switch replies.", e);
+        }
     }
+
     public async Task<Entities.ShiftSwitchReply> GetSingleAsync(long id)
     {
         try
@@ -125,47 +128,18 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while retrieving the shift switch reply.", e);
         }
     }
-    
+
     public async Task<bool> SetTargetAcceptedAsync(long id, bool accepted)
     {
         try
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
-            
-            Console.WriteLine("GRPC CONNECTED");
-            
+
             var response = await client.SetAcceptReplyTargetAsync(new IdBooleanPair
-                {
-                   Id = id,
-                   Boolean = accepted
-                });
-            
-            Console.WriteLine(response.Boolean_);
-            
-            return response.Boolean_;
-        }
-        catch (RpcException e)
-        {
-            if (e.StatusCode == StatusCode.NotFound)
-            {
-                throw new ArgumentException(e.Message + ": " + id, nameof(id));
-            }
-
-            throw;
-        }
-    }
-
-    public async Task<bool> SetOriginAcceptedAsync(long id, bool accepted)
-    {
-        try
-        {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress);
-            var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
-            var response = client.SetAcceptReplyOrigin(new IdBooleanPair
             {
                 Id = id,
                 Boolean = accepted
@@ -180,7 +154,32 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
                 throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while setting target accepted for the shift switch reply.", e);
+        }
+    }
+
+    public async Task<bool> SetOriginAcceptedAsync(long id, bool accepted)
+    {
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
+            var response = await client.SetAcceptReplyOriginAsync(new IdBooleanPair
+            {
+                Id = id,
+                Boolean = accepted
+            });
+
+            return response.Boolean_;
+        }
+        catch (RpcException e)
+        {
+            if (e.StatusCode == StatusCode.NotFound)
+            {
+                throw new ArgumentException(e.Message + ": " + id, nameof(id));
+            }
+
+            throw new Exception("An error occurred while setting origin accepted for the shift switch reply.", e);
         }
     }
 }

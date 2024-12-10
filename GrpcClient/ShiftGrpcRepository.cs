@@ -18,24 +18,33 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public async Task<Entities.Shift> AddAsync(Entities.Shift shift)
     {
-        
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        
-        var client = new Shift.ShiftClient(channel);
-        
-        var reply = await client.AddSingleShiftAsync(new NewShiftDTO
+        try
         {
-            TypeOfShift = shift.TypeOfShift,
-            Location = shift.Location,
-            ShiftStatus = shift.ShiftStatus,
-            Description = shift.Description,
-            StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
-            EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
-            
-        });
-        
-        Entities.Shift shiftReceived = GrpcShiftDtoToEntityShift(reply);
-        return shiftReceived;
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Shift.ShiftClient(channel);
+
+            var reply = await client.AddSingleShiftAsync(new NewShiftDTO
+            {
+                TypeOfShift = shift.TypeOfShift,
+                Location = shift.Location,
+                ShiftStatus = shift.ShiftStatus,
+                Description = shift.Description,
+                StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
+                EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
+            });
+
+            Entities.Shift shiftReceived = GrpcShiftDtoToEntityShift(reply);
+            return shiftReceived;
+        }
+        catch (RpcException e)
+        {
+            if (e.StatusCode == StatusCode.AlreadyExists)
+            {
+                throw new ArgumentException($"Shift already exists: {shift.Id}", nameof(shift.Id));
+            }
+
+            throw new Exception("An error occurred while adding the shift.", e);
+        }
     }
 
     public async Task<Entities.Shift> UpdateAsync(Entities.Shift shift)
@@ -61,20 +70,19 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message+": "+shift.Id, nameof(shift.Id));
+                throw new ArgumentException(e.Message + ": " + shift.Id, nameof(shift.Id));
             }
 
-            throw;
+            throw new Exception("An error occurred while updating the shift.", e);
         }
     }
 
     public async Task DeleteAsync(long shiftId)
     {
-        
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
         var client = new Shift.ShiftClient(channel);
-        var request = new Id{Id_ = shiftId};
-        
+        var request = new Id { Id_ = shiftId };
+
         try
         {
             await client.DeleteSingleShiftAsync(request);
@@ -83,21 +91,28 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message+": "+shiftId, nameof(shiftId));
+                throw new ArgumentException(e.Message + ": " + shiftId, nameof(shiftId));
             }
 
-            throw;
+            throw new Exception("An error occurred while deleting the shift.", e);
         }
     }
 
     public IQueryable<Entities.Shift> GetManyAsync()
     {
-        using var channel = GrpcChannel.ForAddress(_grpcAddress);
-        var client = new Shift.ShiftClient(channel);
-        List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
-        List<Entities.Shift> shifts = new List<Entities.Shift>();
-        shiftDtos.ForEach(dto => { shifts.Add(GrpcDtoConverter.GrpcShiftDtoToShift(dto)); });
-        return shifts.AsQueryable();
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Shift.ShiftClient(channel);
+            List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
+            List<Entities.Shift> shifts = new List<Entities.Shift>();
+            shiftDtos.ForEach(dto => { shifts.Add(GrpcDtoConverter.GrpcShiftDtoToShift(dto)); });
+            return shifts.AsQueryable();
+        }
+        catch (RpcException e)
+        {
+            throw new Exception("An error occurred while retrieving shifts.", e);
+        }
     }
 
     public async Task<Entities.Shift> GetSingleAsync(long id)
@@ -114,10 +129,10 @@ public class ShiftGrpcRepository : IShiftRepository
         {
             if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException(e.Message+": "+id, nameof(id));
+                throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while retrieving the shift.", e);
         }
     }
 
@@ -137,7 +152,7 @@ public class ShiftGrpcRepository : IShiftRepository
                 throw new ArgumentException(e.Message);
             }
 
-            throw;
+            throw new Exception("An error occurred while checking if the shift is in the repository.", e);
         }
     }
 
@@ -153,12 +168,8 @@ public class ShiftGrpcRepository : IShiftRepository
                 EmployeeId = employeeId
             };
 
-            Console.WriteLine($"Assigning Employee ID: {employeeId} to Shift ID: {shiftId}");
             var reply = await client.AssignEmployeeToShiftAsync(assignEmployeeRequest);
-            Console.WriteLine("Assignment successful, fetching updated shift");
-
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
-            Console.WriteLine($"Updated Shift: {updatedShift.Id}, Employee ID: {employeeId}");
 
             return GrpcShiftDtoToEntityShift(updatedShift);
         }
@@ -176,25 +187,25 @@ public class ShiftGrpcRepository : IShiftRepository
                 }
             }
 
-            throw;
+            throw new Exception("An error occurred while assigning the employee to the shift.", e);
         }
     }
 
-    public async  Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
+    public async Task<Entities.Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
         try
         {
+            using var channel = GrpcChannel.ForAddress(_grpcAddress);
+            var client = new Shift.ShiftClient(channel);
             var unassignEmployeeRequest = new ShiftEmployeePair
             {
                 ShiftId = shiftId,
                 EmployeeId = employeeId
             };
-            
-            using var channel = GrpcChannel.ForAddress(_grpcAddress);
-            var client = new Shift.ShiftClient(channel);
-            var unassignRequest = new ShiftEmployeePair { ShiftId = shiftId, EmployeeId = employeeId};
+
             var reply = await client.UnAssignEmployeeFromShiftAsync(unassignEmployeeRequest);
             var updatedShift = await client.GetSingleShiftByIdAsync(new Id { Id_ = shiftId });
+
             return GrpcShiftDtoToEntityShift(updatedShift);
         }
         catch (RpcException e)
@@ -211,15 +222,12 @@ public class ShiftGrpcRepository : IShiftRepository
                 }
             }
 
-            throw;
+            throw new Exception("An error occurred while unassigning the employee from the shift.", e);
         }
-        
     }
-    
 
     public static Entities.Shift GrpcShiftDtoToEntityShift(ShiftDTO shiftDto)
     {
-
         Entities.Shift shift = new Entities.Shift()
         {
             Description = shiftDto.Description,
@@ -248,22 +256,3 @@ public class ShiftGrpcRepository : IShiftRepository
         return shift;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

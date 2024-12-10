@@ -9,29 +9,48 @@ public class ShiftInMemoryRepository : IShiftRepository
     
     public async Task<Shift> AddAsync(Shift shift)
     {
-        shifts.Add(shift);
-        return shift;
+      
+        try
+        {
+            shifts.Add(shift);
+            return shift;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while adding the shift.", ex);
+        }
     }
 
     
     public async Task<Shift> UpdateAsync(Shift shift)
     {
-        Shift? exisitingShift = shifts.SingleOrDefault(p => p.Id == shift.Id);
+        try
+        {
+            Shift? existingShift = shifts.SingleOrDefault(p => p.Id == shift.Id);
+            if (existingShift is null) throw new ArgumentException($"Shift with ID {shift.Id} not found!", nameof(shift.Id));
 
-        if (exisitingShift is null) throw new ArgumentException($"Shift with ID {shift.Id} not found!", nameof(shift.Id));
-
-        shifts.Remove(exisitingShift);
-        shifts.Add(shift);
-        return shift;
+            shifts.Remove(existingShift);
+            shifts.Add(shift);
+            return shift;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while updating the shift.", ex);
+        }
     }
     
     public async Task DeleteAsync(long id)
     {
-        Shift? shiftToRemove = shifts.FirstOrDefault(p => p.Id == id);
-
-        if (shiftToRemove is null) throw new ArgumentException($"Shift with ID {id} not found", nameof(id));
-
-        shifts.Remove(shiftToRemove);
+        try
+        {
+            Shift? shiftToRemove = shifts.FirstOrDefault(p => p.Id == id);
+            if (shiftToRemove is null) throw new ArgumentException($"Shift with ID {id} not found", nameof(id));
+            shifts.Remove(shiftToRemove);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while deleting the shift.", ex);
+        }
     }
 
     public IQueryable<Shift> GetManyAsync()
@@ -41,53 +60,79 @@ public class ShiftInMemoryRepository : IShiftRepository
 
     public async Task<Shift> GetSingleAsync(long id)
     {
-        var shift = shifts.FirstOrDefault(c => c.Id == id);
-        if (shift is null) throw new ArgumentException($"Shift with ID '{id}' not found", nameof(id));
-        return shift;
+        try
+        {
+            var shift = shifts.FirstOrDefault(c => c.Id == id);
+            if (shift is null) throw new ArgumentException($"Shift with ID '{id}' not found", nameof(id));
+            return shift;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while retrieving the shift.", ex);
+        }
     }
 
-    public Task<bool> IsShiftInRepository(long id)
+    public async Task<bool> IsShiftInRepository(long id)
     {
-        var exists = shifts.Any(shift => shift.Id == id);
-        return Task.FromResult(exists);
+        try
+        {
+            var exists = shifts.Any(shift => shift.Id == id);
+            return await Task.FromResult(exists);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while checking if the shift is in the repository.", ex);
+        }
     }
 
     public async Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
-        var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
-        Console.WriteLine("about to start throwin");
+        try
+        {
+            var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
+            if (shift == null)
+            {
+                throw new ArgumentException("No shift found with ID: " + shiftId, nameof(shiftId));
+            }
+            else if (shift.AssingnedEmployees.Contains(employeeId))
+            {
+                throw new InvalidOperationException($"Shift with ID {shiftId} has already assigned employee with ID {employeeId}.");
+            }
+            else
+            {
+                shifts.SingleOrDefault(s => s.Id == shiftId).AssingnedEmployees.Add(employeeId);
+            }
 
-        if (shift == null)
-        {
-            throw new ArgumentException("No shift found with ID: " + shiftId, nameof(shiftId));
+            return shift;
         }
-        else if (shift.AssingnedEmployees.Contains(employeeId))
+        catch (Exception ex)
         {
-            throw new InvalidOperationException($"Shift with ID {shiftId} has already assigned employee with ID {employeeId}.");
+            throw new Exception("An error occurred while assigning the employee to the shift.", ex);
         }
-        else
-        {
-            shifts.SingleOrDefault(s => s.Id == shiftId).AssingnedEmployees.Add(employeeId);
-            //shift.AssingnedEmployees.Add(employeeId);
-        }
-        
-        return shift;
     }
     
 
     public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
-        if (shift == null)
+        
+        try
         {
-            throw new ArgumentException($"Shift with ID {shiftId} not found!");
+            var shift = shifts.SingleOrDefault(s => s.Id == shiftId);
+            if (shift == null)
+            {
+                throw new ArgumentException($"Shift with ID {shiftId} not found!");
+            }
+            if (shift.AssingnedEmployees.Contains(employeeId))
+            {
+                shift.AssingnedEmployees.Remove(employeeId);
+                return shift;
+            }
+            throw new InvalidOperationException($"Shift with ID {shiftId} has not assigned employee with ID {employeeId}!");
         }
-        if (shift.AssingnedEmployees.Contains(employeeId))
+        catch (Exception ex)
         {
-            shift.AssingnedEmployees.Remove(employeeId);
-            return shift;
+            throw new Exception("An error occurred while unassigning the employee from the shift.", ex);
         }
-        throw new InvalidOperationException($"Shift with ID {shiftId} has not assigned employee with ID {employeeId}!");
     }
 
     public void UpdateChache(List<Shift> newShifts)

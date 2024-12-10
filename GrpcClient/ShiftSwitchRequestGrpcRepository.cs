@@ -7,13 +7,13 @@ using RepositoryContracts;
 
 namespace GrpcClient
 {
-    public class ShiftSwitchSwitchRequestGrpcRepository : IShiftSwitchRequestRepository
+    public class ShiftSwitchRequestGrpcRepository : IShiftSwitchRequestRepository
     {
         private string _grpcAddress { get; set; }
         private readonly IShiftRepository _shiftRepository;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public ShiftSwitchSwitchRequestGrpcRepository(IShiftRepository shiftRepository,
+        public ShiftSwitchRequestGrpcRepository(IShiftRepository shiftRepository,
             IEmployeeRepository employeeRepository, string grpcAddress)
         {
             _grpcAddress = grpcAddress;
@@ -56,7 +56,7 @@ namespace GrpcClient
                     }
                 }
 
-                throw;
+                throw new Exception("An error occurred while adding the shift switch request.", e);
             }
         }
 
@@ -82,7 +82,7 @@ namespace GrpcClient
                     throw new ArgumentException(e.Message + ": " + request.Id, nameof(request.Id));
                 }
 
-                throw;
+                throw new Exception("An error occurred while updating the shift switch request.", e);
             }
         }
 
@@ -103,18 +103,25 @@ namespace GrpcClient
                     throw new ArgumentException(e.Message + ": " + id, nameof(id));
                 }
 
-                throw;
+                throw new Exception("An error occurred while deleting the shift switch request.", e);
             }
         }
 
         public IQueryable<Entities.ShiftSwitchRequest> GetManyAsync()
         {
-            using var channel = GrpcChannel.ForAddress(_grpcAddress);
-            var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
-            var response = client.GetAll(new Empty());
-            var shiftSwitchRequests = response.Dtos.Select(r =>
-                GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(r, _shiftRepository, _employeeRepository));
-            return shiftSwitchRequests.AsQueryable();
+            try
+            {
+                using var channel = GrpcChannel.ForAddress(_grpcAddress);
+                var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
+                var response = client.GetAll(new Empty());
+                var shiftSwitchRequests = response.Dtos.Select(r =>
+                    GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(r, _shiftRepository, _employeeRepository));
+                return shiftSwitchRequests.AsQueryable();
+            }
+            catch (RpcException e)
+            {
+                throw new Exception("An error occurred while retrieving shift switch requests.", e);
+            }
         }
 
         public async Task<Entities.ShiftSwitchRequest> GetSingleAsync(long id)
@@ -135,7 +142,7 @@ namespace GrpcClient
                     throw new ArgumentException(e.Message + ": " + id, nameof(id));
                 }
 
-                throw;
+                throw new Exception("An error occurred while retrieving the shift switch request.", e);
             }
         }
 
@@ -157,7 +164,7 @@ namespace GrpcClient
                     throw new ArgumentException(e.Message + ": " + employeeId, nameof(employeeId));
                 }
 
-                throw;
+                throw new Exception("An error occurred while retrieving shift switch requests by employee.", e);
             }
         }
 
@@ -179,7 +186,7 @@ namespace GrpcClient
                     throw new ArgumentException(e.Message + ": " + shiftId, nameof(shiftId));
                 }
 
-                throw;
+                throw new Exception("An error occurred while retrieving shift switch requests by shift.", e);
             }
         }
     }

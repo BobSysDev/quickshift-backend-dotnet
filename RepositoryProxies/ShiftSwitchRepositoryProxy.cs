@@ -20,7 +20,7 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     public ShiftSwitchRepositoryProxy(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
         _replyStorageRepository = new ShiftSwitchReplyGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
-        _requestStorageRepository = new ShiftSwitchSwitchRequestGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
+        _requestStorageRepository = new ShiftSwitchRequestGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
         _timeframeStorageRepository = new ShiftSwitchRequestTimeframeGrpcRepository(shiftRepository, employeeRepository, _grpcAddress);
         List<ShiftSwitchRequest> requests = _requestStorageRepository.GetManyAsync().ToList();
         _shiftSwitchCachingRepository= new ShiftSwitchInMemoryRepository();

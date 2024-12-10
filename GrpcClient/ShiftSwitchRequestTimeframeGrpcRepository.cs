@@ -40,10 +40,10 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
                 throw new ArgumentException($"Shift Switch Request Timeframe already exists: {timeframe.Id}", nameof(timeframe.Id));
             }
 
-            throw;
+            throw new Exception("An error occurred while adding the shift switch request timeframe.", e);
         }
     }
-    
+
     public async Task DeleteAsync(long id)
     {
         using var channel = GrpcChannel.ForAddress(_grpcAddress);
@@ -61,10 +61,10 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
                 throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while deleting the shift switch request timeframe.", e);
         }
     }
-    
+
     public async Task<Entities.ShiftSwitchRequestTimeframe> GetSingleAsync(long id)
     {
         try
@@ -82,8 +82,7 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
                 throw new ArgumentException(e.Message + ": " + id, nameof(id));
             }
 
-            throw;
+            throw new Exception("An error occurred while retrieving the shift switch request timeframe.", e);
         }
     }
-    
 }
