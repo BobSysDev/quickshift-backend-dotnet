@@ -248,6 +248,28 @@ public class GrpcDtoConverter
         return shiftsToReturn;
     }
     
+    public static List<ShiftDTO> ShiftListToListOfGrpcShiftDto(List<Entities.Shift> shifts)
+    {
+        List<ShiftDTO> shiftsToReturn = new List<ShiftDTO>();
+        foreach (var shift in shifts)
+        {
+            ShiftDTO dto = new ShiftDTO()
+            {
+                Id = shift.Id,
+                StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
+                EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
+                TypeOfShift = shift.TypeOfShift,
+                ShiftStatus = shift.ShiftStatus,
+                Description = shift.Description,
+                Location = shift.Location,
+                AssignedEmployeeIds = { shift.AssingnedEmployees }
+            };
+            shiftsToReturn.Add(dto);
+        }
+
+        return shiftsToReturn;
+    }
+    
     
     //FOR REPLY (grpcDto -> reply)
     public static Entities.ShiftSwitchReply GrpcReplyDtoToShiftSwitchReply(ReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)

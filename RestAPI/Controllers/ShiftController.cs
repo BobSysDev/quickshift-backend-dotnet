@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using DTOs;
 using DTOs.Shift;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -26,22 +27,12 @@ public class ShiftController : ControllerBase
     {
         try
         {
-            Shift tmp = ShiftGrpcRepository.NewShiftDtoToEntityShift(request);
+            Shift tmp = EntityDtoConverter.NewShiftDtoToShift(request);
             //Console.WriteLine(tmp.Print());
             var shift = await _shiftRepository.AddAsync(tmp);
             //Console.WriteLine(shift.Print());
-            var simpleDto = new ShiftDTO
-            {
-                Description = shift.Description,
-                TypeOfShift = shift.TypeOfShift,
-                ShiftStatus = shift.ShiftStatus,
-                Id = shift.Id,
-                StartDateTime = shift.StartDateTime,
-                EndDateTime = shift.EndDateTime,
-                Location = shift.Location,
-                AssignedEmployees = shift.AssingnedEmployees
-            };
-            return Ok(simpleDto);
+            ShiftDTO dto = EntityDtoConverter.ShiftToShiftDto(shift);
+            return Ok(dto);
         }
         catch (Exception e)
         {
@@ -92,17 +83,7 @@ public class ShiftController : ControllerBase
         {
             var shift = await _shiftRepository.GetSingleAsync(long.CreateChecked(id));
 
-            var shiftDto = new ShiftDTO
-            {
-                Description = shift.Description,
-                TypeOfShift = shift.TypeOfShift,
-                ShiftStatus = shift.ShiftStatus,
-                StartDateTime = shift.StartDateTime,
-                EndDateTime = shift.EndDateTime,
-                Location = shift.Location,
-                Id = shift.Id,
-                AssignedEmployees = shift.AssingnedEmployees
-            };
+            ShiftDTO shiftDto = EntityDtoConverter.ShiftToShiftDto(shift);
             return Ok(shiftDto);
         }
         catch (ArgumentException e)
@@ -116,19 +97,8 @@ public class ShiftController : ControllerBase
     {
         var shifts = _shiftRepository.GetManyAsync();
 
-        var shiftDtos = shifts.Select(shift => new ShiftDTO
-        {
-            Id = shift.Id,
-            Description = shift.Description,
-            TypeOfShift = shift.TypeOfShift,
-            ShiftStatus = shift.ShiftStatus,
-            StartDateTime = shift.StartDateTime,
-            EndDateTime = shift.EndDateTime,
-            Location = shift.Location,
-            AssignedEmployees = shift.AssingnedEmployees
-            //EmployeeId = shift.EmployeeId == -1 ? null : shift.EmployeeId
-        });
-        
+        //var shiftDtos = shifts.Select(shift => new ShiftDTO = EntityDtoConverter.ShiftToShiftDto());
+        var shiftDtos = EntityDtoConverter.ListShiftToListShiftDtos(shifts.ToList()).AsEnumerable();
         
         return Ok(shiftDtos.ToList());
     }
@@ -137,25 +107,26 @@ public class ShiftController : ControllerBase
     public async Task<ActionResult<IEnumerable<ShiftDTO>>> GetShiftsByEmployeeId([FromRoute] int id)
     {
         var shifts =  _shiftRepository.GetManyAsync();
-        var shiftDtos = new List<ShiftDTO>();
+        var shiftDtos = EntityDtoConverter.ListShiftToListShiftDtos(shifts.ToList()).AsEnumerable();
+        
 
-        foreach (var shift in shifts)
-        {
-            if (shift.AssingnedEmployees.Contains(id))
-            {
-                shiftDtos.Add(new ShiftDTO
-                {
-                    StartDateTime = shift.StartDateTime,
-                    EndDateTime = shift.EndDateTime,
-                    Description = shift.Description,
-                    TypeOfShift = shift.TypeOfShift,
-                    Id = shift.Id,
-                    ShiftStatus = shift.ShiftStatus,
-                    Location = shift.Location,
-                    AssignedEmployees = shift.AssingnedEmployees
-                });
-            }
-        }
+        // foreach (var shift in shifts)
+        // {
+        //     if (shift.AssingnedEmployees.Contains(id))
+        //     {
+        //         shiftDtos.Add(new ShiftDTO
+        //         {
+        //             StartDateTime = shift.StartDateTime,
+        //             EndDateTime = shift.EndDateTime,
+        //             Description = shift.Description,
+        //             TypeOfShift = shift.TypeOfShift,
+        //             Id = shift.Id,
+        //             ShiftStatus = shift.ShiftStatus,
+        //             Location = shift.Location,
+        //             AssignedEmployees = shift.AssingnedEmployees
+        //         });
+        //     }
+        //}
 
         return Ok(shiftDtos);
     }

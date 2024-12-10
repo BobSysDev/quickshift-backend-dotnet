@@ -106,7 +106,7 @@ public class EmployeeController : ControllerBase
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName,
                 Id = gotEmployee.Id,
-                Shifts = EmployeeGrpcRepository.ShiftsToEntityShiftDTOs(gotEmployee.Shifts),
+                Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts)
             };
             return Accepted($"/Employee/{gotEmployee.Id}", dto);
         }
