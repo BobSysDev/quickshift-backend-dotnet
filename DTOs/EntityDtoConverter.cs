@@ -323,24 +323,7 @@ public class EntityDtoConverter
         return shiftDtosToReturn;
     }
     
-    //list3
-    public static List<ShiftSwitchRequestTimeframeDTO> ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(List<ShiftSwitchRequestTimeframe> list, long requestId)
-    {
-        List<ShiftSwitchRequestTimeframeDTO> TrequestTimeframeDtos = new List<ShiftSwitchRequestTimeframeDTO>();
-        foreach (var reply in list)
-        {
-            ShiftSwitchRequestTimeframeDTO dto = new ShiftSwitchRequestTimeframeDTO()
-            {
-                Id = reply.Id,
-                RequestId = requestId,
-                StartDate = reply.TimeFrameStart,
-                EndDate = reply.TimeFrameEnd
-            };
-            TrequestTimeframeDtos.Add(dto);
-        }
-
-        return TrequestTimeframeDtos;
-    }
+   
     
     public static NewShiftDTO ShiftToNewShiftDto(Entities.Shift s)
     {
@@ -400,7 +383,7 @@ public class EntityDtoConverter
             OriginShiftId = s.OriginShift.Id,
             Details = s.Details,
             ReplyDtos = ListShiftSwitchRepliesToListShiftSwitchReplyDtos(s.SwitchReplies,s.Id),
-            TimeframeDtos = ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(s.Timeframes,s.Id)
+            TimeframeDtos = ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(s.Timeframes)
         };
         
         return dto;
@@ -446,7 +429,8 @@ public class EntityDtoConverter
         {
             OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
             OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
-            Details = dto.Details
+            Details = dto.Details,
+            Timeframes = ListShiftSwitchRequestTimeframeDtosToListShiftSwitchRequestTimeframes(dto.TimeframeDtos)
         };
         return request;
     }
@@ -469,5 +453,42 @@ public class EntityDtoConverter
             TimeFrameEnd = dto.EndDate
         };
         return timeframe;
+    }
+    
+    //list3
+    public static List<ShiftSwitchRequestTimeframeDTO> ListShiftSwitchRequestTimeframesToListShiftSwitchRequestTimeframeDtos(List<ShiftSwitchRequestTimeframe> list)
+    {
+        List<ShiftSwitchRequestTimeframeDTO> TrequestTimeframeDtos = new List<ShiftSwitchRequestTimeframeDTO>();
+        foreach (var request in list)
+        {
+            ShiftSwitchRequestTimeframeDTO dto = new ShiftSwitchRequestTimeframeDTO()
+            {
+                Id = request.Id,
+                RequestId = request.Id,
+                StartDate = request.TimeFrameStart,
+                EndDate = request.TimeFrameEnd
+            };
+            TrequestTimeframeDtos.Add(dto);
+        }
+
+        return TrequestTimeframeDtos;
+    }
+    
+    //list4
+    public static List<ShiftSwitchRequestTimeframe> ListShiftSwitchRequestTimeframeDtosToListShiftSwitchRequestTimeframes(List<ShiftSwitchRequestTimeframeDTO> list)
+    {
+        List<ShiftSwitchRequestTimeframe> timeframes = new List<ShiftSwitchRequestTimeframe>();
+        foreach (var reply in list)
+        {
+            ShiftSwitchRequestTimeframe timeframe = new ShiftSwitchRequestTimeframe()
+            {
+                Id = reply.Id,
+                TimeFrameStart = reply.StartDate,
+                TimeFrameEnd = reply.EndDate,
+            };
+            timeframes.Add(timeframe);
+        }
+
+        return timeframes;
     }
 }
