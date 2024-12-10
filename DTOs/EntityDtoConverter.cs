@@ -425,14 +425,26 @@ public class EntityDtoConverter
     //--requests
     public static ShiftSwitchRequest NewShiftSwitchRequestDtoToShiftSwitchRequest(NewShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
     {
-        ShiftSwitchRequest request = new ShiftSwitchRequest()
+        try
         {
-            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
-            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
-            Details = dto.Details,
-            Timeframes = ListShiftSwitchRequestTimeframeDtosToListShiftSwitchRequestTimeframes(dto.TimeframeDtos)
-        };
-        return request;
+            ShiftSwitchRequest request = new ShiftSwitchRequest()
+            {
+                OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+                OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+                Details = dto.Details,
+                Timeframes = ListShiftSwitchRequestTimeframeDtosToListShiftSwitchRequestTimeframes(dto.TimeframeDtos)
+            };
+            return request;
+        }
+        catch (ArgumentException e)
+        {
+            throw new ArgumentException(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new InvalidOperationException(e.Message);
+        }
+       
     }
     
     public static ShiftSwitchRequest UpdateShiftSwitchRequestDtoToShiftSwitchRequest(UpdateShiftSwitchRequestDTO dto )
