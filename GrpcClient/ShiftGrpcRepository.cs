@@ -86,19 +86,12 @@ public class ShiftGrpcRepository : IShiftRepository
 
     public IQueryable<Entities.Shift> GetManyAsync()
     {
-        try
-        {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Shift.ShiftClient(channel);
             List<ShiftDTO> shiftDtos = client.GetAllShifts(new Empty()).Dtos.ToList();
             List<Entities.Shift> shifts = new List<Entities.Shift>();
             shiftDtos.ForEach(dto => { shifts.Add(GrpcDtoConverter.GrpcShiftDtoToShift(dto)); });
             return shifts.AsQueryable();
-        }
-        catch (RpcException e)
-        {
-            throw new Exception("An error occurred while retrieving shifts.", e);
-        }
     }
 
     public async Task<Entities.Shift> GetSingleAsync(long id)
