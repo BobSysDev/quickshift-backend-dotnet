@@ -33,6 +33,7 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     public async Task<ShiftSwitchRequest> AddShiftSwitchRequestAsync(ShiftSwitchRequest request)
     {
         ShiftSwitchRequest addedRequest = await _requestStorageRepository.AddAsync(request);
+        Console.WriteLine(addedRequest.Id);
         await _shiftSwitchCachingRepository.AddShiftSwitchRequestAsync(addedRequest);
         return addedRequest;
     }

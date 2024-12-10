@@ -423,27 +423,27 @@ public class EntityDtoConverter
         return reply;
     }
     //--requests
-    public static ShiftSwitchRequest NewShiftSwitchRequestDtoToShiftSwitchRequest(NewShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
+    public static async Task<ShiftSwitchRequest> NewShiftSwitchRequestDtoToShiftSwitchRequest(NewShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
     {
-        try
-        {
+        // try
+        // {
             ShiftSwitchRequest request = new ShiftSwitchRequest()
             {
-                OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
-                OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
+                OriginEmployee = await _employeeRepository.GetSingleAsync(dto.OriginEmployeeId),
+                OriginShift = await _shiftRepository.GetSingleAsync(dto.OriginShiftId),
                 Details = dto.Details,
                 Timeframes = ListShiftSwitchRequestTimeframeDtosToListShiftSwitchRequestTimeframes(dto.TimeframeDtos)
             };
             return request;
-        }
-        catch (ArgumentException e)
-        {
-            throw new ArgumentException(e.Message);
-        }
-        catch (InvalidOperationException e)
-        {
-            throw new InvalidOperationException(e.Message);
-        }
+        // }
+        // catch (ArgumentException e)
+        // {
+        //     throw e;
+        // }
+        // catch (InvalidOperationException e)
+        // {
+        //     throw new InvalidOperationException(e.Message);
+        // }
        
     }
     

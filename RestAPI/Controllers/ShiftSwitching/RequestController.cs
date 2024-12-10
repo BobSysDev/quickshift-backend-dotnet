@@ -28,7 +28,7 @@ public class RequestController : ControllerBase
     {
         try
         {
-            ShiftSwitchRequest requestToAdd = EntityDtoConverter
+            ShiftSwitchRequest requestToAdd = await EntityDtoConverter
                 .NewShiftSwitchRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository);
             var addedRequest = await _shiftSwitchRepository.AddShiftSwitchRequestAsync(requestToAdd);
             return Ok(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(addedRequest));

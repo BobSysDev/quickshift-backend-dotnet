@@ -51,7 +51,7 @@ public class EmployeeController : ControllerBase
     // }
 
 
-    [HttpPut("/Employee/{id:int}")] //problem: shifts are erased when user is updated
+    [HttpPut("{id:int}")] //problem: shifts are erased when user is updated
     public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromRoute] int id, [FromBody] DTOs.UpdateEmployeeDTO request)
     {
         try
@@ -81,7 +81,7 @@ public class EmployeeController : ControllerBase
                 Id = updated.Id
                 
             };
-            return Accepted($"/Employee/{dto.Id}", $"{dto.FirstName} {dto.LastName} id=[{dto.Id}] was updated!");
+            return Ok(dto);
         }
         catch (ArgumentException e)
         {
@@ -91,7 +91,7 @@ public class EmployeeController : ControllerBase
     
     
     
-    [HttpGet("/Employee/{id:long}")]
+    [HttpGet("{id:long}")]
     public async Task<ActionResult<ShiftEmpoyeeDTO>> GetSingle([FromRoute] long id)
     {
        // Console.WriteLine(id.GetType());
@@ -108,7 +108,7 @@ public class EmployeeController : ControllerBase
                 Id = gotEmployee.Id,
                 Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts)
             };
-            return Accepted($"/Employee/{gotEmployee.Id}", dto);
+            return Ok(dto);
         }
         catch (ArgumentException e)
         {
@@ -121,7 +121,7 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet("/Employees/")]
+    [HttpGet]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         
