@@ -33,9 +33,13 @@ public class RequestController : ControllerBase
             var addedRequest = await _shiftSwitchRepository.AddShiftSwitchRequestAsync(requestToAdd);
             return Ok(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(addedRequest));
         }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 
@@ -47,20 +51,35 @@ public class RequestController : ControllerBase
             ShiftSwitchRequest retrievedRequest = await _shiftSwitchRepository.GetSingleShiftSwitchRequestAsync(id);
             return Ok(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(retrievedRequest));
         }
+        catch (InvalidOperationException e)
+        {
+            return  NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 
     [HttpGet]
     public async Task<ActionResult<List<ShiftSwitchRequestDTO>>> GetAllShiftRequests()
     {
-        List<ShiftSwitchRequest> retrievedRequests = _shiftSwitchRepository.GetManyShiftSwitchRequestAsync().ToList();
-        List<ShiftSwitchRequestDTO> requestDtos = new List<ShiftSwitchRequestDTO>();
-        retrievedRequests.ForEach(request =>
-            requestDtos.Add(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(request)));
-        return Ok(requestDtos);
+        try
+        {
+            List<ShiftSwitchRequest> retrievedRequests = _shiftSwitchRepository.GetManyShiftSwitchRequestAsync().ToList();
+            List<ShiftSwitchRequestDTO> requestDtos = new List<ShiftSwitchRequestDTO>();
+            retrievedRequests.ForEach(request =>
+                requestDtos.Add(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(request)));
+            return Ok(requestDtos);
+        }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet("/Shift/{shiftId:long}/ShiftSwitching/[controller]")]
@@ -75,11 +94,17 @@ public class RequestController : ControllerBase
                 requestDtos.Add(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(request)));
             return Ok(requestDtos);
         }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
+        
     }
+    
 
     [HttpGet("/Employee/{employeeId:long}/ShiftSwitching/[controller]")]
     public async Task<ActionResult<List<ShiftSwitchRequestDTO>>> GetAllShiftRequestsByEmployeeId(
@@ -94,9 +119,13 @@ public class RequestController : ControllerBase
                 requestDtos.Add(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(request)));
             return Ok(requestDtos);
         }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 
@@ -111,9 +140,17 @@ public class RequestController : ControllerBase
             var updatedRequest = await _shiftSwitchRepository.UpdateShiftSwitchRequestAsync(requestToUpdate);
             return Ok(EntityDtoConverter.ShiftSwitchRequestToShiftSwitchRequestDto(updatedRequest));
         }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 
@@ -125,9 +162,17 @@ public class RequestController : ControllerBase
             await _shiftSwitchRepository.DeleteShiftSwitchRequestAsync(id);
             return Ok();
         }
+        catch (ArgumentException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 }

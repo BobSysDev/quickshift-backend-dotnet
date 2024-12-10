@@ -34,11 +34,15 @@ public class TimeframeController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
             return BadRequest(e.Message);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
         }
     }
     
@@ -54,11 +58,12 @@ public class TimeframeController : ControllerBase
 
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
-        catch (ArgumentException e)
+        
+        catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
     
@@ -81,11 +86,12 @@ public class TimeframeController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
-        catch (ArgumentException e)
+        
+        catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return Problem(e.Message);
         }
     }
 
@@ -99,11 +105,16 @@ public class TimeframeController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
+        }
+        
+        catch (Exception e)
+        {
+            return Problem(e.Message);
         }
     }
 }

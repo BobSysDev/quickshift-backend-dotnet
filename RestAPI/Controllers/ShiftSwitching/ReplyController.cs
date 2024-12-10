@@ -56,11 +56,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
     }
 
@@ -79,7 +79,7 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
@@ -105,7 +105,7 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
@@ -128,11 +128,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -151,11 +151,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -174,11 +174,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -197,11 +197,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -219,11 +219,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -237,11 +237,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 
@@ -279,11 +279,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
         catch (ArgumentException e)
         {
-            return BadRequest(e.Message);
+            return NotFound(e.Message);;
         }
     }
 }
