@@ -23,15 +23,13 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchRequestTimeframe.ShiftSwitchRequestTimeframeClient(channel);
-            var request = await client.AddTimeframeAsync(new NewTimeframeDTO()
-            {
-                ShiftSwitchRequestId = requestId,
-                TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
-                TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds()
-            });
-            Entities.ShiftSwitchRequestTimeframe shiftSwitchRequestTimeframeRecieved =
+
+            var newTimeframeDto = GrpcDtoConverter.ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(timeframe);
+            var request = await client.AddTimeframeAsync(newTimeframeDto);
+
+            Entities.ShiftSwitchRequestTimeframe shiftSwitchRequestTimeframeReceived =
                 GrpcDtoConverter.GrpcTimeframeDtoToShiftSwitchRequestTimeframe(request);
-            return shiftSwitchRequestTimeframeRecieved;
+            return shiftSwitchRequestTimeframeReceived;
         }
         catch (RpcException e)
         {

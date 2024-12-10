@@ -414,7 +414,7 @@ public class GrpcDtoConverter
         return request;
     }
     
-    public static UpdateRequestDTO ShiftSwitchRequestToGrpcUpdateNewRequestDto(Entities.ShiftSwitchRequest r)
+    public static UpdateRequestDTO ShiftSwitchRequestToGrpcUpdateRequestDto(Entities.ShiftSwitchRequest r)
     {
         UpdateRequestDTO request = new UpdateRequestDTO()
         {
@@ -506,5 +506,17 @@ public class GrpcDtoConverter
 
         return dtos;
     }
+    
+    //createShift
+    public static ShiftEmployeePair ShiftIdAndEmployeeIdToShiftEmployeePair(long shiftId, long employeeId)
+    {
+        return new ShiftEmployeePair
+        {
+            ShiftId = shiftId,
+            EmployeeId = employeeId
+        };
+    }
+    
+    
 }
 

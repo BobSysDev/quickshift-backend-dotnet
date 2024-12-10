@@ -105,7 +105,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             var client = new Employee.EmployeeClient(channel);
             var reply = await client.GetSingleEmployeeByIdAsync(new Id { Id_ = id });
 
-            return GrpcEmployeeDtoToEntityEmployee(reply, GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
+            return GrpcDtoConverter.GrpcEmployeeDtoToEmployee(reply);
         }
         catch (RpcException e)
         {
@@ -126,7 +126,7 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress); 
             var client = new Employee.EmployeeClient(channel);
             var reply = await client.GetSingleEmployeeByWorkingNumberAsync(new WorkingNumber { WorkingNumber_ = uint.CreateChecked(WorkingNumber)  }); 
-            employee = GrpcEmployeeDtoToEntityEmployee(reply, GrpcShiftDtosToEntityShiftsList(reply.AssignedShifts.Dtos.ToList()));
+            employee = GrpcDtoConverter.GrpcEmployeeDtoToEmployee(reply);
         }
         catch (RpcException e)
         {
@@ -155,101 +155,5 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             throw new Exception("An error occurred while checking if the employee is in the repository.", e);
         }
     }
-
-    public static List<Entities.Shift> GrpcShiftDtosToEntityShiftsList(List<ShiftDTO> grpcShiftDtos)
-    {
-        List<Entities.Shift> shifts = new List<Entities.Shift>();
-        foreach (var shiftDTO in grpcShiftDtos)
-        {
-            var shift = new Entities.Shift
-            {
-                Id = shiftDTO.Id,
-                StartDateTime = new DateTime(shiftDTO.StartDateTime),
-                EndDateTime = new DateTime(shiftDTO.EndDateTime),
-                TypeOfShift = shiftDTO.TypeOfShift,
-                ShiftStatus = shiftDTO.ShiftStatus,
-                Description = shiftDTO.Description,
-                Location = shiftDTO.Location,
-                AssingnedEmployees = shiftDTO.AssignedEmployeeIds.ToList()
-            };
-            shifts.Add(shift);
-        }
-
-        return shifts;
-    }
     
-    public static List<Entities.Shift> ShiftDtosToEntityShiftsList(List<DTOs.Shift.ShiftDTO> shiftDtos)
-    {
-        List<Entities.Shift> shifts = new List<Entities.Shift>();
-        foreach (var shiftDto in shiftDtos)
-        {
-            var shift = new Entities.Shift
-            {
-                Id = shiftDto.Id,
-                StartDateTime = shiftDto.StartDateTime,
-                EndDateTime = shiftDto.EndDateTime,
-                TypeOfShift = shiftDto.TypeOfShift,
-                ShiftStatus = shiftDto.ShiftStatus,
-                Description = shiftDto.Description,
-                Location = shiftDto.Location,
-                AssingnedEmployees = shiftDto.AssignedEmployees
-            };
-            shifts.Add(shift);
-        }
-
-        return shifts;
-    }
-
-    public static Entities.Employee GrpcEmployeeDtoToEntityEmployee(EmployeeDTO employeeDto, List<Entities.Shift> shifts)
-    {
-        Entities.Employee employee = new Entities.Employee
-        {
-            FirstName = employeeDto.FirstName,
-            LastName = employeeDto.LastName,
-            Id = employeeDto.Id,
-            WorkingNumber = int.CreateChecked(employeeDto.WorkingNumber),
-            Shifts = shifts,
-            Email = employeeDto.Email,
-            Password = employeeDto.Password,
-        };
-        return employee;
-    }
-    
-    
-    
-    public static Entities.Employee NewEmployeeDtoToEntityEmployee(DTOs.NewEmployeeDTO newEmployeeDto)
-    {
-        Entities.Employee employee = new Entities.Employee
-        {
-            FirstName = newEmployeeDto.FirstName,
-            LastName = newEmployeeDto.LastName,
-            WorkingNumber = int.CreateChecked(newEmployeeDto.WorkingNumber),
-            Email = newEmployeeDto.Email,
-            Password = newEmployeeDto.Password
-        };
-        return employee;
-    }
-
-    public static List<DTOs.Shift.ShiftDTO> ShiftsToEntityShiftDTOs(List<Entities.Shift> shifts)
-    {
-        List<DTOs.Shift.ShiftDTO> shiftsToReturn = new List<DTOs.Shift.ShiftDTO>();
-        foreach (var shiftTemp in shifts)
-        {
-            var shiftDTO = new DTOs.Shift.ShiftDTO
-            {
-                Id = shiftTemp.Id,
-                StartDateTime = shiftTemp.StartDateTime,
-                EndDateTime = shiftTemp.EndDateTime,
-                TypeOfShift = shiftTemp.TypeOfShift,
-                ShiftStatus = shiftTemp.ShiftStatus,
-                Description = shiftTemp.Description,
-                Location = shiftTemp.Location,
-                AssignedEmployees = shiftTemp.AssingnedEmployees
-            };
-            shiftsToReturn.Add(shiftDTO);
-        }
-
-        return shiftsToReturn;
-    }
-
 }
