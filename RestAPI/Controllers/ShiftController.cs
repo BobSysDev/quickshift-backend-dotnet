@@ -74,6 +74,10 @@ public class ShiftController : ControllerBase
         {
             return Conflict(e.Message);
         }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
     }
 
     [HttpGet("{id:int}")]
