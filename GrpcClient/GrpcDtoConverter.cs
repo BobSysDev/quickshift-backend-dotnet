@@ -103,8 +103,8 @@ public class GrpcDtoConverter
         Entities.Shift shift = new Entities.Shift()
         {
             Id = dto.Id,
-            StartDateTime = new DateTime(dto.StartDateTime), 
-            EndDateTime = new DateTime(dto.EndDateTime), 
+            StartDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.StartDateTime),
+            EndDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.EndDateTime),
             TypeOfShift = dto.TypeOfShift,
             ShiftStatus = dto.ShiftStatus,
             Description = dto.Description,
@@ -117,8 +117,8 @@ public class GrpcDtoConverter
     {
         Entities.Shift shift = new Entities.Shift()
         {
-            StartDateTime = new DateTime(dto.StartDateTime), 
-            EndDateTime = new DateTime(dto.EndDateTime), 
+            StartDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.StartDateTime),
+            EndDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.EndDateTime),
             TypeOfShift = dto.TypeOfShift,
             ShiftStatus = dto.ShiftStatus,
             Description = dto.Description,
@@ -153,8 +153,8 @@ public class GrpcDtoConverter
             Entities.Shift shift = new Entities.Shift()
             {
                 Id = dto.Id,
-                StartDateTime = new DateTime(dto.StartDateTime), 
-                EndDateTime = new DateTime(dto.EndDateTime), 
+                StartDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.StartDateTime),
+                EndDateTime = DateTime.UnixEpoch.AddMilliseconds(dto.EndDateTime),
                 TypeOfShift = dto.TypeOfShift,
                 ShiftStatus = dto.ShiftStatus,
                 Description = dto.Description,
@@ -178,8 +178,8 @@ public class GrpcDtoConverter
         ShiftDTO dto = new ShiftDTO()
         {
             Id = s.Id,
-            StartDateTime = s.StartDateTime.Ticks, 
-            EndDateTime = s.EndDateTime.Ticks, 
+            StartDateTime = new DateTimeOffset(s.StartDateTime).ToUnixTimeMilliseconds(),
+            EndDateTime = new DateTimeOffset(s.EndDateTime).ToUnixTimeMilliseconds(),
             TypeOfShift = s.TypeOfShift,
             ShiftStatus = s.ShiftStatus,
             Description = s.Description,
@@ -194,8 +194,8 @@ public class GrpcDtoConverter
     {
         NewShiftDTO dto = new NewShiftDTO()
         {
-            StartDateTime = s.StartDateTime.Ticks, 
-            EndDateTime = s.EndDateTime.Ticks, 
+            StartDateTime = new DateTimeOffset(s.StartDateTime).ToUnixTimeMilliseconds(),
+            EndDateTime = new DateTimeOffset(s.EndDateTime).ToUnixTimeMilliseconds(),
             TypeOfShift = s.TypeOfShift,
             ShiftStatus = s.ShiftStatus,
             Description = s.Description,
@@ -212,8 +212,8 @@ public class GrpcDtoConverter
             ShiftDTO dto = new ShiftDTO()
             {
                 Id = shift.Id,
-                StartDateTime = shift.StartDateTime.Ticks, 
-                EndDateTime = shift.EndDateTime.Ticks, 
+                StartDateTime = new DateTimeOffset(shift.StartDateTime).ToUnixTimeMilliseconds(),
+                EndDateTime = new DateTimeOffset(shift.EndDateTime).ToUnixTimeMilliseconds(),
                 TypeOfShift = shift.TypeOfShift,
                 ShiftStatus = shift.ShiftStatus,
                 Description = shift.Description,
@@ -398,8 +398,8 @@ public class GrpcDtoConverter
         Entities.ShiftSwitchRequestTimeframe timeframe = new Entities.ShiftSwitchRequestTimeframe()
         {
             Id = dto.Id,
-            TimeFrameStart = new DateTime(dto.TimeFrameStart),
-            TimeFrameEnd = new DateTime(dto.TimeFrameEnd)
+            TimeFrameStart = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameStart),
+            TimeFrameEnd = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameEnd),
         };
         return timeframe;
     }
@@ -408,8 +408,8 @@ public class GrpcDtoConverter
     {
         Entities.ShiftSwitchRequestTimeframe timeframe = new Entities.ShiftSwitchRequestTimeframe()
         {
-            TimeFrameStart = new DateTime(dto.TimeFrameStart),
-            TimeFrameEnd = new DateTime(dto.TimeFrameEnd)
+            TimeFrameStart = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameStart),
+            TimeFrameEnd = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameEnd),
         };
         return timeframe;
     }
@@ -424,8 +424,8 @@ public class GrpcDtoConverter
             Entities.ShiftSwitchRequestTimeframe t = new Entities.ShiftSwitchRequestTimeframe()
             {
                 Id = dto.Id,
-                TimeFrameStart = new DateTime(dto.TimeFrameStart), 
-                TimeFrameEnd = new DateTime(dto.TimeFrameEnd) 
+                TimeFrameStart = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameStart),
+                TimeFrameEnd = DateTime.UnixEpoch.AddMilliseconds(dto.TimeFrameEnd),
             };
             timeframes.Add(t);
         }
@@ -439,8 +439,8 @@ public class GrpcDtoConverter
         TimeframeDTO dto = new TimeframeDTO()
         {
             Id = timeframe.Id,
-            TimeFrameStart = timeframe.TimeFrameStart.Ticks,
-            TimeFrameEnd = timeframe.TimeFrameEnd.Ticks
+            TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
+            TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds(),
         };
         return dto;
     }
@@ -449,8 +449,8 @@ public class GrpcDtoConverter
     {
         NewTimeframeDTO dto = new NewTimeframeDTO()
         {
-            TimeFrameStart = timeframe.TimeFrameStart.Ticks,
-            TimeFrameEnd = timeframe.TimeFrameEnd.Ticks
+            TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
+            TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds(),
         };
         return dto;
     }
@@ -464,8 +464,8 @@ public class GrpcDtoConverter
             TimeframeDTO dto = new TimeframeDTO()
             {
                 Id = timeframe.Id,
-                TimeFrameStart = timeframe.TimeFrameStart.Ticks,
-                TimeFrameEnd= timeframe.TimeFrameEnd.Ticks
+                TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
+                TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds(),
                 
             };
             dtos.Dtos.Add(dto);
