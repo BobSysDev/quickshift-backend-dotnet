@@ -100,27 +100,15 @@ public class ShiftController : ControllerBase
     [HttpGet("/Shifts/Employee/{id:int}")]
     public async Task<ActionResult<IEnumerable<ShiftDTO>>> GetShiftsByEmployeeId([FromRoute] int id)
     {
-        var shifts =  _shiftRepository.GetManyAsync();
-        var shiftDtos = EntityDtoConverter.ListShiftToListShiftDtos(shifts.ToList()).AsEnumerable();
-        
-
-        // foreach (var shift in shifts)
-        // {
-        //     if (shift.AssingnedEmployees.Contains(id))
-        //     {
-        //         shiftDtos.Add(new ShiftDTO
-        //         {
-        //             StartDateTime = shift.StartDateTime,
-        //             EndDateTime = shift.EndDateTime,
-        //             Description = shift.Description,
-        //             TypeOfShift = shift.TypeOfShift,
-        //             Id = shift.Id,
-        //             ShiftStatus = shift.ShiftStatus,
-        //             Location = shift.Location,
-        //             AssignedEmployees = shift.AssingnedEmployees
-        //         });
-        //     }
-        //}
+        var shifts =  _shiftRepository.GetManyAsync().ToList();
+        var shiftDtos = new List<ShiftDTO>();
+        foreach (var shift in shifts)
+        {
+            if (shift.AssingnedEmployees.Contains(id))
+            {
+                shiftDtos.Add(EntityDtoConverter.ShiftToShiftDto(shift));
+            }
+        }
 
         return Ok(shiftDtos);
     }
