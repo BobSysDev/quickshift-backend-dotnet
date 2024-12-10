@@ -95,12 +95,12 @@ public class ShiftController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ShiftDTO>> GetAllShifts()
     {
-        var shifts = _shiftRepository.GetManyAsync();
+        var shifts = _shiftRepository.GetManyAsync().ToList();
 
         //var shiftDtos = shifts.Select(shift => new ShiftDTO = EntityDtoConverter.ShiftToShiftDto());
-        var shiftDtos = EntityDtoConverter.ListShiftToListShiftDtos(shifts.ToList()).AsEnumerable();
+        var shiftDtos = EntityDtoConverter.ListShiftToListShiftDtos(shifts);
         
-        return Ok(shiftDtos.ToList());
+        return Ok(shiftDtos);
     }
 
     [HttpGet("/Shifts/Employee/{id:int}")]
