@@ -37,6 +37,10 @@ public class RequestController : ControllerBase
         {
             return NotFound(e.Message);
         }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
+        }
         
     }
 
