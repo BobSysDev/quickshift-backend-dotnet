@@ -169,6 +169,11 @@ public class ShiftGrpcRepository : IShiftRepository
                 }
             }
 
+            if (e.StatusCode == StatusCode.AlreadyExists)
+            {
+                throw new InvalidOperationException(e.Message);
+            }
+
             throw new Exception("An error occurred while assigning the employee to the shift.", e);
         }
     }
@@ -198,6 +203,10 @@ public class ShiftGrpcRepository : IShiftRepository
                 {
                     throw new ArgumentException(e.Message + ": " + employeeId, nameof(employeeId));
                 }
+            }
+            if (e.StatusCode == StatusCode.FailedPrecondition)
+            {
+                throw new InvalidOperationException(e.Message);
             }
 
             throw new Exception("An error occurred while unassigning the employee from the shift.", e);
