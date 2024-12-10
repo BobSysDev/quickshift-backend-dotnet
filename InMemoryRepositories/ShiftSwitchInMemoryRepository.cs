@@ -55,7 +55,7 @@ namespace InMemoryRepositories
         public async Task<ShiftSwitchRequest> GetSingleShiftSwitchRequestAsync(long id)
         {
             
-                var request = _requests.FirstOrDefault(r => r.Id == id);
+                var request = _requests.SingleOrDefault(r => r.Id == id);
 
                 if (request == null)
                     throw new InvalidOperationException($"ShiftSwitchRequest with ID {id} not found.");
