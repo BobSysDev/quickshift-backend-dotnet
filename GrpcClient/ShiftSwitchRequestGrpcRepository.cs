@@ -28,12 +28,7 @@ namespace GrpcClient
                 using var channel = GrpcChannel.ForAddress(_grpcAddress);
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
 
-                var reply = await client.AddRequestAsync(new NewRequestDTO
-                {
-                    OriginEmployeeId = request.OriginEmployee.Id,
-                    OriginShiftId = request.OriginShift.Id,
-                    Details = request.Details
-                });
+                var reply = await client.AddRequestAsync(GrpcDtoConverter.ShiftSwitchRequestToGrpcNewRequestDto(request));
 
                 Entities.ShiftSwitchRequest shiftSwitchRequestReceived =
                     GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository, _employeeRepository);
@@ -67,10 +62,7 @@ namespace GrpcClient
                 using var channel = GrpcChannel.ForAddress(_grpcAddress);
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
 
-                var reply = await client.UpdateRequestAsync(new UpdateRequestDTO
-                {
-                    Details = request.Details
-                });
+                var reply = await client.UpdateRequestAsync(GrpcDtoConverter.ShiftSwitchRequestToGrpcUpdateRequestDto(request));
 
                 return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository,
                     _employeeRepository);
