@@ -506,5 +506,17 @@ public class GrpcDtoConverter
 
         return dtos;
     }
+    
+    //createShift
+    public static ShiftEmployeePair ShiftIdAndEmployeeIdToShiftEmployeePair(long shiftId, long employeeId)
+    {
+        return new ShiftEmployeePair
+        {
+            ShiftId = shiftId,
+            EmployeeId = employeeId
+        };
+    }
+    
+    
 }
 
