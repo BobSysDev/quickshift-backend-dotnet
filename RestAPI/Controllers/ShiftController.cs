@@ -25,19 +25,13 @@ public class ShiftController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ShiftDTO>> AddShift([FromBody] NewShiftDTO request)
     {
-        try
-        {
             Shift tmp = EntityDtoConverter.NewShiftDtoToShift(request);
             //Console.WriteLine(tmp.Print());
             var shift = await _shiftRepository.AddAsync(tmp);
             //Console.WriteLine(shift.Print());
             ShiftDTO dto = EntityDtoConverter.ShiftToShiftDto(shift);
             return Ok(dto);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
+        
     }
 
     [HttpPatch("/Shift/{shiftId:int}/Assign/{employeeId:int}")]
@@ -73,10 +67,6 @@ public class ShiftController : ControllerBase
         catch (InvalidOperationException e)
         {
             return Conflict(e.Message);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
         }
     }
 

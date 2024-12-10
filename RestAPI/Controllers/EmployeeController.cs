@@ -124,8 +124,7 @@ public class EmployeeController : ControllerBase
     [HttpGet("/Employees/")]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
-        try
-        {
+        
             Console.WriteLine("1");
             IQueryable<Employee> employees = employeeRepo.GetManyAsync();
             Console.WriteLine("2");
@@ -140,11 +139,8 @@ public class EmployeeController : ControllerBase
             Console.WriteLine("3");
 
             return Ok(dtos);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message); 
-        }
+        
+        
     }
     
     [HttpDelete("{id:long}")]
