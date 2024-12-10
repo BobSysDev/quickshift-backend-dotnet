@@ -25,13 +25,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
 
-            var response = await client.AddReplyAsync(new NewReplyDTO
-            {
-                ShiftSwitchRequestId = requestId,
-                TargetEmployeeId = reply.TargetEmployee.Id,
-                TargetShiftId = reply.TargetShift.Id,
-                Details = reply.Details
-            });
+            var response = await client.AddReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcNewReplyDto(reply));
 
             Entities.ShiftSwitchReply shiftSwitchReplyReceived =
                 GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
@@ -55,11 +49,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
 
-            var response = await client.UpdateReplyAsync(new UpdateReplyDTO
-            {
-                Details = reply.Details,
-                Id = reply.Id
-            });
+            var response = await client.UpdateReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcUpdateReplyDto(reply));
 
             return GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
         }
