@@ -144,8 +144,8 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
 
     public async Task DeleteShiftSwitchRequestTimeframeAsync(long id)
     {
+        await _timeframeStorageRepository.DeleteAsync(id);
         await _shiftSwitchCachingRepository.DeleteShiftSwitchRequestTimeframeAsync(id);
-        await _requestStorageRepository.DeleteAsync(id);
     }
 
     public async Task<ShiftSwitchRequestTimeframe> GetShiftSwitchRequestTimeframeSingleAsync(long id)

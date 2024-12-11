@@ -106,10 +106,5 @@ public class TimeframeController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
     }
 }
