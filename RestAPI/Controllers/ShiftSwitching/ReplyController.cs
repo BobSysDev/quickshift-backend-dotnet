@@ -279,11 +279,11 @@ public class ReplyController : ControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return NotFound(e.Message);;
+            return NotFound(e.Message);
         }
         catch (ArgumentException e)
         {
-            return NotFound(e.Message);;
+            return NotFound(e.Message);
         }
     }
 }

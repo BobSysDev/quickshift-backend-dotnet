@@ -69,7 +69,7 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     
     private async Task RefreshCache()
     {
-        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
+        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) <= 0)
         {
             List<Employee> employees = _employeeStorageRepository.GetManyAsync().ToList();
             _employeeCachingRepository = new EmployeeInMemoryRepository();
