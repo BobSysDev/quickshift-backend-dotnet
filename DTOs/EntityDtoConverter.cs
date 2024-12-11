@@ -242,23 +242,23 @@ public class EntityDtoConverter
         return shift;
     }
     
-    public static ShiftSwitchReply ShiftSwitchReplyDtoToShiftSwitchReply(ShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository)
+    public static async Task<ShiftSwitchReply> ShiftSwitchReplyDtoToShiftSwitchReply(ShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository)
     {
         ShiftSwitchReply shift = new ShiftSwitchReply()
         {
             Id = dto.Id,
-            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result
+            TargetShift = await _shiftRepository.GetSingleAsync(dto.TargetShiftId)
         };
         
         return shift;
     }
-    public static ShiftSwitchRequest ShiftSwitchRequestDtoToShiftSwitchRequest(ShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    public static async Task<ShiftSwitchRequest> ShiftSwitchRequestDtoToShiftSwitchRequest(ShiftSwitchRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         ShiftSwitchRequest shift = new ShiftSwitchRequest()
         {
             Id = dto.Id,
-            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
-            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            OriginShift = await _shiftRepository.GetSingleAsync(dto.OriginShiftId),
+            OriginEmployee = await _employeeRepository.GetSingleAsync(dto.OriginEmployeeId),
             Details = dto.Details
         };
         
@@ -403,12 +403,12 @@ public class EntityDtoConverter
     
     //other shift switch ones: (dtos->entities)
     //--replies
-    public static ShiftSwitchReply NewShiftSwitchReplyDtoToShiftSwitchReply(NewShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
+    public static async Task<ShiftSwitchReply> NewShiftSwitchReplyDtoToShiftSwitchReply(NewShiftSwitchReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository )
     {
         ShiftSwitchReply reply = new ShiftSwitchReply()
         {
-            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
-            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            TargetShift = await _shiftRepository.GetSingleAsync(dto.TargetShiftId),
+            TargetEmployee = await _employeeRepository.GetSingleAsync(dto.TargetEmployeeId),
             Details = dto.Details
         };
         return reply;

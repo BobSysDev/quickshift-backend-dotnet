@@ -29,7 +29,7 @@ public class ReplyController : ControllerBase
     {
         try
         {
-            ShiftSwitchReply replyToAdd = EntityDtoConverter
+            ShiftSwitchReply replyToAdd = await EntityDtoConverter
                 .NewShiftSwitchReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository);
 
             var addedReply = await _shiftSwitchRepository.AddShiftSwitchReplyAsync(replyToAdd, requestId);

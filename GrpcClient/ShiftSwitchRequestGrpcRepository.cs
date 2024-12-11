@@ -31,7 +31,7 @@ namespace GrpcClient
                 var reply = await client.AddRequestAsync(GrpcDtoConverter.ShiftSwitchRequestToGrpcNewRequestDto(request));
 
                 Entities.ShiftSwitchRequest shiftSwitchRequestReceived =
-                    GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository, _employeeRepository);
+                    await GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository, _employeeRepository);
                 return shiftSwitchRequestReceived;
             }
             catch (RpcException e)
@@ -64,7 +64,7 @@ namespace GrpcClient
 
                 var reply = await client.UpdateRequestAsync(GrpcDtoConverter.ShiftSwitchRequestToGrpcUpdateRequestDto(request));
 
-                return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository,
+                return  await GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(reply, _shiftRepository,
                     _employeeRepository);
             }
             catch (RpcException e)
@@ -107,7 +107,7 @@ namespace GrpcClient
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var response = client.GetAll(new Empty());
                 var shiftSwitchRequests = response.Dtos.Select(r =>
-                    GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(r, _shiftRepository, _employeeRepository));
+                    GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(r, _shiftRepository, _employeeRepository).Result);
                 return shiftSwitchRequests.AsQueryable();
             }
             catch (RpcException e)
@@ -124,7 +124,7 @@ namespace GrpcClient
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var request = new Id { Id_ = id };
                 var response = await client.GetSingleByIdAsync(request);
-                return GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(response, _shiftRepository,
+                return await GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(response, _shiftRepository,
                     _employeeRepository);
             }
             catch (RpcException e)
@@ -146,7 +146,7 @@ namespace GrpcClient
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var response = await client.GetRequestsByOriginEmployeeIdAsync(new Id { Id_ = employeeId });
                 return response.Dtos.Select(dto =>
-                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository))
+                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository).Result)
                     .ToList();
             }
             catch (RpcException e)
@@ -168,7 +168,7 @@ namespace GrpcClient
                 var client = new ShiftSwitchRequest.ShiftSwitchRequestClient(channel);
                 var response = await client.GetRequestsByOriginShiftIdAsync(new Id { Id_ = shiftId });
                 return response.Dtos.Select(dto =>
-                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository))
+                        GrpcDtoConverter.GrpcRequestDtoToShiftSwitchRequest(dto, _shiftRepository, _employeeRepository).Result)
                     .ToList();
             }
             catch (RpcException e)

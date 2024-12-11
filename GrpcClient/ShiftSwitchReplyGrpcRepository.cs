@@ -28,7 +28,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
             var response = await client.AddReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcNewReplyDto(reply));
 
             Entities.ShiftSwitchReply shiftSwitchReplyReceived =
-                GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
+                await GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
             return shiftSwitchReplyReceived;
         }
         catch (RpcException e)
@@ -51,7 +51,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
 
             var response = await client.UpdateReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcUpdateReplyDto(reply));
 
-            return GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
+            return await GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
         }
         catch (RpcException e)
         {
@@ -85,14 +85,14 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
         }
     }
 
-    public IQueryable<Entities.ShiftSwitchReply> GetManyAsync()
+    public  IQueryable<Entities.ShiftSwitchReply> GetManyAsync()
     {
         try
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
             var response = client.GetAll(new Empty());
-            var shiftSwitchReplies = response.Dtos.Select(dto => GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository)).ToList();
+            var shiftSwitchReplies = response.Dtos.Select(dto => GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository).Result).ToList();
             return shiftSwitchReplies.AsQueryable();
         }
         catch (RpcException e)
@@ -109,7 +109,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
             var request = new Id { Id_ = id };
             var response = await client.GetSingleByIdAsync(request);
-            return GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
+            return await GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
         }
         catch (RpcException e)
         {

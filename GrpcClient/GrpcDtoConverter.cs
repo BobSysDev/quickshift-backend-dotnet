@@ -272,13 +272,14 @@ public class GrpcDtoConverter
     
     
     //FOR REPLY (grpcDto -> reply)
-    public static Entities.ShiftSwitchReply GrpcReplyDtoToShiftSwitchReply(ReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    //Couldnt do async for this one
+    public static async Task<Entities.ShiftSwitchReply> GrpcReplyDtoToShiftSwitchReply(ReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         Entities.ShiftSwitchReply reply = new Entities.ShiftSwitchReply()
         {
             Id = dto.Id,
-            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
-            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            TargetShift = await _shiftRepository.GetSingleAsync(dto.TargetShiftId),
+            TargetEmployee = await _employeeRepository.GetSingleAsync(dto.TargetEmployeeId),
             TargetAccepted = dto.TargetAccepted,
             OriginAccepted = dto.OriginAccepted,
             Details = dto.Details,
@@ -286,25 +287,25 @@ public class GrpcDtoConverter
         return reply;
     }
     
-    public static Entities.ShiftSwitchReply GrpcNewReplyDtoToShiftSwitchReply(NewReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    public static async Task<Entities.ShiftSwitchReply> GrpcNewReplyDtoToShiftSwitchReply(NewReplyDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         Entities.ShiftSwitchReply reply = new Entities.ShiftSwitchReply()
         {
-            TargetShift = _shiftRepository.GetSingleAsync(dto.TargetShiftId).Result,
-            TargetEmployee = _employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
+            TargetShift = await _shiftRepository.GetSingleAsync(dto.TargetShiftId),
+            TargetEmployee = await _employeeRepository.GetSingleAsync(dto.TargetEmployeeId),
             Details = dto.Details
         };
         return reply;
     }
     
     //list
-    public static List<Entities.ShiftSwitchReply> GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(ReplyDTOList dtos, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    public static async Task<List<Entities.ShiftSwitchReply>> GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(ReplyDTOList dtos, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         List<ReplyDTO> dtos2 = dtos.Dtos.ToList();
         List<Entities.ShiftSwitchReply> replies = new List<Entities.ShiftSwitchReply>();
         foreach (var dto in dtos2)
         {
-            Entities.ShiftSwitchReply shift = GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository);
+            Entities.ShiftSwitchReply shift =  await GrpcReplyDtoToShiftSwitchReply(dto, _shiftRepository, _employeeRepository);
             replies.Add(shift);
         }
 
@@ -369,16 +370,16 @@ public class GrpcDtoConverter
     
     
     //FOR REQUEST (grpcDto -> request)
-    public static Entities.ShiftSwitchRequest GrpcRequestDtoToShiftSwitchRequest(RequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    public static async Task<Entities.ShiftSwitchRequest>GrpcRequestDtoToShiftSwitchRequest(RequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         Entities.ShiftSwitchRequest request = new Entities.ShiftSwitchRequest()
         {
             Id = dto.Id,
-            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
-            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            OriginShift = await _shiftRepository.GetSingleAsync(dto.OriginShiftId),
+            OriginEmployee = await _employeeRepository.GetSingleAsync(dto.OriginEmployeeId),
             Details = dto.Details,
             SwitchReplies =
-                GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(dto.Replies, _shiftRepository, _employeeRepository),
+               await GrpcShiftSwitchReplyListDtoToShiftSwitchRequestList(dto.Replies, _shiftRepository, _employeeRepository),
             Timeframes = ShiftSwitchRequestTimeframeDtoListToShiftSwitchRequestTimeframeList(dto.Timeframes)
         };
         return request;
@@ -386,12 +387,12 @@ public class GrpcDtoConverter
     
     
     
-    public static Entities.ShiftSwitchRequest GrpcNewRequestDtoToShiftSwitchRequest(NewRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
+    public static async Task<Entities.ShiftSwitchRequest> GrpcNewRequestDtoToShiftSwitchRequest(NewRequestDTO dto, IShiftRepository _shiftRepository, IEmployeeRepository _employeeRepository)
     {
         Entities.ShiftSwitchRequest request = new Entities.ShiftSwitchRequest()
         {
-            OriginShift = _shiftRepository.GetSingleAsync(dto.OriginShiftId).Result,
-            OriginEmployee = _employeeRepository.GetSingleAsync(dto.OriginEmployeeId).Result,
+            OriginShift = await _shiftRepository.GetSingleAsync(dto.OriginShiftId),
+            OriginEmployee = await _employeeRepository.GetSingleAsync(dto.OriginEmployeeId),
             Details = dto.Details,
             Timeframes = ShiftSwitchRequestTimeframeDtoListToShiftSwitchRequestTimeframeList(dto.Timeframes)
         };
