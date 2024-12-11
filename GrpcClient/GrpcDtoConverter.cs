@@ -502,10 +502,11 @@ public class GrpcDtoConverter
         return dto;
     }
     
-    public static NewTimeframeDTO ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(Entities.ShiftSwitchRequestTimeframe timeframe)
+    public static NewTimeframeDTO ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(Entities.ShiftSwitchRequestTimeframe timeframe, long requestId)
     {
         NewTimeframeDTO dto = new NewTimeframeDTO()
         {
+            ShiftSwitchRequestId = requestId,
             TimeFrameStart = new DateTimeOffset(timeframe.TimeFrameStart).ToUnixTimeMilliseconds(),
             TimeFrameEnd = new DateTimeOffset(timeframe.TimeFrameEnd).ToUnixTimeMilliseconds(),
         };

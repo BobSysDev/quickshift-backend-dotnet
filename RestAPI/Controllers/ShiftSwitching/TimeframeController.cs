@@ -40,10 +40,6 @@ public class TimeframeController : ControllerBase
         {
             return BadRequest(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
     }
     
     [HttpGet("/ShiftSwitching/Timeframe/{id:long}")]

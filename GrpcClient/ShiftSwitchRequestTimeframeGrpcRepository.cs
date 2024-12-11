@@ -24,7 +24,7 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchRequestTimeframe.ShiftSwitchRequestTimeframeClient(channel);
 
-            var newTimeframeDto = GrpcDtoConverter.ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(timeframe);
+            var newTimeframeDto = GrpcDtoConverter.ShiftSwitchRequestTimeframeToGrpcNewTimeframeDto(timeframe, requestId);
             var request = await client.AddTimeframeAsync(newTimeframeDto);
 
             Entities.ShiftSwitchRequestTimeframe shiftSwitchRequestTimeframeReceived =
@@ -33,9 +33,9 @@ public class ShiftSwitchRequestTimeframeGrpcRepository : IShiftSwitchRequestTime
         }
         catch (RpcException e)
         {
-            if (e.StatusCode == StatusCode.AlreadyExists)
+            if (e.StatusCode == StatusCode.NotFound)
             {
-                throw new ArgumentException($"Shift Switch Request Timeframe already exists: {timeframe.Id}", nameof(timeframe.Id));
+                throw new ArgumentException($"Shift Switch RequestID Timeframe not found: {timeframe.Id}", nameof(timeframe.Id));
             }
 
             throw new Exception("An error occurred while adding the shift switch request timeframe.", e);
