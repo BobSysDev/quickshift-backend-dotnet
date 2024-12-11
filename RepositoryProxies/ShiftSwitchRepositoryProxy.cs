@@ -168,7 +168,7 @@ public class ShiftSwitchRepositoryProxy : IShiftSwitchRepository
     
     private void RefreshCache()
     {
-        if (_lastChacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
+        if (_lastChacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) <= 0)
         {
             List<ShiftSwitchRequest> shifts = _shiftSwitchCachingRepository.GetManyShiftSwitchRequestAsync().ToList();
             _shiftSwitchCachingRepository= new ShiftSwitchInMemoryRepository();

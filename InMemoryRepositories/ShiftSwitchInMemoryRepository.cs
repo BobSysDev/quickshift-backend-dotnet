@@ -242,7 +242,7 @@ namespace InMemoryRepositories
         public async Task<long> GetShiftSwitchRequestIdByShiftSwitchReplyId(long id)
         {
             
-                var request = _requests.FirstOrDefault(r => r.SwitchReplies.Any(reply => reply.Id == id));
+                var request = _requests.SingleOrDefault(r => r.SwitchReplies.Any(reply => reply.Id == id));
                 return request.Id;
            
         }
