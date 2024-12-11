@@ -25,7 +25,7 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
         
        
             Employee? existingEmployee = _employees.SingleOrDefault(e => e.Id == employee.Id);
-            if (existingEmployee is null) throw new InvalidOperationException($"User({employee.Id}) not found");
+            if (existingEmployee is null) throw new InvalidOperationException($"Employee with ID {employee.Id} not found.");
             _employees.Remove(existingEmployee);
             _employees.Add(employee);
             return employee;
@@ -36,7 +36,7 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
     {
        
             Employee? employeeToRemove = _employees.SingleOrDefault(e => e.Id == id);
-            if (employeeToRemove is null) throw new InvalidOperationException($"User({id}) not found");
+            if (employeeToRemove is null) throw new InvalidOperationException($"Employee with ID {id} not found.");
             _employees.Remove(employeeToRemove);
             return Task.CompletedTask;
        
@@ -51,7 +51,7 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
     {
        
             Employee? employeeToReturn = _employees.SingleOrDefault(u => u.Id == id);
-            if (employeeToReturn is null) throw new InvalidOperationException($"User({id}) not found");
+            if (employeeToReturn is null) throw new InvalidOperationException($"Employee with ID {id} not found.");
             return employeeToReturn;
         
     }
@@ -60,7 +60,7 @@ public class EmployeeInMemoryRepository : IEmployeeRepository
     {
        
             Employee? employeeToReturn = _employees.SingleOrDefault(u => u.WorkingNumber == WorkingNumber);
-            if (employeeToReturn is null) throw new InvalidOperationException($"User({WorkingNumber}) not found");
+            if (employeeToReturn is null) throw new InvalidOperationException($"Employee({WorkingNumber}) not found");
             return employeeToReturn;
         
     }
