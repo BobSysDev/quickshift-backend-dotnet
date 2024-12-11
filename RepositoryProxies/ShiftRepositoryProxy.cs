@@ -63,8 +63,11 @@ public class ShiftRepositoryProxy : IShiftRepository
 
     public async Task<Shift> AssignEmployeeToShift(long shiftId, long employeeId)
     {
+        //shift stuff
         await _shiftStorageRepository.AssignEmployeeToShift(shiftId, employeeId);
         await _shiftCachingRepository.AssignEmployeeToShift(shiftId, employeeId);
+        
+        
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 

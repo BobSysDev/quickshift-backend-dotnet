@@ -16,10 +16,12 @@ namespace RestAPI.Controllers;
 public class ShiftController : ControllerBase
 {
     private readonly IShiftRepository _shiftRepository;
+    private readonly IEmployeeRepository _employeeRepository;
 
-    public ShiftController(IShiftRepository shiftRepository)
+    public ShiftController(IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
     {
         _shiftRepository = shiftRepository;
+        _employeeRepository = employeeRepository;
     }
 
     [HttpPost]
@@ -40,6 +42,7 @@ public class ShiftController : ControllerBase
         try
         {
             await _shiftRepository.AssignEmployeeToShift(long.CreateChecked(shiftId), long.CreateChecked(employeeId));
+            UpdateEmployeeAfterChangingShifts(employeeId);
             return Ok();
         }
         catch (ArgumentException e)
@@ -58,6 +61,7 @@ public class ShiftController : ControllerBase
         try
         {
             await _shiftRepository.UnassignEmployeeToShift(shiftId, employeeId);
+            UpdateEmployeeAfterChangingShifts(employeeId);
             return Ok();
         }
         catch (ArgumentException e)
@@ -165,5 +169,20 @@ public class ShiftController : ControllerBase
         {
             return NotFound(e.Message);
         }
+    }
+
+    public async void UpdateEmployeeAfterChangingShifts(long employeeId)
+    {
+        List<Shift> allShifts = _shiftRepository.GetManyAsync().ToList();
+        List<Shift> empShifts = new List<Shift>();
+        foreach (var shift in allShifts)
+        {
+            if (shift.AssingnedEmployees.Contains(employeeId))
+            {
+                empShifts.Add(shift);
+            }
+        }
+
+        (await _employeeRepository.GetSingleAsync(employeeId)).Shifts = empShifts;
     }
 }
