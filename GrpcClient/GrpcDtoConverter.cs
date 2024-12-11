@@ -327,10 +327,11 @@ public class GrpcDtoConverter
         return dto;
     }
     
-    public static NewReplyDTO ShiftSwitchReplyToGrpcNewReplyDto(Entities.ShiftSwitchReply r)
+    public static NewReplyDTO ShiftSwitchReplyToGrpcNewReplyDto(Entities.ShiftSwitchReply r, long requestId)
     {
         NewReplyDTO dto = new NewReplyDTO()
         {
+            ShiftSwitchRequestId = requestId,
             TargetShiftId = r.TargetShift.Id,
             TargetEmployeeId = r.TargetEmployee.Id,
             Details = r.Details,

@@ -25,7 +25,7 @@ public class ShiftSwitchReplyGrpcRepository : IShiftSwitchReplyRepository
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new ShiftSwitchReply.ShiftSwitchReplyClient(channel);
 
-            var response = await client.AddReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcNewReplyDto(reply));
+            var response = await client.AddReplyAsync(GrpcDtoConverter.ShiftSwitchReplyToGrpcNewReplyDto(reply,requestId));
 
             Entities.ShiftSwitchReply shiftSwitchReplyReceived =
                 await GrpcDtoConverter.GrpcReplyDtoToShiftSwitchReply(response, _shiftRepository, _employeeRepository);
