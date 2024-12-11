@@ -38,8 +38,8 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
 
     public async Task DeleteAsync(long id)
     {
-        await _employeeCachingRepository.DeleteAsync(id);
         await _employeeStorageRepository.DeleteAsync(id);
+        await _employeeCachingRepository.DeleteAsync(id);
     }
 
     public IQueryable<Employee> GetManyAsync()

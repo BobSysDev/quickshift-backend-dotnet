@@ -26,21 +26,21 @@ public class ShiftRepositoryProxy : IShiftRepository
     public async Task<Shift> AddAsync(Shift shift)
     {
         Shift addedShift = await _shiftStorageRepository.AddAsync(shift);
-        await _shiftCachingRepository.AddAsync(shift);
+        await _shiftCachingRepository.AddAsync(addedShift);
         return addedShift;
     }
 
     public async Task<Shift> UpdateAsync(Shift shift)
     {
-        await _shiftCachingRepository.UpdateAsync(shift);
         await _shiftStorageRepository.UpdateAsync(shift);
+        await _shiftCachingRepository.UpdateAsync(shift);
         return shift;
     }
 
     public async Task DeleteAsync(long shift)
     {
-        await _shiftCachingRepository.DeleteAsync(shift);
         await _shiftStorageRepository.DeleteAsync(shift);
+        await _shiftCachingRepository.DeleteAsync(shift);
     }
 
     public IQueryable<Shift> GetManyAsync()
@@ -67,7 +67,6 @@ public class ShiftRepositoryProxy : IShiftRepository
         await _shiftStorageRepository.AssignEmployeeToShift(shiftId, employeeId);
         await _shiftCachingRepository.AssignEmployeeToShift(shiftId, employeeId);
         
-        
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
@@ -75,6 +74,7 @@ public class ShiftRepositoryProxy : IShiftRepository
     {
         await _shiftStorageRepository.UnassignEmployeeToShift(shiftId, employeeId);
         await _shiftCachingRepository.UnassignEmployeeToShift(shiftId, employeeId);
+        
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 

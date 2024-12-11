@@ -2,6 +2,7 @@
 using DTOs.Shift;
 using Entities;
 using Grpc.Core;
+using InMemoryRepositories;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
@@ -262,18 +263,59 @@ public class ReplyController : ControllerBase
                 return Conflict("The target employee needs to accept the switch first!");
             }
 
-            var originShiftId = request.OriginShift.Id;
-            var targetShiftId = reply.TargetShift.Id;
-            var originEmployeeId = request.OriginEmployee.Id;
-            var targetEmployeeId = reply.TargetEmployee.Id;
+            var originShift = request.OriginShift;
+            var targetShift = reply.TargetShift;
+            var originEmployee = request.OriginEmployee;
+            var targetEmployee = reply.TargetEmployee;
 
-            await _shiftRepository.UnassignEmployeeToShift(originShiftId, originEmployeeId);
-            await _shiftRepository.AssignEmployeeToShift(targetShiftId, originEmployeeId);
-            await _shiftRepository.UnassignEmployeeToShift(targetShiftId, targetEmployeeId);
-            await _shiftRepository.AssignEmployeeToShift(originShiftId, targetEmployeeId);
+            if (originShift.AssingnedEmployees.Contains(targetEmployee.Id) ||
+                targetShift.AssingnedEmployees.Contains(originEmployee.Id))
+            {
+                return Conflict("One of the shifts contains conflicting employees");
+            }
+            
+            await _shiftRepository.UnassignEmployeeToShift(originShift.Id, originEmployee.Id);
+            
+            try
+            {
+                await _shiftRepository.AssignEmployeeToShift(targetShift.Id, originEmployee.Id);
+            }
+            catch (Exception e)
+            {
+                await _shiftRepository.AssignEmployeeToShift(originShift.Id, originEmployee.Id);
+                return Conflict("Shift switching failed: step 2. Changes reverted");
+            }
 
-            var originShiftDto = EntityDtoConverter.ShiftToShiftDto(await _shiftRepository.GetSingleAsync(originShiftId)); 
-            var targetShiftDto = EntityDtoConverter.ShiftToShiftDto(await _shiftRepository.GetSingleAsync(targetShiftId));
+            try
+            {
+                await _shiftRepository.UnassignEmployeeToShift(targetShift.Id, targetEmployee.Id);
+            }
+            catch (Exception e)
+            {
+                await _shiftRepository.AssignEmployeeToShift(originShift.Id, originEmployee.Id);
+                await _shiftRepository.UnassignEmployeeToShift(targetShift.Id, originEmployee.Id);
+                return Conflict("Shift switching failed: step 3. Changes reverted");
+            }
+            
+            try
+            {
+                await _shiftRepository.AssignEmployeeToShift(originShift.Id, targetEmployee.Id);
+            }
+            catch (Exception e)
+            {
+                await _shiftRepository.AssignEmployeeToShift(originShift.Id, originEmployee.Id);
+                await _shiftRepository.UnassignEmployeeToShift(targetShift.Id, originEmployee.Id);
+                await _shiftRepository.AssignEmployeeToShift(targetShift.Id, targetEmployee.Id);
+                return Conflict("Shift switching failed: step 4. Changes reverted");
+            }
+            
+            await ShiftUtilityMethods.UpdateEmployeeAfterChangingShifts(originEmployee.Id, _shiftRepository, _employeeRepository);
+            await ShiftUtilityMethods.UpdateEmployeeAfterChangingShifts(targetEmployee.Id, _shiftRepository, _employeeRepository);
+            
+            var originShiftDto = EntityDtoConverter.ShiftToShiftDto(await _shiftRepository.GetSingleAsync(originShift.Id)); 
+            var targetShiftDto = EntityDtoConverter.ShiftToShiftDto(await _shiftRepository.GetSingleAsync(targetShift.Id));
+
+            await _shiftSwitchRepository.DeleteShiftSwitchRequestAsync(requestId);
             
             return Ok(new List<ShiftDTO>{originShiftDto, targetShiftDto});
         }
