@@ -306,6 +306,10 @@ namespace InMemoryRepositories
         public async Task<List<ShiftSwitchRequestTimeframe>> GetManyShiftSwitchRequestTimeframesByRequestIdAsync(long requestId)
         {
                 var request = _requests.SingleOrDefault(r => r.Id == requestId);
+                if (request is null)
+                {
+                    throw new ArgumentException($"There is no request with ID: {requestId}", nameof(requestId));
+                }
                 return request.Timeframes;
             
         }

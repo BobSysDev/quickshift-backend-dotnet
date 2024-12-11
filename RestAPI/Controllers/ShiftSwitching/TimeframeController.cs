@@ -84,10 +84,9 @@ public class TimeframeController : ControllerBase
         {
             return NotFound(e.Message);
         }
-        
-        catch (Exception e)
+        catch (ArgumentException e)
         {
-            return Problem(e.Message);
+            return NotFound(e.Message);
         }
     }
 
