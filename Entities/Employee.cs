@@ -10,6 +10,7 @@ public class Employee
     public long Id { get; set; }
     public string Password { get; set; }
     public List<Shift> Shifts { get; set; }
+    public bool IsManager { get; set; }
 
     public string PrintShifts()
     {

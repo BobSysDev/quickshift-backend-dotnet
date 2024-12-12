@@ -22,7 +22,8 @@ public class EntityDtoConverter
             Email = dto.Email,
             Id = dto.Id,
             Password = dto.Password,
-            Shifts = ListShiftDtosToListShift(dto.Shifts)
+            Shifts = ListShiftDtosToListShift(dto.Shifts),
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -45,6 +46,7 @@ public class EntityDtoConverter
             WorkingNumber = dto.WorkingNumber,
             Email = dto.Email,
             Password = dto.Password,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -56,6 +58,7 @@ public class EntityDtoConverter
             LastName = dto.LastName,
             WorkingNumber = dto.WorkingNumber,
             Id = dto.Id,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -67,7 +70,8 @@ public class EntityDtoConverter
             LastName = dto.LastName,
             WorkingNumber = dto.WorkingNumber,
             Id = dto.Id,
-            Shifts = ListShiftDtosToListShift(dto.Shifts)
+            Shifts = ListShiftDtosToListShift(dto.Shifts),
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -78,7 +82,8 @@ public class EntityDtoConverter
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             WorkingNumber = dto.WorkingNumber,
-            Id = dto.Id
+            Id = dto.Id,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -90,7 +95,8 @@ public class EntityDtoConverter
             LastName = dto.LastName,
             WorkingNumber = dto.WorkingNumber,
             Email = dto.Email,
-            Password = dto.Password
+            Password = dto.Password,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -119,7 +125,8 @@ public class EntityDtoConverter
             Email = e.Email,
             Id = e.Id,
             Password = e.Password,
-            Shifts = ListShiftToListShiftDtos(e.Shifts)
+            Shifts = ListShiftToListShiftDtos(e.Shifts),
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -133,6 +140,7 @@ public class EntityDtoConverter
             WorkingNumber = e.WorkingNumber,
             Email = e.Email,
             Password = e.Password,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -145,6 +153,7 @@ public class EntityDtoConverter
             LastName = e.LastName,
             WorkingNumber = e.WorkingNumber,
             Id = e.Id,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -157,7 +166,8 @@ public class EntityDtoConverter
             LastName = e.LastName,
             WorkingNumber = e.WorkingNumber,
             Id = e.Id,
-            Shifts = ListShiftToListShiftDtos(e.Shifts)
+            Shifts = ListShiftToListShiftDtos(e.Shifts),
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -170,6 +180,7 @@ public class EntityDtoConverter
             LastName = e.LastName,
             WorkingNumber = e.WorkingNumber,
             Id = e.Id,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -183,6 +194,7 @@ public class EntityDtoConverter
             WorkingNumber = e.WorkingNumber,
             Email = e.Email,
             Password = e.Password,
+            IsManager = e.IsManager
         };
         return dto;
     }

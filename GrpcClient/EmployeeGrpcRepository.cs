@@ -141,13 +141,12 @@ public class EmployeeGrpcRepository : IEmployeeRepository
 
     public async Task<bool> IsEmployeeInRepository(long Id)
     {
-        System.Boolean b = new System.Boolean();
         try
         {
             using var channel = GrpcChannel.ForAddress(_grpcAddress);
             var client = new Employee.EmployeeClient(channel);
             var reply = await client.IsEmployeeInRepositoryAsync(new Id { Id_ = Id });
-            b = reply.Boolean_;
+            bool b = reply.Boolean_;
             return b;
         }
         catch(RpcException e)
@@ -155,5 +154,4 @@ public class EmployeeGrpcRepository : IEmployeeRepository
             throw new Exception("An error occurred while checking if the employee is in the repository.", e);
         }
     }
-    
 }
