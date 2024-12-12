@@ -17,9 +17,10 @@ public class GrpcDtoConverter
             LastName = dto.LastName,
             Id = dto.Id,
             WorkingNumber = int.CreateChecked(dto.WorkingNumber),
-            Shifts = GrpcShiftDtoListToListShifts(dto.AssignedShifts), //TODO this method
+            Shifts = GrpcShiftDtoListToListShifts(dto.AssignedShifts),
             Email = dto.Email,
             Password = dto.Password,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -33,6 +34,7 @@ public class GrpcDtoConverter
             WorkingNumber = int.CreateChecked(dto.WorkingNumber),
             Email = dto.Email,
             Password = dto.Password,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -47,6 +49,7 @@ public class GrpcDtoConverter
             WorkingNumber = int.CreateChecked(dto.WorkingNumber),
             Email = dto.Email,
             Password = dto.Password,
+            IsManager = dto.IsManager
         };
         return employee;
     }
@@ -66,7 +69,8 @@ public class GrpcDtoConverter
                 WorkingNumber = int.CreateChecked(dto.WorkingNumber),
                 Shifts = GrpcShiftDtoListToListShifts(dto.AssignedShifts),
                 Email = dto.Email,
-                Password = dto.Password
+                Password = dto.Password,
+                IsManager = dto.IsManager
             };
             employees.Add(employee);
         }
@@ -87,6 +91,7 @@ public class GrpcDtoConverter
             AssignedShifts = ListShiftsToGrpcShiftDtoList(e.Shifts), 
             Email = e.Email,
             Password = e.Password,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -100,6 +105,7 @@ public class GrpcDtoConverter
             WorkingNumber = uint.CreateChecked(e.WorkingNumber),
             Email = e.Email,
             Password = e.Password,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -114,6 +120,7 @@ public class GrpcDtoConverter
             WorkingNumber = uint.CreateChecked(e.WorkingNumber),
             Email = e.Email,
             Password = e.Password,
+            IsManager = e.IsManager
         };
         return dto;
     }
@@ -148,22 +155,6 @@ public class GrpcDtoConverter
         };
         return shift;
     }
-
-    //TODO:DELETE
-    
-    // public static Entities.ShiftSwitchReply ShiftSwitchReplyDtoToShiftSwitch(ReplyDTO dto, IShiftRepository shiftRepository, IEmployeeRepository employeeRepository)
-    // {
-    //     Entities.ShiftSwitchReply shiftSwitchReply = new Entities.ShiftSwitchReply()
-    //     {
-    //         Details = dto.Details,
-    //         Id = dto.Id,
-    //         OriginAccepted = dto.OriginAccepted,
-    //         TargetEmployee = employeeRepository.GetSingleAsync(dto.TargetEmployeeId).Result,
-    //         TargetAccepted = dto.TargetAccepted,
-    //         TargetShift = shiftRepository.GetSingleAsync(dto.TargetShiftId).Result
-    //     };
-    //     return shiftSwitchReply;
-    // }
     
     //list
     public static List<Entities.Shift> GrpcShiftDtoListToListShifts(ShiftDTOList dtos)
