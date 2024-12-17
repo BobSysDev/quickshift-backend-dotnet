@@ -78,8 +78,8 @@ public class EmployeeController : ControllerBase
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
                 WorkingNumber = updated.WorkingNumber,
-                Id = updated.Id
-                
+                Id = updated.Id,
+                IsManager = updated.IsManager
             };
             return Ok(dto);
         }
@@ -106,7 +106,8 @@ public class EmployeeController : ControllerBase
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName,
                 Id = gotEmployee.Id,
-                Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts)
+                Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts),
+                IsManager = gotEmployee.IsManager,
             };
             return Ok(dto);
         }
@@ -134,7 +135,8 @@ public class EmployeeController : ControllerBase
                 WorkingNumber = employee.WorkingNumber,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                Id = employee.Id
+                Id = employee.Id,
+                IsManager = employee.IsManager
             }).ToList();
             Console.WriteLine("3");
 
