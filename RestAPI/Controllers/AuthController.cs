@@ -68,7 +68,8 @@ public class AuthController: ControllerBase
                 Id = newEmployee.Id,
                 FirstName = newEmployee.FirstName,
                 LastName = newEmployee.LastName,
-                WorkingNumber = newEmployee.WorkingNumber
+                WorkingNumber = newEmployee.WorkingNumber,
+                IsManager = newEmployee.IsManager
                 };
             return Ok(dto);
         }
