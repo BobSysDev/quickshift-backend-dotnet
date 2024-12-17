@@ -93,7 +93,7 @@ public class EmployeeController : ControllerBase
     
     
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<ShiftEmpoyeeDTO>> GetSingle([FromRoute] long id)
+    public async Task<ActionResult<EmployeeDTO>> GetSingle([FromRoute] long id)
     {
        // Console.WriteLine(id.GetType());
         try
@@ -101,7 +101,7 @@ public class EmployeeController : ControllerBase
             Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
             Console.WriteLine("ecntrl-get single eShifts: " + gotEmployee.PrintShifts());
             
-            ShiftEmpoyeeDTO dto = new()
+            EmployeeDTO dto = new()
             {
                 WorkingNumber = gotEmployee.WorkingNumber,
                 FirstName = gotEmployee.FirstName,
@@ -109,6 +109,8 @@ public class EmployeeController : ControllerBase
                 Id = gotEmployee.Id,
                 Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts),
                 IsManager = gotEmployee.IsManager,
+                Email = gotEmployee.Email,
+                Password = gotEmployee.Password
             };
             return Ok(dto);
         }

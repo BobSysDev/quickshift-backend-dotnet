@@ -62,19 +62,19 @@ public class EntityDtoConverter
         };
         return employee;
     }
-    public static Employee ShiftEmployeeDtoToEmployee(ShiftEmpoyeeDTO dto)
-    {
-        Employee employee = new Employee()
-        {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            WorkingNumber = dto.WorkingNumber,
-            Id = dto.Id,
-            Shifts = ListShiftDtosToListShift(dto.Shifts),
-            IsManager = dto.IsManager
-        };
-        return employee;
-    }
+    // public static Employee ShiftEmployeeDtoToEmployee(ShiftEmpoyeeDTO dto)
+    // {
+    //     Employee employee = new Employee()
+    //     {
+    //         FirstName = dto.FirstName,
+    //         LastName = dto.LastName,
+    //         WorkingNumber = dto.WorkingNumber,
+    //         Id = dto.Id,
+    //         Shifts = ListShiftDtosToListShift(dto.Shifts),
+    //         IsManager = dto.IsManager
+    //     };
+    //     return employee;
+    // }
     public static Employee SimpleEmployeeDtoToEmployee(SimpleEmployeeDTO dto)
     {
         Employee employee = new Employee()
@@ -158,19 +158,19 @@ public class EntityDtoConverter
         return dto;
     }
     
-    public static ShiftEmpoyeeDTO EmployeeToShiftEmployeeDto(Employee e)
-    {
-        ShiftEmpoyeeDTO dto = new ShiftEmpoyeeDTO()
-        {
-            FirstName = e.FirstName,
-            LastName = e.LastName,
-            WorkingNumber = e.WorkingNumber,
-            Id = e.Id,
-            Shifts = ListShiftToListShiftDtos(e.Shifts),
-            IsManager = e.IsManager
-        };
-        return dto;
-    }
+    // public static ShiftEmpoyeeDTO EmployeeToShiftEmployeeDto(Employee e)
+    // {
+    //     ShiftEmpoyeeDTO dto = new ShiftEmpoyeeDTO()
+    //     {
+    //         FirstName = e.FirstName,
+    //         LastName = e.LastName,
+    //         WorkingNumber = e.WorkingNumber,
+    //         Id = e.Id,
+    //         Shifts = ListShiftToListShiftDtos(e.Shifts),
+    //         IsManager = e.IsManager
+    //     };
+    //     return dto;
+    // }
     
     public static SimpleEmployeeDTO EmployeeToSimpleEmployeeDto(Employee e)
     {
