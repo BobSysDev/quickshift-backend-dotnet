@@ -37,7 +37,8 @@ public class AuthController: ControllerBase
                 Id = employeeFromRepository.Id,
                 FirstName = employeeFromRepository.FirstName,
                 LastName = employeeFromRepository.LastName,
-                WorkingNumber = employeeFromRepository.WorkingNumber
+                WorkingNumber = employeeFromRepository.WorkingNumber,
+                IsManager = employeeFromRepository.IsManager
             };
             if (Validate(employeeFromRepository.Password, request.Password))
             {
