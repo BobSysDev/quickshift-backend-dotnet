@@ -58,7 +58,7 @@ public class EmployeeController : ControllerBase
         {
             
             
-            Employee existingEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
+            Employee? existingEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
             if (existingEmployee == null)
             {
                 return NotFound($"Employee with the ID {id} not found");
@@ -67,9 +67,11 @@ public class EmployeeController : ControllerBase
             existingEmployee.LastName = request.LastName;
             existingEmployee.WorkingNumber = request.WorkingNumber;
             existingEmployee.Email = request.Email;
-            //existingEmployee.Shifts = EmployeeGrpcRepository.EntityShiftDtosToEntityShiftsList(request.Shifts);
-            //existingEmployee.Id = request.Id;
-            existingEmployee.Password = AuthController.Hash(request.Password);
+
+            if (request.Password != "")
+            {
+                existingEmployee.Password = AuthController.Hash(request.Password);
+            }
 
             Employee updated = await employeeRepo.UpdateAsync(existingEmployee);
             
