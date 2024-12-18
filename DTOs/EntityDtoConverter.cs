@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
+using DTOs.Announcements;
 using DTOs.Shift;
 using DTOs.ShiftSwitching;
 using Entities;
@@ -514,5 +515,34 @@ public class EntityDtoConverter
         }
 
         return timeframes;
+    }
+    
+    // Announcements
+    public static Announcement NewAnnouncementDtoToEntity(NewAnnouncementDTO dto)
+    {
+        return new Announcement
+        {
+            Id = 0,
+            AuthorId = dto.AuthorId,
+            Title = dto.Title,
+            Body = dto.Body,
+            DateTimeOfPosting = dto.DateTimeOfPosting
+        };
+    }
+
+    public async static Task<AnnouncementDTO> AnnouncementEntityToDto(Announcement a, IEmployeeRepository empRep)
+    {
+        Employee author = await empRep.GetSingleAsync(a.AuthorId);
+
+        return new AnnouncementDTO
+        {
+            Id = a.Id,
+            AuthorId = a.AuthorId,
+            AuthorName = author.FirstName + " " + author.LastName,
+            AuthorWorkingNumber = author.WorkingNumber,
+            Title = a.Title,
+            Body = a.Body,
+            DateTimeOfPosting = a.DateTimeOfPosting
+        };
     }
 }

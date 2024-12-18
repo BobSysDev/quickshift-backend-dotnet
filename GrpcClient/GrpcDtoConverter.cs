@@ -1,4 +1,5 @@
 using System.Xml;
+using Entities;
 using Google.Protobuf.Collections;
 using Microsoft.VisualBasic.FileIO;
 using RepositoryContracts;
@@ -533,6 +534,41 @@ public class GrpcDtoConverter
         };
     }
     
+    // Announcement GRPC -> Entity
+    public static Entities.Announcement AnnouncementGrpcDtoToEntity(AnnouncementDTO dto)
+    {
+        return new Entities.Announcement
+        {
+            Id = dto.Id,
+            AuthorId = dto.AuthorEmployeeId,
+            Title = dto.Title,
+            Body = dto.Body,
+            DateTimeOfPosting = DateTime.UnixEpoch.AddMilliseconds(dto.DateTimeOfPosting)
+        };
+    }
     
+    // Announcement Entity -> GRPC
+    public static AnnouncementDTO AnnouncementEntityToGrpcDto(Entities.Announcement announcement)
+    {
+        return new AnnouncementDTO
+        {
+            Id = announcement.Id,
+            AuthorEmployeeId = announcement.AuthorId,
+            Title = announcement.Title,
+            Body = announcement.Body,
+            DateTimeOfPosting = new DateTimeOffset(announcement.DateTimeOfPosting.Value).ToUnixTimeMilliseconds()
+        };
+    }
+
+    public static NewAnnouncementDTO AnnouncementEntityToNewGrpcDto(Entities.Announcement announcement)
+    {
+        return new NewAnnouncementDTO
+        {
+            AuthorEmployeeId = announcement.AuthorId,
+            Title = announcement.Title,
+            Body = announcement.Body,
+            DateTimeOfPosting = new DateTimeOffset(announcement.DateTimeOfPosting.Value).ToUnixTimeMilliseconds(),
+        };
+    }
 }
 

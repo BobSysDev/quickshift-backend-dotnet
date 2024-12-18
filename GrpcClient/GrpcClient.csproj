@@ -28,6 +28,7 @@
         <Protobuf Include="Protos\ShiftSwitchReply.proto" GrpcServices="Client"/>
         <Protobuf Include="Protos\ShiftSwitchRequest.proto" GrpcServices="Client"/>
         <Protobuf Include="Protos\ShiftSwitchRequestTimeframe.proto" GrpcServices="Client"/>
+        <Protobuf Include="Protos\Announcement.proto" GrpcServices="Client"/>
     </ItemGroup>
 
 </Project>

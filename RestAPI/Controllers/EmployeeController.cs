@@ -1,16 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using DTOs;
-using GrpcClient;
+﻿using DTOs;
+
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
-using Exception = System.Exception;
-using Microsoft.EntityFrameworkCore;
+
 using Employee = Entities.Employee;
 using EmployeeDTO = DTOs.EmployeeDTO;
-using NewEmployeeDTO = DTOs.NewEmployeeDTO;
-using Shift = Entities.Shift;
-using ShiftDTO = DTOs.Shift.ShiftDTO;
-using UpdateEmployeeDTO = GrpcClient.UpdateEmployeeDTO;
+
 namespace RestAPI.Controllers;
 
 [ApiController]

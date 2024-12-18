@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IShiftRepository, ShiftRepositoryProxy>();
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepositoryProxy>();
 builder.Services.AddSingleton<IShiftSwitchRepository, ShiftSwitchRepositoryProxy>();
+builder.Services.AddSingleton<IAnnouncementRepository, AnnouncementRepositoryProxy>();
 
 
 
