@@ -10,11 +10,12 @@ public class ShiftRepositoryProxy : IShiftRepository
     private IShiftRepository _shiftCachingRepository { get; set; }
     private IShiftRepository _shiftStorageRepository { get; set; }
     private DateTime _lastCacheUpdate { get; set; }
+    private static string _grpcAddress = "http://localhost:50051";
 
     public ShiftRepositoryProxy()
     {
         _shiftCachingRepository = new ShiftInMemoryRepository();
-        _shiftStorageRepository = new ShiftGrpcRepository();
+        _shiftStorageRepository = new ShiftGrpcRepository(_grpcAddress);
         
         List<Shift> shifts = _shiftStorageRepository.GetManyAsync().ToList();
         shifts.ForEach(shift => _shiftCachingRepository.AddAsync(shift));
@@ -25,21 +26,21 @@ public class ShiftRepositoryProxy : IShiftRepository
     public async Task<Shift> AddAsync(Shift shift)
     {
         Shift addedShift = await _shiftStorageRepository.AddAsync(shift);
-        await _shiftCachingRepository.AddAsync(shift);
+        await _shiftCachingRepository.AddAsync(addedShift);
         return addedShift;
     }
 
     public async Task<Shift> UpdateAsync(Shift shift)
     {
-        await _shiftCachingRepository.UpdateAsync(shift);
         await _shiftStorageRepository.UpdateAsync(shift);
+        await _shiftCachingRepository.UpdateAsync(shift);
         return shift;
     }
 
     public async Task DeleteAsync(long shift)
     {
-        await _shiftCachingRepository.DeleteAsync(shift);
         await _shiftStorageRepository.DeleteAsync(shift);
+        await _shiftCachingRepository.DeleteAsync(shift);
     }
 
     public IQueryable<Shift> GetManyAsync()
@@ -64,19 +65,21 @@ public class ShiftRepositoryProxy : IShiftRepository
     {
         await _shiftStorageRepository.AssignEmployeeToShift(shiftId, employeeId);
         await _shiftCachingRepository.AssignEmployeeToShift(shiftId, employeeId);
+        
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
     public async Task<Shift> UnassignEmployeeToShift(long shiftId, long employeeId)
     {
-        await _shiftCachingRepository.UnassignEmployeeToShift(shiftId, employeeId);
         await _shiftStorageRepository.UnassignEmployeeToShift(shiftId, employeeId);
+        await _shiftCachingRepository.UnassignEmployeeToShift(shiftId, employeeId);
+        
         return await _shiftCachingRepository.GetSingleAsync(shiftId);
     }
 
     private void RefreshCache()
     {
-        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
+        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) <= 0)
         {
             List<Shift> shifts =_shiftStorageRepository.GetManyAsync().ToList();
             _shiftCachingRepository = new ShiftInMemoryRepository();

@@ -11,11 +11,12 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     private IEmployeeRepository _employeeCachingRepository { get; set; } //caching = inmemory
     private IEmployeeRepository _employeeStorageRepository { get; set; }//storage = grpc(java) -> DB
     private DateTime _lastCacheUpdate { get; set; }
+    private static string _grpcAddress = "http://localhost:50051";
     
     public EmployeeRepositoryProxy()
     {
         _employeeCachingRepository = new EmployeeInMemoryRepository();
-        _employeeStorageRepository = new EmployeeGrpcRepository();
+        _employeeStorageRepository = new EmployeeGrpcRepository(_grpcAddress);
         List<Employee> employees = _employeeStorageRepository.GetManyAsync().ToList();
         employees.ForEach(employee => _employeeCachingRepository.AddAsync(employee));
         _lastCacheUpdate = DateTime.Now;
@@ -37,8 +38,8 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
 
     public async Task DeleteAsync(long id)
     {
-        await _employeeCachingRepository.DeleteAsync(id);
         await _employeeStorageRepository.DeleteAsync(id);
+        await _employeeCachingRepository.DeleteAsync(id);
     }
 
     public IQueryable<Employee> GetManyAsync()
@@ -68,7 +69,7 @@ public class EmployeeRepositoryProxy : IEmployeeRepository
     
     private async Task RefreshCache()
     {
-        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) > 0)
+        if (_lastCacheUpdate.AddMinutes(2).CompareTo(DateTime.Now) <= 0)
         {
             List<Employee> employees = _employeeStorageRepository.GetManyAsync().ToList();
             _employeeCachingRepository = new EmployeeInMemoryRepository();

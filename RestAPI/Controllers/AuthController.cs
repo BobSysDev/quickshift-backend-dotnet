@@ -37,7 +37,8 @@ public class AuthController: ControllerBase
                 Id = employeeFromRepository.Id,
                 FirstName = employeeFromRepository.FirstName,
                 LastName = employeeFromRepository.LastName,
-                WorkingNumber = employeeFromRepository.WorkingNumber
+                WorkingNumber = employeeFromRepository.WorkingNumber,
+                IsManager = employeeFromRepository.IsManager
             };
             if (Validate(employeeFromRepository.Password, request.Password))
             {
@@ -62,13 +63,14 @@ public class AuthController: ControllerBase
         try
         {
             request.Password = Hash(request.Password);
-            var newEmployee = await _employeeRepository.AddAsync(EmployeeGrpcRepository.NewEmployeeDtoToEntityEmployee(request));
+            var newEmployee = await _employeeRepository.AddAsync(EntityDtoConverter.NewEmployeeDtoToEmployee(request));
             SimpleEmployeeDTO dto = new SimpleEmployeeDTO
             {
                 Id = newEmployee.Id,
                 FirstName = newEmployee.FirstName,
                 LastName = newEmployee.LastName,
-                WorkingNumber = newEmployee.WorkingNumber
+                WorkingNumber = newEmployee.WorkingNumber,
+                IsManager = newEmployee.IsManager
                 };
             return Ok(dto);
         }

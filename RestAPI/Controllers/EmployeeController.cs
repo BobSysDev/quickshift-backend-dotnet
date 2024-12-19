@@ -1,16 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using DTOs;
-using GrpcClient;
+﻿using DTOs;
+
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
-using Exception = System.Exception;
-using Microsoft.EntityFrameworkCore;
+
 using Employee = Entities.Employee;
 using EmployeeDTO = DTOs.EmployeeDTO;
-using NewEmployeeDTO = DTOs.NewEmployeeDTO;
-using Shift = Entities.Shift;
-using ShiftDTO = DTOs.Shift.ShiftDTO;
-using UpdateEmployeeDTO = GrpcClient.UpdateEmployeeDTO;
+
 namespace RestAPI.Controllers;
 
 [ApiController]
@@ -51,14 +46,12 @@ public class EmployeeController : ControllerBase
     // }
 
 
-    [HttpPut("/Employee/{id:int}")] //problem: shifts are erased when user is updated
+    [HttpPut("{id:int}")] //problem: shifts are erased when user is updated
     public async Task<ActionResult<PublicEmployeeDTO>> UpdateEmployee([FromRoute] int id, [FromBody] DTOs.UpdateEmployeeDTO request)
     {
         try
         {
-            
-            
-            Employee existingEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
+            Employee? existingEmployee = await employeeRepo.GetSingleAsync(long.CreateChecked(id));
             if (existingEmployee == null)
             {
                 return NotFound($"Employee with the ID {id} not found");
@@ -67,9 +60,11 @@ public class EmployeeController : ControllerBase
             existingEmployee.LastName = request.LastName;
             existingEmployee.WorkingNumber = request.WorkingNumber;
             existingEmployee.Email = request.Email;
-            //existingEmployee.Shifts = EmployeeGrpcRepository.EntityShiftDtosToEntityShiftsList(request.Shifts);
-            //existingEmployee.Id = request.Id;
-            existingEmployee.Password = AuthController.Hash(request.Password);
+            if (request.Password != "")
+            {
+                existingEmployee.Password = AuthController.Hash(request.Password);
+            }
+            existingEmployee.IsManager = request.IsManager;
 
             Employee updated = await employeeRepo.UpdateAsync(existingEmployee);
             
@@ -78,10 +73,10 @@ public class EmployeeController : ControllerBase
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
                 WorkingNumber = updated.WorkingNumber,
-                Id = updated.Id
-                
+                Id = updated.Id,
+                IsManager = updated.IsManager
             };
-            return Accepted($"/Employee/{dto.Id}", $"{dto.FirstName} {dto.LastName} id=[{dto.Id}] was updated!");
+            return Ok(dto);
         }
         catch (ArgumentException e)
         {
@@ -91,8 +86,8 @@ public class EmployeeController : ControllerBase
     
     
     
-    [HttpGet("/Employee/{id:long}")]
-    public async Task<ActionResult<ShiftEmpoyeeDTO>> GetSingle([FromRoute] long id)
+    [HttpGet("{id:long}")]
+    public async Task<ActionResult<EmployeeDTO>> GetSingle([FromRoute] long id)
     {
        // Console.WriteLine(id.GetType());
         try
@@ -100,15 +95,18 @@ public class EmployeeController : ControllerBase
             Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
             Console.WriteLine("ecntrl-get single eShifts: " + gotEmployee.PrintShifts());
             
-            ShiftEmpoyeeDTO dto = new()
+            EmployeeDTO dto = new()
             {
                 WorkingNumber = gotEmployee.WorkingNumber,
                 FirstName = gotEmployee.FirstName,
                 LastName =  gotEmployee.LastName,
                 Id = gotEmployee.Id,
-                Shifts = EmployeeGrpcRepository.ShiftsToEntityShiftDTOs(gotEmployee.Shifts),
+                Shifts = EntityDtoConverter.ListShiftToListShiftDtos(gotEmployee.Shifts),
+                IsManager = gotEmployee.IsManager,
+                Email = gotEmployee.Email,
+                Password = gotEmployee.Password
             };
-            return Accepted($"/Employee/{gotEmployee.Id}", dto);
+            return Ok(dto);
         }
         catch (ArgumentException e)
         {
@@ -121,11 +119,10 @@ public class EmployeeController : ControllerBase
         
     }
     
-    [HttpGet("/Employees/")]
+    [HttpGet]
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
-        try
-        {
+        
             Console.WriteLine("1");
             IQueryable<Employee> employees = employeeRepo.GetManyAsync();
             Console.WriteLine("2");
@@ -135,16 +132,14 @@ public class EmployeeController : ControllerBase
                 WorkingNumber = employee.WorkingNumber,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                Id = employee.Id
+                Id = employee.Id,
+                IsManager = employee.IsManager
             }).ToList();
             Console.WriteLine("3");
 
             return Ok(dtos);
-        }
-        catch (Exception e)
-        {
-            return Problem(e.Message); 
-        }
+        
+        
     }
     
     [HttpDelete("{id:long}")]
