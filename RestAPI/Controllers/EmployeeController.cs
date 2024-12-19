@@ -89,11 +89,9 @@ public class EmployeeController : ControllerBase
     [HttpGet("{id:long}")]
     public async Task<ActionResult<EmployeeDTO>> GetSingle([FromRoute] long id)
     {
-       // Console.WriteLine(id.GetType());
         try
         {
             Employee gotEmployee = await employeeRepo.GetSingleAsync(id);
-            Console.WriteLine("ecntrl-get single eShifts: " + gotEmployee.PrintShifts());
             
             EmployeeDTO dto = new()
             {
@@ -123,9 +121,7 @@ public class EmployeeController : ControllerBase
     public async Task<ActionResult<List<PublicEmployeeDTO>>> GetMany()
     {
         
-            Console.WriteLine("1");
             IQueryable<Employee> employees = employeeRepo.GetManyAsync();
-            Console.WriteLine("2");
 
             List<PublicEmployeeDTO> dtos = employees.Select(employee => new PublicEmployeeDTO
             {
@@ -135,7 +131,6 @@ public class EmployeeController : ControllerBase
                 Id = employee.Id,
                 IsManager = employee.IsManager
             }).ToList();
-            Console.WriteLine("3");
 
             return Ok(dtos);
         

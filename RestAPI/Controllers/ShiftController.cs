@@ -29,9 +29,7 @@ public class ShiftController : ControllerBase
     public async Task<ActionResult<ShiftDTO>> AddShift([FromBody] NewShiftDTO request)
     {
             Shift tmp = EntityDtoConverter.NewShiftDtoToShift(request);
-            //Console.WriteLine(tmp.Print());
             var shift = await _shiftRepository.AddAsync(tmp);
-            //Console.WriteLine(shift.Print());
             ShiftDTO dto = EntityDtoConverter.ShiftToShiftDto(shift);
             return Ok(dto);
         
