@@ -17,7 +17,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\greet.proto" GrpcServices="Client"/>
+      <ProjectReference Include="..\DTOs\DTOs.csproj" />
+      <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\Generic.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Shift.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Employee.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\ShiftSwitchReply.proto" GrpcServices="Client"/>
+        <Protobuf Include="Protos\ShiftSwitchRequest.proto" GrpcServices="Client"/>
+        <Protobuf Include="Protos\ShiftSwitchRequestTimeframe.proto" GrpcServices="Client"/>
+        <Protobuf Include="Protos\Announcement.proto" GrpcServices="Client"/>
     </ItemGroup>
 
 </Project>
